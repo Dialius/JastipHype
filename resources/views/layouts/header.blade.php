@@ -57,7 +57,7 @@
             },
             
             async fetchSuggestions() {
-                if (this.searchQuery.length < 2) {
+                if (this.searchQuery.length < 1) {
                     this.suggestions = [];
                     this.hasSearched = false;
                     this.isLoading = false;
@@ -145,6 +145,7 @@
                                     @input.debounce.300ms="fetchSuggestions()"
                                     @keydown.escape="closeSearch()"
                                     placeholder="Search products..."
+                                    autocomplete="off"
                                     class="w-full px-4 py-2.5 pr-20 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-accent-gold transition-colors"
                                 >
                                 <button type="submit" class="absolute right-12 top-1/2 -translate-y-1/2 text-gray-400 hover:text-accent-gold transition-colors">
@@ -452,6 +453,7 @@
                             placeholder="Search our products"
                             value="{{ request('search') }}"
                             autofocus
+                            autocomplete="off"
                             class="w-full px-4 py-3 pr-20 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-gold"
                         >
                         <button type="submit" class="absolute right-12 top-1/2 -translate-y-1/2 text-gray-400 hover:text-accent-gold">
@@ -556,7 +558,7 @@ function searchAutocomplete() {
         showSuggestions: false,
         
         async fetchSuggestions() {
-            if (this.query.length < 2) {
+            if (this.query.length < 1) {
                 this.suggestions = [];
                 return;
             }
