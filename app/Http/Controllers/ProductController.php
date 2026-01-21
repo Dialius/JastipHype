@@ -15,6 +15,22 @@ class ProductController extends Controller
             ->with(['brand', 'category'])
             ->where('is_active', true);
 
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%")
+                  ->orWhere('sku', 'LIKE', "%{$search}%")
+                  ->orWhereHas('brand', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('category', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
         // Category filter (Radio button - single choice)
         $selectedCategory = null;
         if ($request->filled('category')) {
@@ -121,6 +137,18 @@ class ProductController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
         
+        // Track recently viewed products
+        $recentlyViewed = session('recently_viewed', []);
+        
+        // Remove if already exists and add to front
+        $recentlyViewed = array_diff($recentlyViewed, [$product->id]);
+        array_unshift($recentlyViewed, $product->id);
+        
+        // Keep only last 10 products
+        $recentlyViewed = array_slice($recentlyViewed, 0, 10);
+        
+        session(['recently_viewed' => $recentlyViewed]);
+        
         // Get related products (same category, exclude current product)
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
@@ -131,5 +159,30 @@ class ProductController extends Controller
             ->get();
         
         return view('products.show', compact('product', 'relatedProducts'));
+    }
+
+    /**
+     * Search autocomplete suggestions API
+     */
+    public function searchSuggestions(Request $request)
+    {
+        $search = $request->input('q', '');
+        
+        if (strlen($search) < 2) {
+            return response()->json([]);
+        }
+        
+        $products = Product::where('is_active', true)
+            ->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('brand', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  });
+            })
+            ->with(['brand', 'productImages'])
+            ->limit(8)
+            ->get();
+        
+        return response()->json($products);
     }
 }

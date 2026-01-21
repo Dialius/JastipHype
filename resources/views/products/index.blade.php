@@ -13,14 +13,18 @@
             @endphp
             
             <h1 class="text-3xl font-bold">
-                @if($selectedCategoryDetails)
+                @if(request('search'))
+                    Search Results
+                @elseif($selectedCategoryDetails)
                     {{ $selectedCategoryDetails->name }}
                 @else
                     All Products
                 @endif
             </h1>
             <p class="text-gray-600 mt-2">
-                @if($selectedCategoryDetails)
+                @if(request('search'))
+                    Found {{ $products->total() }} {{ Str::plural('result', $products->total()) }} for "<strong>{{ request('search') }}</strong>"
+                @elseif($selectedCategoryDetails)
                     Explore our curated selection of {{ strtolower($selectedCategoryDetails->name) }}
                 @else
                     Discover our latest collection of luxury fashion and accessories
@@ -229,7 +233,7 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="opacity-100 scale-100"
                              x-transition:leave-end="opacity-0 scale-95"
-                             class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-10 overflow-hidden"
+                             class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden"
                              style="display: none;">
                             <a href="{{ route('products.index', array_merge(request()->except('sort'), ['sort' => 'featured'])) }}"
                                class="block px-4 py-3 text-sm hover:bg-gray-50 transition-colors {{ request('sort', 'featured') == 'featured' ? 'bg-gray-100 font-semibold' : '' }}">
@@ -304,14 +308,42 @@
                     </div>
                 @else
                     <div class="bg-white rounded-lg p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <h3 class="mt-4 text-xl font-semibold text-gray-900">No products found</h3>
-                        <p class="mt-2 text-gray-600">Try adjusting your filters to find what you're looking for.</p>
-                        <a href="{{ route('products.index') }}" class="mt-6 inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-900">
-                            Clear all filters
-                        </a>
+                        @if(request('search'))
+                            {{-- Search Empty State --}}
+                            <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <h3 class="mt-4 text-xl font-semibold">No products found</h3>
+                            <p class="mt-2 text-gray-600">
+                                We couldn't find any products matching "<strong>{{ request('search') }}</strong>"
+                            </p>
+                            <div class="mt-6 space-x-4">
+                                <a href="{{ route('products.index') }}" 
+                                   class="inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-900">
+                                    View All Products
+                                </a>
+                            </div>
+                            
+                            <div class="mt-8 text-left max-w-md mx-auto bg-gray-50 p-4 rounded-lg">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">💡 Search Tips:</p>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Check your spelling</li>
+                                    <li>• Try more general keywords</li>
+                                    <li>• Try searching by brand name</li>
+                                    <li>• Browse categories instead</li>
+                                </ul>
+                            </div>
+                        @else
+                            {{-- General Empty State --}}
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <h3 class="mt-4 text-xl font-semibold text-gray-900">No products found</h3>
+                            <p class="mt-2 text-gray-600">Try adjusting your filters to find what you're looking for.</p>
+                            <a href="{{ route('products.index') }}" class="mt-6 inline-block bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-900">
+                                Clear all filters
+                            </a>
+                        @endif
                     </div>
                 @endif
             </div>

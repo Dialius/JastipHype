@@ -21,9 +21,14 @@
         <div class="max-w-2xl">
             <p class="text-sm uppercase tracking-wider mb-4 text-accent-gold">New Limited Drop</p>
             @if($featuredDrop)
-                <h1 class="text-5xl md:text-6xl font-bold mb-6">
-                    {{ $featuredDrop->brand->name }} <br> {{ $featuredDrop->name }}
-                </h1>
+                <div class="mb-6">
+                    <div class="text-3xl md:text-4xl font-bold text-gray-400 mb-2">
+                        {{ $featuredDrop->brand->name }}
+                    </div>
+                    <h1 class="text-5xl md:text-6xl font-bold text-white leading-tight">
+                        {{ $featuredDrop->name }}
+                    </h1>
+                </div>
                 <p class="text-lg mb-8 text-gray-300">
                     Only {{ $featuredDrop->stock }} pieces worldwide. Don't miss out.
                 </p>
@@ -156,24 +161,8 @@
 </section>
 @endif
 
-{{-- Brand Showcase --}}
-<section class="brands py-16">
-    <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Featured Brands</h2>
-        
-        <div class="grid grid-cols-3 md:grid-cols-6 gap-8 items-center">
-            @foreach($featuredBrands as $brand)
-                <a href="/brands/{{ $brand->slug }}" class="grayscale hover:grayscale-0 transition-all">
-                    @if($brand->logo)
-                        <img src="{{ $brand->logo }}" alt="{{ $brand->name }}" class="w-full">
-                    @else
-                        <div class="text-center font-bold text-gray-400">{{ $brand->name }}</div>
-                    @endif
-                </a>
-            @endforeach
-        </div>
-    </div>
-</section>
+{{-- Brand Showcase - Infinite Scroll Carousel --}}
+<x-brand-carousel />
 
 {{-- Newsletter --}}
 <section class="newsletter py-16 bg-gray-50">
