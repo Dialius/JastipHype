@@ -40,6 +40,21 @@ Route::get('/api/search/suggestions', [ProductController::class, 'searchSuggesti
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
+// Cart Routes
+use App\Http\Controllers\CartController;
+Route::controller(CartController::class)->group(function () {
+    Route::get('/cart', 'index')->name('cart.index');
+    Route::get('/cart/mini', 'miniCart')->name('cart.mini');
+    Route::post('/cart', 'store')->name('cart.store');
+    Route::patch('/cart/{item}', 'update')->name('cart.update');
+    Route::delete('/cart/{item}', 'destroy')->name('cart.destroy');
+});
+
+// Checkout Routes
+use App\Http\Controllers\CheckoutController;
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+
 // Authenticated Routes (requires login)
 Route::middleware('auth')->group(function () {
     // Logout

@@ -14,7 +14,7 @@
             </div>
 
             <!-- Product Info (Right - 50%, Sticky) -->
-            <div class="lg:col-span-6 space-y-6 lg:sticky lg:top-24 lg:self-start">
+            <div class="lg:col-span-6 space-y-6 lg:sticky lg:top-24 lg:self-start" x-data="productPage()">
                 <!-- Header -->
                 <div class="space-y-4">
                     <div class="text-xs uppercase tracking-[2px] text-gray-500 font-medium">
@@ -110,7 +110,7 @@
                 </div>
 
                 {{-- Size Selector (Chambre Style) --}}
-                <div x-data="{ selectedSize: null }">
+                <div> {{-- Removed x-data here --}}
                     {{-- Size Label Only --}}
                     <label class="block text-sm font-bold text-black mb-4">
                         Size
@@ -164,46 +164,58 @@
                 <hr class="my-6 border-gray-200">
 
                 {{-- Quantity & Add to Cart --}}
-                <div x-data="{ quantity: 1 }" class="space-y-4">
-                    {{-- Quantity Selector (Centered) --}}
-                    <div class="flex items-center justify-center gap-4">
+                <form @submit.prevent="addToCart"> {{-- Ajax Form --}}
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="size" :value="selectedSize">
+                    <input type="hidden" name="quantity" :value="quantity">
+                    
+                    <div class="space-y-4">
+                        {{-- Quantity Selector (Centered) --}}
+                        <div class="flex items-center justify-center gap-4">
+                            <button 
+                                type="button"
+                                @click="quantity = Math.max(1, quantity - 1)"
+                                class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                </svg>
+                            </button>
+                            
+                            <div class="text-xl font-bold text-black min-w-[60px] text-center" x-text="quantity"></div>
+                            
+                            <button 
+                                type="button"
+                                @click="quantity = Math.min({{ $product->stock ?? 100 }}, quantity + 1)"
+                                class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors bg-gray-200"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {{-- Add to Cart Button (Rounded, Outline) --}}
                         <button 
-                            @click="quantity = Math.max(1, quantity - 1)"
-                            class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                            type="submit"
+                            @if($product->stock === 0) disabled @endif
+                            @click="if(!selectedSize) { alert('Please select a size first!'); $event.preventDefault(); }"
+                            class="w-full bg-white border-2 border-black text-black h-12 rounded-full uppercase text-sm font-bold hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                            </svg>
+                            {{ $product->stock === 0 ? 'SOLD OUT' : 'Add to Cart' }}
                         </button>
-                        
-                        <div class="text-xl font-bold text-black min-w-[60px] text-center" x-text="quantity"></div>
-                        
+
+                        {{-- Buy It Now Button (Rounded, Filled) --}}
                         <button 
-                            @click="quantity = Math.min({{ $product->stock ?? 100 }}, quantity + 1)"
-                            class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors bg-gray-200"
+                            type="button"
+                            @if($product->stock === 0) disabled @endif
+                            class="w-full bg-black text-white h-12 rounded-full uppercase text-sm font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                            </svg>
+                            Buy It Now
                         </button>
                     </div>
-
-                    {{-- Add to Cart Button (Rounded, Outline) --}}
-                    <button 
-                        @if($product->stock === 0) disabled @endif
-                        class="w-full bg-white border-2 border-black text-black h-12 rounded-full uppercase text-sm font-bold hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {{ $product->stock === 0 ? 'SOLD OUT' : 'Add to Cart' }}
-                    </button>
-
-                    {{-- Buy It Now Button (Rounded, Filled) --}}
-                    <button 
-                        @if($product->stock === 0) disabled @endif
-                        class="w-full bg-black text-white h-12 rounded-full uppercase text-sm font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Buy It Now
-                    </button>
-                </div>
+                </form>
 
                 <!-- Product Details Accordion/Stack -->
                 <div class="pt-8 border-t border-gray-200 space-y-6">
@@ -315,4 +327,150 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 </script>
+
+<script>
+function productPage() {
+    return {
+        selectedSize: null,
+        quantity: 1,
+        isAdding: false,
+        showModal: false,
+        
+        addToCart() {
+            if (!this.selectedSize) {
+                alert('Please select a size first!');
+                return;
+            }
+            
+            this.isAdding = true;
+            
+            fetch('{{ route('cart.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    product_id: {{ $product->id }},
+                    size: this.selectedSize,
+                    quantity: this.quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Dispatch event to header
+                    window.dispatchEvent(new CustomEvent('cart-updated', { 
+                        detail: { count: data.cartCount } 
+                    }));
+                    
+                    // Show modal
+                    this.showModal = true;
+                } else {
+                    alert(data.message || 'Something went wrong');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add to cart: ' + error.message);
+            })
+            .finally(() => {
+                this.isAdding = false;
+            });
+        }
+    }
+}
+</script>
+
+{{-- Add to Cart Success Modal --}}
+<div x-data="{ show: false }" 
+     x-show="show" 
+     @cart-updated.window="show = true" 
+     style="display: none;"
+     class="fixed inset-0 z-[60] overflow-y-auto" 
+     aria-labelledby="modal-title" 
+     role="dialog" 
+     aria-modal="true">
+    
+    {{-- Backdrop --}}
+    <div x-show="show" 
+         x-transition:enter="ease-out duration-300" 
+         x-transition:enter-start="opacity-0" 
+         x-transition:enter-end="opacity-100" 
+         x-transition:leave="ease-in duration-200" 
+         x-transition:leave-start="opacity-100" 
+         x-transition:leave-end="opacity-0" 
+         class="fixed inset-0 bg-black/50 transition-opacity" 
+         @click="show = false"></div>
+
+    {{-- Modal Panel --}}
+    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <div x-show="show" 
+             x-transition:enter="ease-out duration-300" 
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave="ease-in duration-200" 
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+            
+            {{-- Close Button --}}
+            <div class="absolute right-4 top-4">
+                <button type="button" @click="show = false" class="text-gray-400 hover:text-gray-500">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 sm:p-8">
+                {{-- Success Icon --}}
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
+                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+
+                <div class="text-center">
+                    <h3 class="text-xl font-bold leading-6 text-gray-900 mb-2" id="modal-title">Added to Bag!</h3>
+                    <p class="text-sm text-gray-500 mb-6">
+                        <span class="font-semibold text-gray-900">{{ $product->name }}</span> has been added to your shopping cart.
+                    </p>
+                </div>
+
+                {{-- Product Preview --}}
+                <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-lg mb-6 text-left">
+                    @if($product->productImages->count() > 0)
+                        <img src="{{ asset('storage/' . $product->productImages->first()->image_path) }}" 
+                             alt="{{ $product->name }}" 
+                             class="h-16 w-16 object-cover rounded-md border border-gray-200">
+                    @else
+                        <div class="h-16 w-16 bg-gray-200 rounded-md flex items-center justify-center text-gray-400">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                    @endif
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">{{ $product->brand->name ?? 'Brand' }}</p>
+                        <p class="text-sm text-gray-500">Price: Rp {{ number_format($product->sale_price ?? $product->price, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+
+                {{-- Action Buttons --}}
+                <div class="flex flex-col gap-3">
+                    <a href="{{ route('cart.index') }}" 
+                       class="w-full inline-flex justify-center items-center rounded-md bg-black px-3 py-3 text-sm font-bold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                        VIEW BAG
+                    </a>
+                    <button type="button" 
+                            @click="show = false" 
+                            class="w-full inline-flex justify-center items-center rounded-md bg-white px-3 py-3 text-sm font-bold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors">
+                        CONTINUE SHOPPING
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

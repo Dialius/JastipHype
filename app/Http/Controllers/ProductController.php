@@ -109,6 +109,28 @@ class ProductController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
 
+        // Prepare Header Data
+        $pageTitle = 'All Products';
+        $pageDescription = 'Discover our latest collection of luxury fashion and accessories';
+
+        if ($request->filled('search')) {
+            $pageTitle = 'Search Results';
+            $pageDescription = 'Found ' . $products->total() . ' ' . \Illuminate\Support\Str::plural('result', $products->total()) . ' for "<strong>' . e($request->search) . '</strong>"';
+        } elseif ($selectedCategory) {
+            $pageTitle = $selectedCategory->name;
+            $pageDescription = 'Explore our curated selection of ' . strtolower($selectedCategory->name);
+        }
+
+        if ($request->ajax()) {
+            $view = view('products.partials.product-list', compact('products'))->render();
+            return response()->json([
+                'html' => $view,
+                'hasMore' => $products->hasMorePages(),
+                'pageTitle' => $pageTitle,
+                'pageDescription' => $pageDescription
+            ]);
+        }
+        
         // Get filter options
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         $brands = Brand::where('is_active', true)->orderBy('name')->get();
@@ -123,7 +145,9 @@ class ProductController extends Controller
             'brands',
             'minPrice',
             'maxPrice',
-            'selectedCategory'
+            'selectedCategory',
+            'pageTitle',
+            'pageDescription'
         ));
     }
 

@@ -327,20 +327,97 @@
                     </svg>
                 </button>
 
-                <!-- Cart -->
-                <a href="/cart" class="p-2 hover:text-accent-gold transition-colors relative">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                    @php
-                        $cartCount = 0; // TODO: Replace with actual cart count from session/database
-                    @endphp
-                    @if($cartCount > 0)
-                        <span class="absolute -top-1 -right-1 bg-accent-gold text-white text-xs rounded-full min-w-[1.25rem] h-5 flex items-center justify-center px-1">
-                            {{ $cartCount > 99 ? '99+' : $cartCount }}
+                <!-- Cart Dropdown -->
+                @php
+                    $cartCount = 0;
+                    if(Auth::check()) {
+                        $cart = Auth::user()->cart;
+                        if($cart) $cartCount = $cart->items->sum('quantity');
+                    } else {
+                        $sessionId = Session::getId();
+                        $cart = \App\Models\Cart::where('session_id', $sessionId)->first();
+                        if($cart) $cartCount = $cart->items->sum('quantity');
+                    }
+                @endphp
+                <div x-data="{ 
+                        open: false,
+                        count: {{ $cartCount }},
+                        isLoading: false,
+                        html: '',
+                        
+                        init() {
+                            // Listen for cart updates
+                            window.addEventListener('cart-updated', (e) => {
+                                this.count = e.detail.count;
+                                this.fetchMiniCart(); // Refresh content
+                            });
+                        },
+
+                        fetchMiniCart() {
+                            this.isLoading = true;
+                            fetch('{{ route('cart.mini') }}')
+                                .then(res => res.json())
+                                .then(data => {
+                                    this.html = data.html;
+                                    this.count = data.count; // Sync count just in case
+                                    this.isLoading = false;
+                                })
+                                .catch(err => {
+                                    console.error('Error fetching mini cart:', err);
+                                    this.isLoading = false;
+                                });
+                        }
+                     }" 
+                     @mouseenter="open = true; if(!html) fetchMiniCart()"
+                     @mouseleave="open = false"
+                     class="relative">
+                    
+                    <a href="/cart" class="p-2 hover:text-accent-gold transition-colors relative block">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span x-show="count > 0" 
+                              x-transition:enter="transition ease-out duration-200"
+                              x-transition:enter-start="transform scale-0"
+                              x-transition:enter-end="transform scale-100"
+                              class="absolute -top-1 -right-1 bg-accent-gold text-white text-xs rounded-full min-w-[1.25rem] h-5 flex items-center justify-center px-1"
+                              x-text="count > 99 ? '99+' : count"
+                              style="display: none;">
                         </span>
-                    @endif
-                </a>
+                    </a>
+
+                    <!-- Mini Cart Dropdown -->
+                    <div x-show="open"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 translate-y-2"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-2"
+                         class="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden"
+                         style="display: none;">
+                        
+                        <!-- Header -->
+                        <div class="px-4 py-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                            <h3 class="text-sm font-semibold text-gray-900">Shopping Cart</h3>
+                            <span class="text-xs text-gray-500" x-text="`${count} Items`"></span>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="min-h-[100px] relative">
+                            <!-- Loading Spinner -->
+                            <div x-show="isLoading" class="absolute inset-0 bg-white/80 z-10 flex items-center justify-center">
+                                <svg class="animate-spin h-6 w-6 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+
+                            <!-- Cart Items (Injected HTML) -->
+                            <div x-html="html"></div>
+                        </div>
+                    </div>
+                </div>
 
                 {{-- Account / Auth --}}
                 @auth

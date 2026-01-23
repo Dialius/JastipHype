@@ -1,7 +1,7 @@
 @props(['categories', 'brands', 'minPrice', 'maxPrice'])
 
 <div class="bg-white rounded-lg p-6 sticky top-4">
-    <form method="GET" action="{{ route('products.index') }}" x-data="filterForm()">
+    <form id="filter-form" method="GET" action="{{ route('products.index') }}" x-data="filterForm()" @submit.prevent>
         <!-- Filter Header -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-lg font-bold">Filters</h2>
@@ -188,6 +188,7 @@
                                :max="absoluteMax"
                                step="10000"
                                @input="updateMin"
+                               @change="$dispatch('change')"
                                class="thumb thumb-left">
                         
                         <!-- Max Range Input -->
@@ -197,6 +198,7 @@
                                :max="absoluteMax"
                                step="10000"
                                @input="updateMax"
+                               @change="$dispatch('change')"
                                class="thumb thumb-right">
                     </div>
 
@@ -213,10 +215,7 @@
             </div>
         </div>
 
-        <!-- Apply Filters Button -->
-        <button type="submit" class="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition-colors">
-            Apply Filters
-        </button>
+
     </form>
 </div>
 
@@ -462,15 +461,15 @@ function filterForm() {
 function priceSlider(min, max) {
     // Calculate center position with gap (35% to 65% of range)
     const range = max - min;
-    const defaultMin = min + (range * 0.35); // 35% from min
-    const defaultMax = min + (range * 0.65); // 65% from min
+    const defaultMin = min; // Start at 0%
+    const defaultMax = max; // End at 100%
     
     return {
         open: true,
         absoluteMin: min,
         absoluteMax: max,
-        minValue: {{ request('min_price') ?: 'null' }} ?? Math.round(defaultMin),
-        maxValue: {{ request('max_price') ?: 'null' }} ?? Math.round(defaultMax),
+        minValue: {{ request('min_price') ?: 'null' }} ?? defaultMin,
+        maxValue: {{ request('max_price') ?: 'null' }} ?? defaultMax,
         
         get minPercent() {
             return ((this.minValue - this.absoluteMin) / (this.absoluteMax - this.absoluteMin)) * 100;
