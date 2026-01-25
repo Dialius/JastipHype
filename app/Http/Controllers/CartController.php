@@ -46,7 +46,10 @@ class CartController extends Controller
             return $item->quantity * $item->product->price;
         });
 
-        return view('cart.index', compact('cartItems', 'subtotal'));
+        // Get related products for cross-sell (Random for now)
+        $relatedProducts = Product::inRandomOrder()->take(4)->get();
+
+        return view('cart.index', compact('cartItems', 'subtotal', 'relatedProducts'));
     }
 
     public function store(Request $request)
@@ -100,6 +103,19 @@ class CartController extends Controller
             'quantity' => $request->quantity
         ]);
 
+        if ($request->wantsJson()) {
+            $cartItems = $cart->items()->with('product')->get();
+            $subtotal = $cartItems->sum(fn($i) => $i->quantity * $i->product->price);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Cart updated',
+                'item_total' => $item->quantity * $item->product->price,
+                'subtotal' => $subtotal,
+                'cartCount' => $cart->items()->sum('quantity')
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Cart updated!');
     }
 
@@ -108,6 +124,19 @@ class CartController extends Controller
         $cart = $this->getCart();
         $item = $cart->items()->where('id', $itemId)->firstOrFail();
         $item->delete();
+
+        if (request()->wantsJson()) {
+            $cartItems = $cart->items()->with('product')->get();
+            $subtotal = $cartItems->sum(fn($i) => $i->quantity * $i->product->price);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Item removed',
+                'subtotal' => $subtotal,
+                'cartCount' => $cart->items()->sum('quantity'),
+                'empty' => $cartItems->isEmpty()
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Item removed from cart.');
     }

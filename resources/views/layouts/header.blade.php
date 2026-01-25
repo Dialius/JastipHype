@@ -88,7 +88,7 @@
             }
         }">
     <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between h-16">
+        <div class="flex items-center justify-between h-16 relative">
             <!-- Mobile Menu Button -->
             <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@
 
 
             {{-- Desktop Navigation & Search Container --}}
-            <div class="hidden lg:flex items-center flex-1 justify-center relative h-10">
+            <div class="hidden lg:flex items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl justify-center h-10">
                 {{-- Navigation (hidden when search active) --}}
                 <nav x-show="!searchActive" 
                      x-transition:enter="transition-opacity duration-300 ease-out delay-200"

@@ -41,4 +41,10 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URL'),
     ],
 
+    'rajaongkir' => [
+        'key' => env('RAJAONGKIR_API_KEY'),
+        'type' => env('RAJAONGKIR_TYPE', 'starter'),
+        'origin' => env('RAJAONGKIR_ORIGIN', 151),
+    ],
+
 ];

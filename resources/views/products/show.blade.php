@@ -65,7 +65,7 @@
                             @auth
                                 onclick="toggleWishlist({{ $product->id }})"
                             @else
-                                onclick="alert('Please login to add to wishlist')"
+                                onclick="showToast('Please login to add to wishlist', 'error')"
                             @endauth
                             class="p-2 hover:bg-gray-100 rounded-full transition-colors"
                             aria-label="Add to wishlist"
@@ -114,10 +114,14 @@
                     {{-- Size Label Only --}}
                     <label class="block text-sm font-bold text-black mb-4">
                         Size
+                        <span x-show="shake" class="ml-2 text-red-500 text-xs font-normal transition-opacity" style="display: none;">
+                            * Required
+                        </span>
                     </label>
                     
                     {{-- Size Buttons Grid (Rounded Corners) --}}
-                    <div class="grid grid-cols-4 gap-3">
+                    <div class="grid grid-cols-4 gap-3 p-1 rounded-lg transition-colors duration-300"
+                         :class="{ 'animate-shake ring-2 ring-red-500 ring-offset-2': shake }">
                         @php
                             // Use product sizes if available, otherwise use default
                             $availableSizes = $product->sizes && is_array($product->sizes) && count($product->sizes) > 0 
@@ -141,7 +145,7 @@
                             <button
                                 type="button"
                                 @if(!$isOutOfStock)
-                                    @click="selectedSize = '{{ $size }}'"
+                                    @click="selectedSize = '{{ $size }}'; shake = false"
                                 @endif
                                 {{ $isOutOfStock ? 'disabled' : '' }}
                                 :class="selectedSize === '{{ $size }}' ? 'bg-black text-white border-black' : 'bg-white text-black border-gray-200 {{ !$isOutOfStock ? 'hover:border-black' : '' }}'"
@@ -159,6 +163,17 @@
                         @endforeach
                     </div>
                 </div>
+
+                <style>
+                    @keyframes shake {
+                        0%, 100% { transform: translateX(0); }
+                        25% { transform: translateX(-5px); }
+                        75% { transform: translateX(5px); }
+                    }
+                    .animate-shake {
+                        animation: shake 0.3s ease-in-out;
+                    }
+                </style>
 
                 {{-- Horizontal Divider --}}
                 <hr class="my-6 border-gray-200">
@@ -333,12 +348,17 @@ function productPage() {
     return {
         selectedSize: null,
         quantity: 1,
+        shake: false,
         isAdding: false,
         showModal: false,
         
         addToCart() {
             if (!this.selectedSize) {
-                alert('Please select a size first!');
+                // Shake validation
+                this.shake = true;
+                setTimeout(() => this.shake = false, 500);
+                
+                showToast('Please select a size first!', 'error');
                 return;
             }
             

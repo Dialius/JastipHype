@@ -75,8 +75,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // Shipping Calculator Routes
-Route::prefix('shipping')->name('shipping.')->group(function () {
-    Route::get('/provinces', [ShippingController::class, 'getProvinces'])->name('provinces');
-    Route::get('/cities', [ShippingController::class, 'getCities'])->name('cities');
-    Route::post('/calculate', [ShippingController::class, 'calculateCost'])->name('calculate');
+// Location API Routes (RajaOngkir Proxy)
+use App\Http\Controllers\LocationController;
+Route::prefix('api/location')->name('location.')->group(function () {
+    Route::get('/provinces', [LocationController::class, 'getProvinces'])->name('provinces');
+    Route::get('/cities/{province}', [LocationController::class, 'getCities'])->name('cities');
+    Route::post('/cost', [LocationController::class, 'getCost'])->name('cost');
 });
