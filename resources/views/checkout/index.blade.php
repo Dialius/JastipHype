@@ -126,34 +126,15 @@
                         </div>
                     </div>
 
-                    <!-- Payment Method -->
+<!-- Payment Method -->
                     <div class="bg-white rounded-xl p-6 mb-6 shadow-sm border border-gray-100">
                         <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                             <span class="flex items-center justify-center w-6 h-6 rounded-full bg-black text-white text-xs">3</span>
                             Payment Method
                         </h2>
-                        <div class="space-y-4">
-                            <div class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-black transition-colors bg-white">
-                                <input id="manual" name="payment_method" type="radio" value="manual" checked class="focus:ring-black h-4 w-4 text-black border-gray-300">
-                                <label for="manual" class="ml-3 block text-sm font-medium text-gray-700 flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between cursor-pointer gap-2">
-                                    <span>Manual Bank Transfer</span>
-                                    <div class="flex gap-2 items-center">
-                                        <!-- Real Bank Logos (URLs) -->
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/1200px-Bank_Central_Asia.svg.png" alt="BCA" class="h-4 sm:h-5 object-contain">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/1200px-Bank_Mandiri_logo_2016.svg.png" alt="Mandiri" class="h-4 sm:h-5 object-contain">
-                                        <img src="https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/1200px-BNI_logo.svg.png" alt="BNI" class="h-4 sm:h-5 object-contain">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/1280px-BANK_BRI_logo.svg.png" alt="BRI" class="h-4 sm:h-5 object-contain">
-                                    </div>
-                                </label>
-                            </div>
-                            <div class="flex items-center p-4 border border-gray-200 rounded-lg opacity-60 cursor-not-allowed bg-gray-50">
-                                <input id="gateway" name="payment_method" type="radio" value="gateway" disabled class="focus:ring-black h-4 w-4 text-gray-300 border-gray-300">
-                                <label for="gateway" class="ml-3 block text-sm font-medium text-gray-500 flex-1 flex justify-between items-center">
-                                    <span>Online Payment</span>
-                                    <span class="text-xs bg-gray-200 px-2 py-0.5 rounded">Coming Soon</span>
-                                </label>
-                            </div>
-                        </div>
+                        
+                        <!-- New Payment Methods Component -->
+                        <x-payment-methods selected="bank_transfer" />
                     </div>
                 </form>
             </section>

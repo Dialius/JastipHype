@@ -114,29 +114,21 @@ async function toggleWishlist(productId) {
                 }
             }
             
-            showToast(data.message || 'Wishlist updated', 'success');
+            showToast(data.message || 'Wishlist updated', 'success', {
+            description: 'Your wishlist has been updated successfully',
+            duration: 3000
+        });
         }
     } catch (error) {
         console.error('Wishlist error:', error);
-        showToast('Failed to update wishlist', 'error');
+        showToast('Failed to update wishlist', 'error', {
+            description: 'Please check your connection and try again',
+            duration: 3000
+        });
     }
 }
 
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white text-sm font-medium z-[999999] ${
-        type === 'success' ? 'bg-green-500' : 
-        type === 'error' ? 'bg-red-500' : 
-        'bg-gray-800'
-    }`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+// Toast notifications are now handled by the global toastManager
+// Improved toast system with better UX and animations
 </script>
 @endsection

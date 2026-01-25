@@ -309,38 +309,35 @@ async function toggleWishlist(productId) {
             if (data.in_wishlist) {
                 heartIcon.classList.add('fill-current', 'text-red-500');
                 heartIcon.classList.remove('text-gray-700');
-                showToast(data.message || 'Added to wishlist', 'success');
+                showToast(data.message || 'Added to wishlist', 'success', {
+                description: 'Item saved to your wishlist',
+                duration: 3000
+            });
             } else {
                 heartIcon.classList.remove('fill-current', 'text-red-500');
                 heartIcon.classList.add('text-gray-700');
-                showToast(data.message || 'Removed from wishlist', 'info');
+                showToast(data.message || 'Removed from wishlist', 'info', {
+                description: 'Item removed from your wishlist',
+                duration: 3000
+            });
             }
         } else {
-            showToast(data.message || 'Something went wrong', 'error');
+            showToast(data.message || 'Something went wrong', 'error', {
+                description: 'Please try again or contact support',
+                duration: 4000
+            });
         }
     } catch (error) {
         console.error('Wishlist error:', error);
-        showToast('Failed to update wishlist', 'error');
+        showToast('Failed to update wishlist', 'error', {
+            description: 'Please check your connection and try again',
+            duration: 3000
+        });
     }
 }
 
-// Simple toast notification function
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white text-sm font-medium z-[999999] ${
-        type === 'success' ? 'bg-green-500' : 
-        type === 'error' ? 'bg-red-500' : 
-        'bg-gray-800'
-    }`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+// Toast notifications are now handled by the global toastManager
+// New improved toast system with better UX and animations
 </script>
 
 <script>
@@ -358,7 +355,10 @@ function productPage() {
                 this.shake = true;
                 setTimeout(() => this.shake = false, 500);
                 
-                showToast('Please select a size first!', 'error');
+                showToast('Please select a size first!', 'error', { 
+            description: 'Choose your preferred size before adding to cart',
+            duration: 4000 
+        });
                 return;
             }
             

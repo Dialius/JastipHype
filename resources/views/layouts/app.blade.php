@@ -24,7 +24,10 @@
         @yield('content')
     </main>
     
-    @include('layouts.footer')
+@include('layouts.footer')
+    
+    <!-- Toast Container -->
+    @include('components.toast-container')
     
     <!-- Back to Top Button -->
     @include('components.back-to-top')
