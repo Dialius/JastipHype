@@ -12,16 +12,25 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'order_number',
-        'total_price',
-        'status',
-        'shipping_courier',
-        'shipping_service',
+        'email',
+        'name',
+        'phone',
+        'address',
+        'province_id',
+        'city_id',
+        'postal_code',
+        'payment_method',
+        'subtotal',
         'shipping_cost',
-        'shipping_address',
+        'total',
+        'status',
         'tracking_number',
-        'customer_name',
-        'customer_phone',
-        'customer_email',
+    ];
+
+    protected $casts = [
+        'subtotal' => 'decimal:2',
+        'shipping_cost' => 'decimal:2',
+        'total' => 'decimal:2',
     ];
 
     public function user()

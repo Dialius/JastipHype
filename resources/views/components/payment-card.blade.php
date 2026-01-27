@@ -19,19 +19,13 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <!-- Logo Container with Hover Effect -->
-                    <div class="relative w-12 h-12 bg-white rounded-lg flex items-center justify-center p-2 border border-gray-200 
+                        <div class="relative w-12 h-12 bg-white rounded-lg flex items-center justify-center p-2 border border-gray-200 
                                 group-hover:border-black group-hover:shadow-sm transition-all duration-200
                                 {{ !$available ? 'grayscale' : '' }}">
                         @if($logo)
-                            @if(str_contains($logo, '.svg'))
-                                <div class="w-full h-full flex items-center justify-center text-gray-600 text-xs font-bold bg-gray-50 rounded">
-                                    {{ Str::upper(Str::limit($name, 3)) }}
-                                </div>
-                            @else
-                                <img src="{{ $logo }}" 
-                                     alt="{{ $name }}" 
-                                     class="w-full h-full object-contain">
-                            @endif
+                            <img src="{{ $logo }}" 
+                                 alt="{{ $name }}" 
+                                 class="w-full h-full object-contain">
                         @else
                             <div class="w-full h-full bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs font-medium">
                                 {{ Str::limit($name, 2) }}

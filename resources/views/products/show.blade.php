@@ -14,7 +14,7 @@
             </div>
 
             <!-- Product Info (Right - 50%, Sticky) -->
-            <div class="lg:col-span-6 space-y-6 lg:sticky lg:top-24 lg:self-start" x-data="productPage()">
+            <div class="lg:col-span-6 space-y-6 lg:sticky lg:top-24 lg:self-start" x-data="productPage">
                 <!-- Header -->
                 <div class="space-y-4">
                     <div class="text-xs uppercase tracking-[2px] text-gray-500 font-medium">
@@ -65,7 +65,7 @@
                             @auth
                                 onclick="toggleWishlist({{ $product->id }})"
                             @else
-                                onclick="showToast('Please login to add to wishlist', 'error')"
+                                onclick="$notify('Please login to add to wishlist', 'info')"
                             @endauth
                             class="p-2 hover:bg-gray-100 rounded-full transition-colors"
                             aria-label="Add to wishlist"
@@ -76,6 +76,23 @@
                         </button>
                     </div>
                 </div>
+
+                {{-- Voucher Trigger --}}
+                <button 
+                    type="button"
+                    @click="showVoucherModal = true"
+                    class="w-full flex items-center justify-between p-3 mb-4 bg-red-50 border border-red-100 rounded-lg group hover:bg-red-100 transition-colors"
+                >
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                        </svg>
+                        <span class="text-sm font-bold text-red-600">View Available Vouchers</span>
+                    </div>
+                    <svg class="w-4 h-4 text-red-400 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
 
                 {{-- Quantity Information Box (Chambre Style) --}}
                 <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
@@ -91,7 +108,7 @@
                 </div>
 
                 {{-- Size Guide Box (Like Quantity Information) --}}
-                <div x-data="{ showSizeGuide: false }">
+                <div> {{-- Removed nested x-data to use global productPage state --}}
                     <button 
                         @click="showSizeGuide = true"
                         type="button"
@@ -107,6 +124,10 @@
                     
                     {{-- Size Guide Modal Component --}}
                     <x-size-guide-modal :product="$product" />
+                    {{-- Voucher Modal Component --}}
+                    <x-voucher-modal />
+                    {{-- Delivery Modal Component --}}
+                    <x-delivery-modal />
                 </div>
 
                 {{-- Size Selector (Chambre Style) --}}
@@ -215,7 +236,6 @@
                         <button 
                             type="submit"
                             @if($product->stock === 0) disabled @endif
-                            @click="if(!selectedSize) { alert('Please select a size first!'); $event.preventDefault(); }"
                             class="w-full bg-white border-2 border-black text-black h-12 rounded-full uppercase text-sm font-bold hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {{ $product->stock === 0 ? 'SOLD OUT' : 'Add to Cart' }}
@@ -248,11 +268,17 @@
                     </div>
 
                     <div class="prose prose-sm max-w-none">
-                        <h3 class="text-xs font-bold uppercase tracking-wide mb-2">Delivery & Returns</h3>
-                        <div class="text-gray-600 text-sm space-y-1">
-                            <p>Estimated delivery: 3-5 business days.</p>
-                            <p>Free shipping on orders over Rp 2.000.000.</p>
-                            <p>30-day return policy for unworn items.</p>
+                        <button 
+                            @click="showDeliveryModal = true"
+                            class="w-full flex items-center justify-between group text-left"
+                        >
+                            <h3 class="text-xs font-bold uppercase tracking-wide mb-0 group-hover:text-gray-600 transition-colors">Delivery & Returns</h3>
+                            <svg class="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                        <div class="text-gray-600 text-sm mt-2">
+                            <p class="line-clamp-2 text-xs">Estimated delivery: 3-5 business days. Free shipping on orders over Rp 2.000.000.</p>
                         </div>
                     </div>
                 </div>
@@ -300,7 +326,7 @@ async function toggleWishlist(productId) {
 
         if (response.status === 401) {
             // Not authenticated - redirect to login or show message
-            alert('Please login to add items to wishlist');
+            $notify('Please login to add items to wishlist', 'info');
             return;
         }
 
@@ -309,27 +335,27 @@ async function toggleWishlist(productId) {
             if (data.in_wishlist) {
                 heartIcon.classList.add('fill-current', 'text-red-500');
                 heartIcon.classList.remove('text-gray-700');
-                showToast(data.message || 'Added to wishlist', 'success', {
+                $notify(data.message || 'Added to wishlist', 'success', {
                 description: 'Item saved to your wishlist',
                 duration: 3000
             });
             } else {
                 heartIcon.classList.remove('fill-current', 'text-red-500');
                 heartIcon.classList.add('text-gray-700');
-                showToast(data.message || 'Removed from wishlist', 'info', {
+                $notify(data.message || 'Removed from wishlist', 'info', {
                 description: 'Item removed from your wishlist',
                 duration: 3000
             });
             }
         } else {
-            showToast(data.message || 'Something went wrong', 'error', {
+            $notify(data.message || 'Something went wrong', 'error', {
                 description: 'Please try again or contact support',
                 duration: 4000
             });
         }
     } catch (error) {
         console.error('Wishlist error:', error);
-        showToast('Failed to update wishlist', 'error', {
+        $notify('Failed to update wishlist', 'error', {
             description: 'Please check your connection and try again',
             duration: 3000
         });
@@ -340,14 +366,22 @@ async function toggleWishlist(productId) {
 // New improved toast system with better UX and animations
 </script>
 
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
+
 <script>
-function productPage() {
-    return {
+document.addEventListener('alpine:init', () => {
+    Alpine.data('productPage', () => ({
         selectedSize: null,
         quantity: 1,
         shake: false,
         isAdding: false,
         showModal: false,
+        showVoucherModal: false,
+        showDeliveryModal: false,
+        showSizeGuide: false,
         
         addToCart() {
             if (!this.selectedSize) {
@@ -355,10 +389,10 @@ function productPage() {
                 this.shake = true;
                 setTimeout(() => this.shake = false, 500);
                 
-                showToast('Please select a size first!', 'error', { 
-            description: 'Choose your preferred size before adding to cart',
-            duration: 4000 
-        });
+                $notify('Please select a size first!', 'error', { 
+                    description: 'Choose your preferred size before adding to cart',
+                    duration: 4000 
+                });
                 return;
             }
             
@@ -388,19 +422,19 @@ function productPage() {
                     // Show modal
                     this.showModal = true;
                 } else {
-                    alert(data.message || 'Something went wrong');
+                    $notify(data.message || 'Something went wrong', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to add to cart: ' + error.message);
+                $notify('Failed to add to cart: ' + error.message, 'error');
             })
             .finally(() => {
                 this.isAdding = false;
             });
         }
-    }
-}
+    }));
+});
 </script>
 
 {{-- Add to Cart Success Modal --}}
