@@ -20,10 +20,14 @@
         async loadProvinces() {
             this.isLoading = true;
             try {
-                const response = await fetch('/shipping/provinces');
-                this.provinces = await response.json();
+                const response = await fetch('/api/location/provinces');
+                const data = await response.json();
+                if(data.rajaongkir && data.rajaongkir.results) {
+                    this.provinces = data.rajaongkir.results;
+                }
             } catch (error) {
                 console.error('Failed to load provinces:', error);
+                $notify('Failed to load provinces', 'error');
             } finally {
                 this.isLoading = false;
             }
@@ -31,11 +35,16 @@
         
         async loadCities(provinceId) {
             this.isLoading = true;
+            this.cities = [];
             try {
-                const response = await fetch(`/shipping/cities?province_id=${provinceId}`);
-                this.cities = await response.json();
+                const response = await fetch(`/api/location/cities/${provinceId}`);
+                const data = await response.json();
+                if(data.rajaongkir && data.rajaongkir.results) {
+                    this.cities = data.rajaongkir.results;
+                }
             } catch (error) {
                 console.error('Failed to load cities:', error);
+                $notify('Failed to load cities', 'error');
             } finally {
                 this.isLoading = false;
             }
@@ -58,24 +67,26 @@
         async calculateShipping() {
             this.isLoading = true;
             try {
-                const response = await fetch('/shipping/calculate', {
+                const response = await fetch('/api/location/cost', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
                     },
                     body: JSON.stringify({
-                        destination_city: this.selectedCity.city_id,
-                        weight: {{ $product->weight ?? 500 }}
+                        destination: this.selectedCity.city_id,
+                        weight: {{ $product->weight ?? 500 }},
+                        courier: 'jne'
                     })
                 });
                 
                 const data = await response.json();
-                if (data.success) {
-                    this.shippingCosts = data.data;
+                if (data.rajaongkir && data.rajaongkir.results) {
+                    this.shippingCosts = data.rajaongkir.results;
                 }
             } catch (error) {
                 console.error('Failed to calculate shipping:', error);
+                $notify('Failed to calculate shipping cost', 'error');
             } finally {
                 this.isLoading = false;
             }
@@ -291,7 +302,6 @@
                                 <template x-for="courier in shippingCosts" :key="courier.code">
                                     <div class="border border-gray-200 rounded-lg p-4">
                                         <div class="flex items-center gap-3 mb-3">
-                                            <img :src="`/images/couriers/${courier.code}.png`" :alt="courier.name" class="h-6" onerror="this.style.display='none'">
                                             <h4 class="font-bold text-black uppercase" x-text="courier.name"></h4>
                                         </div>
                                         
@@ -313,7 +323,11 @@
 
                             {{-- No Results --}}
                             <div x-show="!isLoading && shippingCosts.length === 0" class="text-center py-8 text-gray-500">
-                                <p>No shipping options available</p>
+                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                </svg>
+                                <p class="font-medium">No shipping options available</p>
+                                <p class="text-sm mt-1">Please try a different location</p>
                             </div>
                         </div>
                     </div>

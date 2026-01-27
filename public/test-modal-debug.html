@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Debug</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-8">Test Modal Debug</h1>
+        
+        <!-- Test Alpine.js -->
+        <div x-data="{ showVoucher: false, showDeliveryMessage: false }" class="space-y-4">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="font-bold mb-4">Test Buttons</h2>
+                
+                <button @click="showVoucher = true; console.log('Voucher clicked, showVoucher:', showVoucher)"
+                        class="bg-blue-500 text-white px-4 py-2 rounded mr-2">
+                    Open Voucher Modal
+                </button>
+                
+                <button @click="showDeliveryMessage = true; console.log('Message clicked, showDeliveryMessage:', showDeliveryMessage)"
+                        class="bg-green-500 text-white px-4 py-2 rounded">
+                    Open Message Modal
+                </button>
+                
+                <div class="mt-4 text-sm">
+                    <p>showVoucher: <span x-text="showVoucher"></span></p>
+                    <p>showDeliveryMessage: <span x-text="showDeliveryMessage"></span></p>
+                </div>
+            </div>
+
+            <!-- Voucher Modal -->
+            <template x-teleport="body">
+                <div x-show="showVoucher" 
+                     @keydown.escape.window="showVoucher = false"
+                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     style="display: none;">
+                    
+                    <div x-show="showVoucher"
+                         @click="showVoucher = false"
+                         class="fixed inset-0 bg-black/50"></div>
+
+                    <div class="flex min-h-screen items-center justify-center p-4">
+                        <div x-show="showVoucher"
+                             @click.outside="showVoucher = false"
+                             class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                            
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold">Voucher Modal</h3>
+                                <button @click="showVoucher = false"
+                                        class="p-2 hover:bg-gray-100 rounded">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <p>This is voucher modal content</p>
+                            
+                            <button @click="showVoucher = false"
+                                    class="mt-4 w-full bg-black text-white py-2 rounded">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Delivery Message Modal -->
+            <template x-teleport="body">
+                <div x-show="showDeliveryMessage" 
+                     @keydown.escape.window="showDeliveryMessage = false"
+                     class="fixed inset-0 z-50 overflow-y-auto" 
+                     style="display: none;">
+                    
+                    <div x-show="showDeliveryMessage"
+                         @click="showDeliveryMessage = false"
+                         class="fixed inset-0 bg-black/50"></div>
+
+                    <div class="flex min-h-screen items-center justify-center p-4">
+                        <div x-show="showDeliveryMessage"
+                             @click.outside="showDeliveryMessage = false"
+                             class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                            
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold">Delivery Message Modal</h3>
+                                <button @click="showDeliveryMessage = false"
+                                        class="p-2 hover:bg-gray-100 rounded">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <p>This is delivery message modal content</p>
+                            
+                            <button @click="showDeliveryMessage = false"
+                                    class="mt-4 w-full bg-black text-white py-2 rounded">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script>
+        console.log('Alpine.js loaded:', typeof Alpine !== 'undefined');
+    </script>
+</body>
+</html>

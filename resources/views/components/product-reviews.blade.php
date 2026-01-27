@@ -342,18 +342,27 @@ if (reviewForm) {
             const data = await response.json();
             
             if (data.success) {
-                showToast(data.message, 'success');
+showToast(data.message, 'success', {
+                description: 'Your review has been submitted successfully',
+                duration: 3000
+            });
                 setTimeout(() => {
                     window.location.reload();
                 }, 1500);
             } else {
-                showToast(data.message || 'Something went wrong', 'error');
+                showToast(data.message || 'Something went wrong', 'error', {
+                description: 'Please check your input and try again',
+                duration: 4000
+            });
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Review';
             }
         } catch (error) {
             console.error('Error:', error);
-            showToast('Failed to submit review. Please try again.', 'error');
+            showToast('Failed to submit review. Please try again.', 'error', {
+                description: 'Check your connection and review content',
+                duration: 4000
+            });
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Review';
         }
@@ -381,16 +390,25 @@ async function deleteReview(reviewId) {
         const data = await response.json();
         
         if (data.success) {
-            showToast(data.message, 'success');
+            showToast(data.message, 'success', {
+                description: 'Your review has been deleted',
+                duration: 3000
+            });
             setTimeout(() => {
                 window.location.reload();
             }, 1500);
         } else {
-            showToast(data.message || 'Failed to delete review', 'error');
+            showToast(data.message || 'Failed to delete review', 'error', {
+                description: 'Please try again or contact support',
+                duration: 4000
+            });
         }
     } catch (error) {
         console.error('Error:', error);
-        showToast('Failed to delete review. Please try again.', 'error');
+        showToast('Failed to delete review. Please try again.', 'error', {
+                description: 'Please check your connection and try again',
+                duration: 4000
+            });
     }
 }
 </script>

@@ -55,6 +55,16 @@ use App\Http\Controllers\CheckoutController;
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
 
+// Payment Routes
+use App\Http\Controllers\PaymentController;
+Route::get('/payment/{orderNumber}', [PaymentController::class, 'show'])->name('payment.show');
+Route::get('/payment/{orderNumber}/status', [PaymentController::class, 'checkStatus'])->name('payment.status');
+Route::post('/payment/{orderNumber}/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
+
+// Webhook Routes (CSRF exception configured in VerifyCsrfToken middleware)
+use App\Http\Controllers\WebhookController;
+Route::post('/payment/webhook', [WebhookController::class, 'handle'])->name('payment.webhook');
+
 // Authenticated Routes (requires login)
 Route::middleware('auth')->group(function () {
     // Logout
@@ -80,5 +90,6 @@ use App\Http\Controllers\LocationController;
 Route::prefix('api/location')->name('location.')->group(function () {
     Route::get('/provinces', [LocationController::class, 'getProvinces'])->name('provinces');
     Route::get('/cities/{province}', [LocationController::class, 'getCities'])->name('cities');
+    Route::get('/subdistricts/{city}', [LocationController::class, 'getSubdistricts'])->name('subdistricts');
     Route::post('/cost', [LocationController::class, 'getCost'])->name('cost');
 });
