@@ -52,8 +52,10 @@ class WebhookController extends Controller
 
             // Update payment based on transaction status
             $updateData = [
+                'transaction_id' => $notification->transaction_id ?? null,
                 'transaction_status' => $transactionStatus,
                 'fraud_status' => $fraudStatus,
+                'payment_type' => $notification->payment_type ?? null,
             ];
 
             // Handle different transaction statuses
@@ -83,6 +85,14 @@ class WebhookController extends Controller
 
             // Update payment record
             $payment->update($updateData);
+            
+            // Also update order payment_method and payment_detail based on actual payment
+            if (isset($notification->payment_type)) {
+                $order->update([
+                    'payment_method' => $notification->payment_type,
+                    'payment_detail' => $this->getPaymentDetail($notification)
+                ]);
+            }
 
             Log::info('Webhook processed successfully', [
                 'order_number' => $orderNumber,
@@ -101,6 +111,45 @@ class WebhookController extends Controller
                 'message' => 'Webhook processing failed',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+    
+    /**
+     * Get payment detail from notification
+     */
+    private function getPaymentDetail($notification)
+    {
+        $paymentType = $notification->payment_type ?? '';
+        
+        // Extract specific payment details based on type
+        switch ($paymentType) {
+            case 'bank_transfer':
+                // Get bank name from VA number
+                if (isset($notification->va_numbers[0])) {
+                    return $notification->va_numbers[0]->bank ?? 'bank_transfer';
+                }
+                return 'bank_transfer';
+                
+            case 'echannel':
+                return 'mandiri';
+                
+            case 'gopay':
+                return 'gopay';
+                
+            case 'shopeepay':
+                return 'shopeepay';
+                
+            case 'qris':
+                return 'qris';
+                
+            case 'cstore':
+                return $notification->store ?? 'cstore';
+                
+            case 'credit_card':
+                return $notification->card_type ?? 'credit_card';
+                
+            default:
+                return $paymentType;
         }
     }
 }

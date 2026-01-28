@@ -37,6 +37,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if email is verified
+        $user = Auth::user();
+        if (!$user->hasVerifiedEmail()) {
+            Auth::logout();
+            
+            throw ValidationException::withMessages([
+                'email' => 'Please verify your email address before logging in. Check your inbox for the verification link.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

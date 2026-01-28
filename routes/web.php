@@ -9,6 +9,9 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -20,10 +23,16 @@ Route::middleware('guest')->group(function () {
     
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
+    
+    // Forgot Password Routes
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.email');
+    Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+    Route::post('/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.resend');
 });
 
 // Social Authentication Routes (Google Only)
-use App\Http\Controllers\Auth\SocialAuthController;
 
 Route::get('/auth/{provider}', [SocialAuthController::class, 'redirectToProvider'])
     ->name('social.redirect')
@@ -70,10 +79,21 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
     
+    // Email Verification Routes
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->middleware(['signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+        ->middleware(['throttle:6,1'])->name('verification.send');
+    
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    
+    // Password Change with OTP
+    Route::post('/profile/password/request-otp', [ProfileController::class, 'requestPasswordChangeOtp'])->name('profile.password.request-otp');
+    Route::post('/profile/password/verify-otp', [ProfileController::class, 'verifyPasswordChangeOtp'])->name('profile.password.verify-otp');
     
     // Wishlist Routes
     Route::post('/wishlist/{product}/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');

@@ -195,6 +195,14 @@ window.paymentMethods = function(initialSelection = 'bank_transfer') {
     return {
         selectedPayment: initialSelection,
         
+        init() {
+            // Watch for payment method changes and log for debugging
+            this.$watch('selectedPayment', (value) => {
+                console.log('Payment method changed to:', value);
+                console.log('Payment detail:', this.getPaymentDetail());
+            });
+        },
+        
         getPaymentDetail() {
             // Get the selected detail based on payment type
             if (this.selectedPayment === 'bank_transfer') {
@@ -206,6 +214,8 @@ window.paymentMethods = function(initialSelection = 'bank_transfer') {
             } else if (this.selectedPayment === 'convenience_store') {
                 const selected = document.querySelector('input[name="store_type"]:checked');
                 return selected ? selected.value : '';
+            } else if (this.selectedPayment === 'qris') {
+                return 'qris';
             }
             return '';
         }

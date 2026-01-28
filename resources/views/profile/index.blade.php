@@ -18,7 +18,7 @@
                     <nav class="space-y-1">
                         <button 
                             @click="activeTab = 'profile'"
-                            :class="activeTab === 'profile' ? 'bg-accent-gold text-white' : 'text-gray-700 hover:bg-gray-100'"
+                            :class="activeTab === 'profile' ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-100'"
                             class="w-full text-left px-4 py-3 rounded-lg font-medium transition-colors flex items-center"
                         >
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,8 +27,18 @@
                             Profile
                         </button>
                         <button 
+                            @click="activeTab = 'orders'"
+                            :class="activeTab === 'orders' ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-100'"
+                            class="w-full text-left px-4 py-3 rounded-lg font-medium transition-colors flex items-center"
+                        >
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            </svg>
+                            Order History
+                        </button>
+                        <button 
                             @click="activeTab = 'password'"
-                            :class="activeTab === 'password' ? 'bg-accent-gold text-white' : 'text-gray-700 hover:bg-gray-100'"
+                            :class="activeTab === 'password' ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-100'"
                             class="w-full text-left px-4 py-3 rounded-lg font-medium transition-colors flex items-center"
                         >
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,6 +259,93 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+
+                {{-- Order History Tab --}}
+                <div x-show="activeTab === 'orders'" x-transition style="display: none;">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-6">Order History</h2>
+                        
+                        @if(isset($orders) && $orders->count() > 0)
+                            <div class="space-y-4">
+                                @foreach($orders as $order)
+                                <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                                    {{-- Order Header --}}
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 pb-4 border-b border-gray-100">
+                                        <div>
+                                            <h3 class="font-bold text-gray-900">Order #{{ $order->order_number }}</h3>
+                                            <p class="text-sm text-gray-500 mt-1">{{ $order->created_at->format('d M Y, H:i') }}</p>
+                                        </div>
+                                        <div class="mt-3 md:mt-0 flex items-center gap-3">
+                                            <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                                @if($order->status === 'processing') bg-blue-100 text-blue-800
+                                                @elseif($order->status === 'pending') bg-yellow-100 text-yellow-800
+                                                @elseif($order->status === 'completed') bg-green-100 text-green-800
+                                                @else bg-red-100 text-red-800
+                                                @endif">
+                                                {{ ucfirst($order->status) }}
+                                            </span>
+                                            <a href="{{ route('payment.show', $order->order_number) }}" 
+                                               class="text-sm font-medium text-black hover:text-gray-700 underline">
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    {{-- Order Items --}}
+                                    <div class="space-y-3 mb-4">
+                                        @foreach($order->items->take(2) as $item)
+                                        <div class="flex items-center gap-4">
+                                            <img src="{{ $item->product->productImages->first()?->image_url ?? '/images/placeholder.png' }}" 
+                                                 alt="{{ $item->product->name }}"
+                                                 class="w-16 h-16 object-cover rounded-lg">
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="font-medium text-gray-900 truncate">{{ $item->product->name }}</h4>
+                                                <p class="text-sm text-gray-500">Size: {{ $item->size }} | Qty: {{ $item->quantity }}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-semibold text-gray-900">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</p>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                        
+                                        @if($order->items->count() > 2)
+                                        <p class="text-sm text-gray-500 pl-20">
+                                            +{{ $order->items->count() - 2 }} more item(s)
+                                        </p>
+                                        @endif
+                                    </div>
+
+                                    {{-- Order Total --}}
+                                    <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                        <span class="text-sm text-gray-600">Total Payment</span>
+                                        <span class="text-lg font-bold text-gray-900">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+
+                            {{-- Pagination --}}
+                            @if($orders->hasPages())
+                            <div class="mt-6">
+                                {{ $orders->links() }}
+                            </div>
+                            @endif
+                        @else
+                            {{-- Empty State --}}
+                            <div class="text-center py-12">
+                                <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">No Orders Yet</h3>
+                                <p class="text-gray-600 mb-6">You haven't placed any orders yet.</p>
+                                <a href="{{ route('products.index') }}" 
+                                   class="inline-block px-6 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
+                                    Start Shopping
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

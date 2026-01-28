@@ -22,7 +22,7 @@ class PaymentController extends Controller
      */
     public function show($orderNumber)
     {
-        $order = Order::with(['payment', 'items.product'])
+        $order = Order::with(['payment', 'items.product.productImages'])
             ->where('order_number', $orderNumber)
             ->firstOrFail();
 
@@ -37,7 +37,12 @@ class PaymentController extends Controller
             return redirect()->route('home')->with('error', 'Payment information not found.');
         }
 
-        // Get payment instructions
+        // If snap_token exists, show Snap UI directly (no manual instructions needed)
+        if (isset($payment->payment_data['snap_token'])) {
+            return view('payment.show', compact('order', 'payment'));
+        }
+
+        // Otherwise, get payment instructions for manual payment methods
         $instructions = $payment->getInstructions();
 
         return view('payment.show', compact('order', 'payment', 'instructions'));

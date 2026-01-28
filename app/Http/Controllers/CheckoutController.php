@@ -69,8 +69,8 @@ class CheckoutController extends Controller
             'province_id' => 'required',
             'city_id' => 'required',
             'postal_code' => 'required|string|max:10',
-            'payment_method' => 'required|string',
-            'payment_detail' => 'nullable|string', // For bank selection, store selection, etc
+            'payment_method' => 'nullable|string', // Optional, will use Snap
+            'payment_detail' => 'nullable|string',
         ]);
 
         \Log::info('Validation passed', ['validated' => $validated]);
@@ -96,7 +96,7 @@ class CheckoutController extends Controller
             $shippingCost = $request->input('shipping_cost', 0);
             $total = $subtotal + $shippingCost;
 
-            // Create order
+            // Create order (payment method will be determined by Midtrans)
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'order_number' => 'ORD-' . strtoupper(uniqid()),
@@ -107,7 +107,8 @@ class CheckoutController extends Controller
                 'province_id' => $validated['province_id'],
                 'city_id' => $validated['city_id'],
                 'postal_code' => $validated['postal_code'],
-                'payment_method' => $validated['payment_method'],
+                'payment_method' => 'snap', // Will be updated after payment
+                'payment_detail' => null, // Will be updated after payment
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'total' => $total,
@@ -146,7 +147,7 @@ class CheckoutController extends Controller
                 ];
             }
 
-            // Prepare Midtrans transaction data
+            // Prepare Midtrans transaction data (show all payment methods)
             $orderData = [
                 'order_id' => $order->order_number,
                 'gross_amount' => $total,
@@ -163,13 +164,8 @@ class CheckoutController extends Controller
                     ]
                 ],
                 'items' => $itemDetails
+                // No enabled_payments - show all available payment methods in Midtrans
             ];
-
-            // Map payment method to Snap enabled_payments
-            // $enabledPayments = $this->mapPaymentToSnap($validated['payment_method'], $validated['payment_detail'] ?? null);
-            // if ($enabledPayments) {
-            //    $orderData['enabled_payments'] = $enabledPayments;
-            // } 
 
             // Create Midtrans Snap Transaction
             $midtransResponse = $this->midtrans->createSnapTransaction($orderData);
@@ -207,9 +203,6 @@ class CheckoutController extends Controller
             return redirect()->route('payment.show', $order->order_number)
                 ->with('success', 'Order created successfully! Please complete payment.');
 
-            // Legacy: Redirect to Midtrans Hosted Payment Page
-            // return redirect($midtransResponse['redirect_url']);
-
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Checkout error: ' . $e->getMessage(), [
@@ -220,44 +213,6 @@ class CheckoutController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Failed to process order: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Map frontend payment selection to Snap enabled_payments
-     */
-    private function mapPaymentToSnap($method, $detail)
-    {
-        switch ($method) {
-            case 'qris':
-                // Snap QRIS is usually handled via GoPay or specific QRIS acquirer
-                // We enable gopay and shopeepay as they support QRIS
-                return ['gopay', 'shopeepay', 'other_qris'];
-            
-            case 'bank_transfer':
-                $map = [
-                    'bca' => 'bca_va',
-                    'mandiri' => 'echannel',
-                    'bni' => 'bni_va',
-                    'bri' => 'bri_va',
-                    'permata' => 'permata_va'
-                ];
-                return isset($map[$detail]) ? [$map[$detail]] : ['other_va'];
-
-            case 'ewallet':
-                $map = [
-                    'gopay' => 'gopay',
-                    'shopeepay' => 'shopeepay',
-                    'dana' => 'dana',
-                    'ovo' => 'ovo'
-                ];
-                return isset($map[$detail]) ? [$map[$detail]] : null;
-            
-            case 'convenience_store':
-                return [$detail]; // indomaret, alfamart
-                
-            default:
-                return null; // All
         }
     }
 }
