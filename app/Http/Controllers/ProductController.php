@@ -49,7 +49,7 @@ class ProductController extends Controller
         }
 
         // Discount filter (products with sale_price)
-        if ($request->filled('discount')) {
+        if ($request->filled('discount') || $request->filled('on_sale')) {
             $query->whereNotNull('sale_price')
                   ->where('sale_price', '>', 0)
                   ->whereRaw('sale_price < price');

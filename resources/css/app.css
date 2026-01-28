@@ -56,4 +56,30 @@
     .toast-info {
         @apply border-blue-200 text-blue-900;
     }
+
+    /* Shake animation for SALE link - goyang pelan setiap 5 detik */
+    @keyframes shake {
+        0%, 100% {
+            transform: translateX(0);
+        }
+        3% {
+            transform: translateX(-3px);
+        }
+        6% {
+            transform: translateX(3px);
+        }
+        9% {
+            transform: translateX(-3px);
+        }
+        12% {
+            transform: translateX(3px);
+        }
+        15%, 100% {
+            transform: translateX(0);
+        }
+    }
+
+    .animate-shake {
+        animation: shake 5s ease-in-out infinite;
+    }
 }

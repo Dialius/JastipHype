@@ -20,6 +20,7 @@ class Order extends Model
         'city_id',
         'postal_code',
         'payment_method',
+        'payment_detail',
         'subtotal',
         'shipping_cost',
         'total',

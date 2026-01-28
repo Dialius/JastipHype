@@ -115,9 +115,9 @@
                      class="absolute inset-0 flex items-center justify-center">
                     <div class="w-full max-w-xl">
                         <div class="flex items-center justify-center space-x-8">
-                        <a href="{{ route('products.index') }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">SHOP</a>
-                        <a href="{{ route('products.index', ['sort' => 'newest']) }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">NEW ARRIVALS</a>
-                        <a href="{{ route('products.index', ['availability' => ['limited']]) }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">LIMITED</a>
+                        <a href="{{ route('products.index') }}" class="text-sm font-medium text-red-600 hover:text-red-700 transition-colors whitespace-nowrap animate-shake">SALE</a>
+                        <a href="{{ route('products.index', ['new' => true]) }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">NEW</a>
+                        <a href="#" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">REQUEST</a>
                         <a href="{{ route('products.index') }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">BRANDS</a>
                     </div>
                 </nav>
@@ -460,6 +460,13 @@
                                 My Account
                             </a>
                             
+                            <a href="{{ route('profile.index', ['tab' => 'orders']) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                                Order History
+                            </a>
+                            
                             <a href="{{ route('wishlist.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
@@ -502,9 +509,9 @@
          class="lg:hidden border-t border-gray-200 bg-white"
          @click.away="mobileMenuOpen = false">
         <nav class="px-4 py-4 space-y-3">
-            <a href="{{ route('products.index') }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">SHOP</a>
-            <a href="{{ route('products.index', ['sort' => 'newest']) }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">NEW ARRIVALS</a>
-            <a href="{{ route('products.index', ['availability' => ['limited']]) }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">LIMITED</a>
+            <a href="{{ route('products.index') }}" class="block text-sm font-medium text-red-600 hover:text-red-700 transition-colors animate-shake">SALE</a>
+            <a href="{{ route('products.index', ['new' => true]) }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">NEW</a>
+            <a href="#" class="block text-sm font-medium hover:text-accent-gold transition-colors">REQUEST</a>
             <a href="{{ route('products.index') }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">BRANDS</a>
         </nav>
     </div>

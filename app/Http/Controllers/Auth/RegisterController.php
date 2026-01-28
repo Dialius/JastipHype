@@ -28,8 +28,9 @@ class RegisterController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Don't auto login - user must verify email first
+        // Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Welcome to JastipHype!');
+        return redirect()->route('verification.notice')->with('success', 'Registration successful! Please check your email to verify your account.');
     }
 }

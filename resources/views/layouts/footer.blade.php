@@ -11,10 +11,10 @@
             <div>
                 <h4 class="font-semibold mb-4">SHOP</h4>
                 <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="/shop" class="hover:text-white transition-colors">All Products</a></li>
-                    <li><a href="/new-arrivals" class="hover:text-white transition-colors">New Arrivals</a></li>
-                    <li><a href="/limited-editions" class="hover:text-white transition-colors">Limited Editions</a></li>
-                    <li><a href="/brands" class="hover:text-white transition-colors">Brands</a></li>
+                    <li><a href="{{ route('products.index') }}" class="hover:text-white transition-colors">All Products</a></li>
+                    <li><a href="{{ route('products.index', ['sort' => 'newest']) }}" class="hover:text-white transition-colors">New Arrivals</a></li>
+                    <li><a href="{{ route('products.index', ['availability' => ['limited']]) }}" class="hover:text-white transition-colors">Limited Editions</a></li>
+                    <li><a href="{{ route('products.index') }}" class="hover:text-white transition-colors">Brands</a></li>
                 </ul>
             </div>
 

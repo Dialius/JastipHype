@@ -30,7 +30,7 @@
                     <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white border-2 border-gray-300 mb-2">
                         <span class="text-gray-500 font-bold">3</span>
                     </div>
-                    <span class="text-sm font-medium text-gray-500">Complete</span>
+                    <span class="text-sm font-medium text-gray-500">Payment</span>
                 </li>
             </ol>
         </nav>
@@ -226,16 +226,9 @@
                         </div>
                     </div>
 
-                    <!-- Payment Method -->
-                    <div class="bg-white rounded-2xl p-8 mb-6 shadow-sm border border-gray-200">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-black text-white text-sm font-bold">3</span>
-                            Payment Method
-                        </h2>
-                        
-                        <!-- Simple Payment Methods Component -->
-                        <x-payment-methods-simple selected="bank_transfer" />
-                    </div>
+                    <!-- Payment Method - Hidden (will be selected in Midtrans) -->
+                    <input type="hidden" name="payment_method" value="snap">
+                    <input type="hidden" name="payment_detail" value="all">
 
                     <!-- Hidden input for shipping cost -->
                     <input type="hidden" name="shipping_cost" x-model="shippingCost">
@@ -709,7 +702,6 @@ function checkoutPage() {
             const provinceId = document.querySelector('input[name="province_id"]').value;
             const cityId = document.querySelector('input[name="city_id"]').value;
             const postalCode = document.querySelector('input[name="postal_code"]').value;
-            const paymentMethod = document.querySelector('input[name="payment_method"]').value;
 
             if (!provinceId || !cityId || !postalCode) {
                 event.preventDefault();
@@ -721,22 +713,11 @@ function checkoutPage() {
                 return false;
             }
 
-            if (!paymentMethod) {
-                event.preventDefault();
-                if (typeof $notify !== 'undefined') {
-                    $notify('Please select a payment method', 'error');
-                } else {
-                    alert('Please select a payment method');
-                }
-                return false;
-            }
-
             // Log form data for debugging
             console.log('Form validation passed. Submitting with data:', {
                 provinceId,
                 cityId,
                 postalCode,
-                paymentMethod,
                 shippingCost: this.shippingCost
             });
 

@@ -112,7 +112,7 @@
                             <input type="checkbox" name="remember" class="w-4 h-4 bg-gray-800 border-gray-700 rounded text-accent-gold focus:ring-accent-gold">
                             <span class="ml-2 text-sm text-gray-400">Remember me</span>
                         </label>
-                        <a href="#" class="text-sm text-accent-gold hover:text-accent-gold/80 transition-colors">
+                        <a href="{{ route('password.request') }}" class="text-sm text-accent-gold hover:text-accent-gold/80 transition-colors">
                             Forgot password?
                         </a>
                     </div>

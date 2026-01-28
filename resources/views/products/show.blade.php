@@ -244,10 +244,18 @@
                         {{-- Buy It Now Button (Rounded, Filled) --}}
                         <button 
                             type="button"
+                            @click="buyNow()"
                             @if($product->stock === 0) disabled @endif
                             class="w-full bg-black text-white h-12 rounded-full uppercase text-sm font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Buy It Now
+                            <span x-show="!isBuying">Buy It Now</span>
+                            <span x-show="isBuying" class="flex items-center justify-center gap-2">
+                                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Processing...
+                            </span>
                         </button>
                     </div>
                 </form>
@@ -378,6 +386,7 @@ document.addEventListener('alpine:init', () => {
         quantity: 1,
         shake: false,
         isAdding: false,
+        isBuying: false,
         showModal: false,
         showVoucherModal: false,
         showDeliveryModal: false,
@@ -431,6 +440,57 @@ document.addEventListener('alpine:init', () => {
             })
             .finally(() => {
                 this.isAdding = false;
+            });
+        },
+        
+        buyNow() {
+            if (!this.selectedSize) {
+                // Shake validation
+                this.shake = true;
+                setTimeout(() => this.shake = false, 500);
+                
+                $notify('Please select a size first!', 'error', { 
+                    description: 'Choose your preferred size before buying',
+                    duration: 4000 
+                });
+                return;
+            }
+            
+            this.isBuying = true;
+            
+            // Add to cart first
+            fetch('{{ route('cart.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    product_id: {{ $product->id }},
+                    size: this.selectedSize,
+                    quantity: this.quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update cart count
+                    window.dispatchEvent(new CustomEvent('cart-updated', { 
+                        detail: { count: data.cartCount } 
+                    }));
+                    
+                    // Redirect to checkout immediately
+                    window.location.href = '{{ route('checkout.index') }}';
+                } else {
+                    $notify(data.message || 'Something went wrong', 'error');
+                    this.isBuying = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                $notify('Failed to process: ' + error.message, 'error');
+                this.isBuying = false;
             });
         }
     }));

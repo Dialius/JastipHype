@@ -64,8 +64,8 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="/shop" class="btn-primary text-center">Shop Now</a>
-                <a href="/limited-editions" class="btn-secondary text-center">View Collection</a>
+                <a href="{{ route('products.index') }}" class="btn-primary text-center">Shop Now</a>
+                <a href="{{ route('products.index', ['availability' => ['limited']]) }}" class="btn-secondary text-center">View Collection</a>
             </div>
         </div>
     </div>
@@ -78,7 +78,7 @@
         
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             @foreach($categories as $category)
-                <a href="/shop?category={{ $category->slug }}" 
+                <a href="{{ route('products.index', ['category' => $category->slug]) }}" 
                    class="category-card group relative overflow-hidden rounded-lg aspect-square">
                     @if($category->image)
                         <img src="{{ $category->image }}" 
@@ -104,7 +104,7 @@
     <div class="container mx-auto px-4">
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-3xl font-bold">New Arrivals</h2>
-            <a href="/shop?sort=newest" class="text-sm uppercase tracking-wider hover:underline">
+            <a href="{{ route('products.index', ['sort' => 'newest']) }}" class="text-sm uppercase tracking-wider hover:underline">
                 View All →
             </a>
         </div>
