@@ -44,6 +44,6 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
         "QUEUE_CONNECTION": "sync",
-        "FILESYSTEM_DISK": "s3"
+        "FILESYSTEM_DISK": "cloudinary"
     }
 }
