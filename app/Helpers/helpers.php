@@ -12,7 +12,12 @@ if (!function_exists('image_url')) {
      */
     function image_url(?string $path, string $disk = 'public'): string
     {
-        return ImageHelper::getImageUrl($path, $disk);
+        try {
+            return ImageHelper::getImageUrl($path, $disk);
+        } catch (\Throwable $e) {
+            \Log::error('image_url helper error', ['error' => $e->getMessage(), 'path' => $path]);
+            return asset('images/placeholder-product.svg');
+        }
     }
 }
 
@@ -26,7 +31,12 @@ if (!function_exists('product_image_url')) {
      */
     function product_image_url($product, string $type = 'front'): string
     {
-        return ImageHelper::getProductImageUrl($product, $type);
+        try {
+            return ImageHelper::getProductImageUrl($product, $type);
+        } catch (\Throwable $e) {
+            \Log::error('product_image_url helper error', ['error' => $e->getMessage()]);
+            return asset('images/placeholder-product.svg');
+        }
     }
 }
 
@@ -39,7 +49,12 @@ if (!function_exists('category_image_url')) {
      */
     function category_image_url($category): string
     {
-        return ImageHelper::getCategoryImageUrl($category);
+        try {
+            return ImageHelper::getCategoryImageUrl($category);
+        } catch (\Throwable $e) {
+            \Log::error('category_image_url helper error', ['error' => $e->getMessage()]);
+            return asset('images/placeholder-product.svg');
+        }
     }
 }
 
@@ -52,7 +67,12 @@ if (!function_exists('brand_logo_url')) {
      */
     function brand_logo_url($brand): string
     {
-        return ImageHelper::getBrandLogoUrl($brand);
+        try {
+            return ImageHelper::getBrandLogoUrl($brand);
+        } catch (\Throwable $e) {
+            \Log::error('brand_logo_url helper error', ['error' => $e->getMessage()]);
+            return asset('images/placeholder-product.svg');
+        }
     }
 }
 
@@ -65,6 +85,11 @@ if (!function_exists('banner_image_url')) {
      */
     function banner_image_url($banner): string
     {
-        return ImageHelper::getBannerImageUrl($banner);
+        try {
+            return ImageHelper::getBannerImageUrl($banner);
+        } catch (\Throwable $e) {
+            \Log::error('banner_image_url helper error', ['error' => $e->getMessage()]);
+            return asset('images/placeholder-product.svg');
+        }
     }
 }

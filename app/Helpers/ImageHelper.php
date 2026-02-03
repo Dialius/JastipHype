@@ -15,49 +15,59 @@ class ImageHelper
      */
     public static function getImageUrl(?string $path, string $disk = 'public'): string
     {
-        if (empty($path)) {
-            return self::getPlaceholderUrl();
-        }
-        
-        // If it's already a full URL, return as is
-        if (filter_var($path, FILTER_VALIDATE_URL)) {
-            return $path;
-        }
-        
-        // Check if it's external storage (S3, Cloudinary, etc.)
-        $isExternal = in_array($disk, ['s3', 'cloudinary', 'gcs']);
-        
         try {
-            // Always try to get URL from Storage driver first
-            // This handles S3/Cloudinary URLs correctly
-            $url = Storage::disk($disk)->url($path);
-            
-            // If we got a valid URL, return it
-            if (filter_var($url, FILTER_VALIDATE_URL)) {
-                return $url;
+            if (empty($path)) {
+                return self::getPlaceholderUrl();
             }
-        } catch (\Exception $e) {
-            // Log error but continue to fallback
-            \Log::warning('Failed to get storage URL', [
+            
+            // If it's already a full URL, return as is
+            if (filter_var($path, FILTER_VALIDATE_URL)) {
+                return $path;
+            }
+            
+            // Check if it's external storage (S3, Cloudinary, etc.)
+            $isExternal = in_array($disk, ['s3', 'cloudinary', 'gcs']);
+            
+            try {
+                // Always try to get URL from Storage driver first
+                // This handles S3/Cloudinary URLs correctly
+                $url = Storage::disk($disk)->url($path);
+                
+                // If we got a valid URL, return it
+                if (filter_var($url, FILTER_VALIDATE_URL)) {
+                    return $url;
+                }
+            } catch (\Exception $e) {
+                // Log error but continue to fallback
+                \Log::warning('Failed to get storage URL', [
+                    'path' => $path,
+                    'disk' => $disk,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+            
+            // Fallback for local/public disk in serverless
+            if (self::isServerless() && !$isExternal) {
+                // In serverless local, we can only serve what's in public/storage (build assets)
+                // We cannot serve what's in /tmp/storage (uploaded files)
+                // So this will likely only work for pre-deployed assets
+                $cleanPath = ltrim($path, '/');
+                $cleanPath = str_replace('storage/', '', $cleanPath);
+                return asset('storage/' . $cleanPath);
+            }
+            
+            // Default fallback
+            $cleanPath = ltrim($path, '/');
+            return asset('storage/' . $cleanPath);
+        } catch (\Throwable $e) {
+            \Log::error('ImageHelper::getImageUrl error', [
                 'path' => $path,
                 'disk' => $disk,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
+            return self::getPlaceholderUrl();
         }
-        
-        // Fallback for local/public disk in serverless
-        if (self::isServerless() && !$isExternal) {
-            // In serverless local, we can only serve what's in public/storage (build assets)
-            // We cannot serve what's in /tmp/storage (uploaded files)
-            // So this will likely only work for pre-deployed assets
-            $cleanPath = ltrim($path, '/');
-            $cleanPath = str_replace('storage/', '', $cleanPath);
-            return asset('storage/' . $cleanPath);
-        }
-        
-        // Default fallback
-        $cleanPath = ltrim($path, '/');
-        return asset('storage/' . $cleanPath);
     }
     
     /**
