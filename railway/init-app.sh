@@ -1,8 +1,6 @@
 #!/bin/bash
 # Railway Laravel Init Script
-# Make sure this file has executable permissions: chmod +x railway/init-app.sh
 
-# Exit the script if any command fails
 set -e
 
 echo "⏳ Waiting for database to be ready..."
