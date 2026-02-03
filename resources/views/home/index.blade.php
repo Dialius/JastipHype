@@ -14,38 +14,12 @@
             <div class="carousel-item h-full {{ $index === 0 ? 'active' : '' }}" x-data="countdownTimer('{{ $banner->countdown_target ? $banner->countdown_target->format('Y-m-d H:i:s') : '2026-01-20 00:00:00' }}')">
                 <div class="hero-image absolute inset-0">
                     @php
-                        // Priority: Banner's uploaded image first, then product image as fallback
-                        $imageUrl = null;
-                        
-                        // 1. First check if banner has its own image
-                        if ($banner->image_path) {
-                            if (filter_var($banner->image_path, FILTER_VALIDATE_URL)) {
-                                $imageUrl = $banner->image_path; // External URL
-                            } else {
-                                $imageUrl = \Storage::url($banner->image_path); // Local storage
-                            }
-                        }
-                        // 2. Fallback to product image if no banner image
-                        elseif ($banner->product_id && $banner->product) {
-                            $primaryImage = $banner->product->productImages->where('type', 'front')->first() 
-                                         ?? $banner->product->productImages->first();
-                            if ($primaryImage) {
-                                if (filter_var($primaryImage->image_path, FILTER_VALIDATE_URL)) {
-                                    $imageUrl = $primaryImage->image_path; // External URL
-                                } else {
-                                    $imageUrl = \Storage::url($primaryImage->image_path); // Local storage
-                                }
-                            }
-                        }
+                        $imageUrl = banner_image_url($banner);
                     @endphp
                     
-                    @if($imageUrl)
-                        <img src="{{ $imageUrl }}" 
-                             alt="{{ $banner->title }}" 
-                             class="w-full h-full object-cover opacity-60">
-                    @else
-                        <div class="w-full h-full bg-gradient-to-br from-gray-900 to-black"></div>
-                    @endif
+                    <img src="{{ $imageUrl }}" 
+                         alt="{{ $banner->title }}" 
+                         class="w-full h-full object-cover opacity-60">
                     <div class="overlay absolute inset-0 bg-black/40"></div>
                 </div>
                 
@@ -226,19 +200,9 @@
             @foreach($categories as $category)
                 <a href="{{ route('products.index', ['category' => $category->slug]) }}" 
                    class="category-card group relative overflow-hidden rounded-lg aspect-square">
-                    @if($category->image)
-                        @php
-                            // Check if image is external URL or local storage path
-                            $categoryImageUrl = filter_var($category->image, FILTER_VALIDATE_URL) 
-                                ? $category->image 
-                                : \Storage::url($category->image);
-                        @endphp
-                        <img src="{{ $categoryImageUrl }}" 
-                             alt="{{ $category->name }}"
-                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                    @else
-                        <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900"></div>
-                    @endif
+                    <img src="{{ category_image_url($category) }}" 
+                         alt="{{ $category->name }}"
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors">
                         <div class="absolute bottom-6 left-6 text-white">
                             <h3 class="text-xl font-bold">{{ $category->name }}</h3>
@@ -278,24 +242,12 @@
         <div class="grid md:grid-cols-2 gap-8 items-center">
             <div>
                 @php
-                    // Get image - check if URL or local path
-                    $showcaseImageUrl = null;
-                    if ($limitedShowcase->primaryImage) {
-                        if (filter_var($limitedShowcase->primaryImage->image_path, FILTER_VALIDATE_URL)) {
-                            $showcaseImageUrl = $limitedShowcase->primaryImage->image_path;
-                        } else {
-                            $showcaseImageUrl = \Storage::url($limitedShowcase->primaryImage->image_path);
-                        }
-                    }
+                    $showcaseImageUrl = product_image_url($limitedShowcase);
                 @endphp
                 
-                @if($showcaseImageUrl)
-                    <img src="{{ $showcaseImageUrl }}" 
-                         alt="{{ $limitedShowcase->name }}" 
-                         class="rounded-lg">
-                @else
-                    <div class="aspect-square bg-gray-800 rounded-lg"></div>
-                @endif
+                <img src="{{ $showcaseImageUrl }}" 
+                     alt="{{ $limitedShowcase->name }}" 
+                     class="rounded-lg">
             </div>
             <div>
                 <p class="text-sm uppercase tracking-wider text-accent-gold mb-4">Exclusive Release</p>
