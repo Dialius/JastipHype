@@ -144,6 +144,150 @@
         </div>
     </div>
     
+    <!-- Confirm Modal Component -->
+    <div id="confirm-modal" class="fixed inset-0 z-[9999] flex items-center justify-center hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeConfirmModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="confirm-modal-content">
+            <div class="p-6">
+                <!-- Icon -->
+                <div id="confirm-modal-icon" class="flex h-14 w-14 mx-auto items-center justify-center rounded-full mb-4">
+                    <!-- Icon will be inserted here -->
+                </div>
+                
+                <!-- Title -->
+                <h3 id="confirm-modal-title" class="text-lg font-semibold text-center text-gray-800 dark:text-white mb-2"></h3>
+                
+                <!-- Message -->
+                <p id="confirm-modal-message" class="text-sm text-center text-gray-500 dark:text-gray-400 mb-6"></p>
+                
+                <!-- Buttons -->
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeConfirmModal()" class="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-700 font-medium text-sm hover:bg-gray-50 transition dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="button" id="confirm-modal-btn" class="flex-1 px-4 py-2.5 rounded-lg font-medium text-sm text-white transition">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global JavaScript Functions -->
+    <script>
+        let confirmCallback = null;
+
+        function showConfirmModal(options) {
+            const modal = document.getElementById('confirm-modal');
+            const content = document.getElementById('confirm-modal-content');
+            const iconEl = document.getElementById('confirm-modal-icon');
+            const titleEl = document.getElementById('confirm-modal-title');
+            const messageEl = document.getElementById('confirm-modal-message');
+            const confirmBtn = document.getElementById('confirm-modal-btn');
+
+            // Set content
+            titleEl.textContent = options.title || 'Confirm Action';
+            messageEl.textContent = options.message || 'Are you sure you want to proceed?';
+            confirmBtn.textContent = options.confirmText || 'Confirm';
+            confirmCallback = options.onConfirm;
+
+            // Set styles based on type
+            const type = options.type || 'warning';
+            const typeStyles = {
+                danger: {
+                    iconBg: 'bg-red-100 dark:bg-red-500/15',
+                    iconColor: 'text-red-600 dark:text-red-400',
+                    btnBg: 'bg-red-600 hover:bg-red-700',
+                    icon: '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>'
+                },
+                warning: {
+                    iconBg: 'bg-yellow-100 dark:bg-yellow-500/15',
+                    iconColor: 'text-yellow-600 dark:text-yellow-400',
+                    btnBg: 'bg-yellow-600 hover:bg-yellow-700',
+                    icon: '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>'
+                },
+                success: {
+                    iconBg: 'bg-green-100 dark:bg-green-500/15',
+                    iconColor: 'text-green-600 dark:text-green-400',
+                    btnBg: 'bg-green-600 hover:bg-green-700',
+                    icon: '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+                },
+                info: {
+                    iconBg: 'bg-blue-100 dark:bg-blue-500/15',
+                    iconColor: 'text-blue-600 dark:text-blue-400',
+                    btnBg: 'bg-blue-600 hover:bg-blue-700',
+                    icon: '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>'
+                }
+            };
+
+            const style = typeStyles[type] || typeStyles.warning;
+            iconEl.className = `flex h-14 w-14 mx-auto items-center justify-center rounded-full mb-4 ${style.iconBg} ${style.iconColor}`;
+            iconEl.innerHTML = style.icon;
+            confirmBtn.className = `flex-1 px-4 py-2.5 rounded-lg font-medium text-sm text-white transition ${style.btnBg}`;
+
+            // Show modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            const content = document.getElementById('confirm-modal-content');
+            
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                confirmCallback = null;
+            }, 200);
+        }
+
+        document.getElementById('confirm-modal-btn').addEventListener('click', function() {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            closeConfirmModal();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeConfirmModal();
+            }
+        });
+
+        // Global toast function
+        function showToast(message, type = 'success') {
+            const colors = {
+                success: '#10B981',
+                error: '#EF4444',
+                warning: '#F59E0B',
+                info: '#3B82F6'
+            };
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: colors[type] || colors.success,
+                stopOnFocus: true,
+                style: {
+                    borderRadius: "8px",
+                    fontWeight: "500",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+                }
+            }).showToast();
+        }
+    </script>
+
     @stack('scripts')
 
     @if(session('success'))

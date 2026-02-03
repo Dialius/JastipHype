@@ -15,8 +15,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Active banners for hero carousel (with product relationship)
+        // Active banners for hero carousel (only type 'hero')
         $banners = Banner::active()
+            ->ofType('hero')
             ->with(['product.brand', 'product.productImages'])
             ->ordered()
             ->get();
@@ -40,12 +41,20 @@ class HomeController extends Controller
             ->limit(8)
             ->get();
 
-        // Limited edition showcase
-        $limitedShowcase = Product::limited()
-            ->active()
-            ->with(['brand', 'productImages'])
-            ->inRandomOrder()
+        // Limited edition showcase - use banner with type "limited" if available
+        $limitedBanner = Banner::active()
+            ->ofType('limited')
+            ->with(['product.brand', 'product.productImages'])
             ->first();
+        
+        // If limited banner exists, use its product, otherwise get random limited product
+        $limitedShowcase = $limitedBanner && $limitedBanner->product 
+            ? $limitedBanner->product 
+            : Product::limited()
+                ->active()
+                ->with(['brand', 'productImages'])
+                ->inRandomOrder()
+                ->first();
 
         // Featured brands
         $featuredBrands = Brand::featured()
@@ -58,6 +67,7 @@ class HomeController extends Controller
             'categories',
             'newArrivals',
             'limitedShowcase',
+            'limitedBanner',
             'featuredBrands'
         ));
     }

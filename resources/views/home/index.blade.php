@@ -14,25 +14,27 @@
             <div class="carousel-item h-full {{ $index === 0 ? 'active' : '' }}" x-data="countdownTimer('{{ $banner->countdown_target ? $banner->countdown_target->format('Y-m-d H:i:s') : '2026-01-20 00:00:00' }}')">
                 <div class="hero-image absolute inset-0">
                     @php
-                        // Get image from product if linked, otherwise from banner
+                        // Priority: Banner's uploaded image first, then product image as fallback
                         $imageUrl = null;
-                        if ($banner->product_id && $banner->product) {
+                        
+                        // 1. First check if banner has its own image
+                        if ($banner->image_path) {
+                            if (filter_var($banner->image_path, FILTER_VALIDATE_URL)) {
+                                $imageUrl = $banner->image_path; // External URL
+                            } else {
+                                $imageUrl = \Storage::url($banner->image_path); // Local storage
+                            }
+                        }
+                        // 2. Fallback to product image if no banner image
+                        elseif ($banner->product_id && $banner->product) {
                             $primaryImage = $banner->product->productImages->where('type', 'front')->first() 
                                          ?? $banner->product->productImages->first();
                             if ($primaryImage) {
-                                // Check if image_path is external URL or local path
                                 if (filter_var($primaryImage->image_path, FILTER_VALIDATE_URL)) {
                                     $imageUrl = $primaryImage->image_path; // External URL
                                 } else {
                                     $imageUrl = \Storage::url($primaryImage->image_path); // Local storage
                                 }
-                            }
-                        } elseif ($banner->image_path) {
-                            // Check if banner image_path is external URL or local path
-                            if (filter_var($banner->image_path, FILTER_VALIDATE_URL)) {
-                                $imageUrl = $banner->image_path; // External URL
-                            } else {
-                                $imageUrl = \Storage::url($banner->image_path); // Local storage
                             }
                         }
                     @endphp
@@ -302,8 +304,13 @@
                     {{ $limitedShowcase->name }}
                 </h3>
                 <p class="text-gray-300 mb-8">
-                    {{ Str::limit($limitedShowcase->description, 200) }}
+                    @if($limitedBanner && $limitedBanner->description)
+                        {{ $limitedBanner->description }}
+                    @else
+                        {{ Str::limit($limitedShowcase->description, 200) }}
+                    @endif
                 </p>
+                
                 <div class="mb-8">
                     <div class="text-sm text-gray-400 mb-2">Stock Remaining</div>
                     <div class="h-2 bg-gray-800 rounded-full overflow-hidden">

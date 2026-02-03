@@ -25,4 +25,14 @@ class InfoController extends Controller
     {
         return view('info.faq');
     }
+
+    public function terms()
+    {
+        return view('info.terms');
+    }
+
+    public function privacy()
+    {
+        return view('info.privacy');
+    }
 }

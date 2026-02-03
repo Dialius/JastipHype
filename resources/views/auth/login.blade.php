@@ -68,6 +68,25 @@
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
 
+                    {{-- Email Verification Alert --}}
+                    @if(session('status'))
+                        <div class="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                            <p class="text-sm text-green-400">{{ session('status') }}</p>
+                        </div>
+                    @endif
+
+                    {{-- Info Alert for New Users --}}
+                    <div class="p-4 bg-accent-gold/10 border border-accent-gold/30 rounded-lg">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-accent-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p class="text-sm text-gray-300">
+                                <span class="text-accent-gold font-medium">Note:</span> After registering, please verify your email before logging in.
+                            </p>
+                        </div>
+                    </div>
+
                     {{-- Email --}}
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-300 mb-2">

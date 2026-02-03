@@ -77,7 +77,7 @@
                 </div>
 
                 {{-- Form --}}
-                <form method="POST" action="#" class="space-y-5" x-data="{ 
+                <form method="POST" action="{{ route('register') }}" class="space-y-5" x-data="{ 
                     password: '', 
                     strength: 0,
                     showPassword: false,
@@ -99,10 +99,14 @@
                             type="text" 
                             id="name" 
                             name="name" 
+                            value="{{ old('name') }}"
                             required
-                            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all"
+                            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all @error('name') border-red-500 @enderror"
                             placeholder="John Doe"
                         >
+                        @error('name')
+                            <p class="mt-1.5 text-xs text-red-400">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Email --}}
@@ -114,10 +118,14 @@
                             type="email" 
                             id="email" 
                             name="email" 
+                            value="{{ old('email') }}"
                             required
-                            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all"
+                            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all @error('email') border-red-500 @enderror"
                             placeholder="john@example.com"
                         >
+                        @error('email')
+                            <p class="mt-1.5 text-xs text-red-400">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Password with Strength Indicator --}}
@@ -133,7 +141,7 @@
                                 required
                                 x-model="password"
                                 @input="checkStrength()"
-                                class="w-full px-4 py-3 pr-12 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all"
+                                class="w-full px-4 py-3 pr-12 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all @error('password') border-red-500 @enderror"
                                 placeholder="••••••••"
                             >
                             <button 
@@ -158,6 +166,17 @@
                             <div class="h-1.5 flex-1 rounded-full transition-all" :class="strength >= 3 ? 'bg-green-500' : 'bg-gray-700'"></div>
                         </div>
                         <p class="mt-1.5 text-xs" x-show="password.length > 0" :class="strength === 1 ? 'text-red-400' : strength === 2 ? 'text-yellow-400' : strength === 3 ? 'text-green-400' : 'text-gray-500'" x-text="strength === 1 ? 'Weak password' : strength === 2 ? 'Medium strength' : strength === 3 ? 'Strong password' : ''"></p>
+                        @error('password')
+                            <div class="mt-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                                <p class="text-xs text-red-400 font-medium mb-1">Password requirements:</p>
+                                <ul class="text-xs text-red-400 list-disc pl-4 space-y-0.5">
+                                    <li>Minimum 8 characters</li>
+                                    <li>At least one uppercase letter (A-Z)</li>
+                                    <li>At least one lowercase letter (a-z)</li>
+                                    <li>At least one number (0-9)</li>
+                                </ul>
+                            </div>
+                        @enderror
                     </div>
 
                     {{-- Confirm Password --}}
@@ -170,16 +189,19 @@
                             id="password_confirmation" 
                             name="password_confirmation" 
                             required
-                            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all"
+                            class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-accent-gold focus:ring-2 focus:ring-accent-gold/50 transition-all @error('password_confirmation') border-red-500 @enderror"
                             placeholder="••••••••"
                         >
+                        @error('password_confirmation')
+                            <p class="mt-1.5 text-xs text-red-400">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Terms --}}
                     <label class="flex items-start cursor-pointer">
                         <input type="checkbox" name="terms" required class="mt-1 w-4 h-4 bg-gray-800 border-gray-700 rounded text-accent-gold focus:ring-accent-gold">
                         <span class="ml-3 text-sm text-gray-400">
-                            I agree to the <a href="#" class="text-accent-gold hover:text-accent-gold/80">Terms of Service</a> and <a href="#" class="text-accent-gold hover:text-accent-gold/80">Privacy Policy</a>
+                            I agree to the <a href="{{ route('info.terms') }}" target="_blank" class="text-accent-gold hover:text-accent-gold/80">Terms of Service</a> and <a href="{{ route('info.privacy') }}" target="_blank" class="text-accent-gold hover:text-accent-gold/80">Privacy Policy</a>
                         </span>
                     </label>
 

@@ -30,6 +30,8 @@ Route::prefix('info')->name('info.')->group(function () {
     Route::get('/shipping', [InfoController::class, 'shipping'])->name('shipping');
     Route::get('/returns', [InfoController::class, 'returns'])->name('returns');
     Route::get('/faq', [InfoController::class, 'faq'])->name('faq');
+    Route::get('/terms', [InfoController::class, 'terms'])->name('terms');
+    Route::get('/privacy', [InfoController::class, 'privacy'])->name('privacy');
 });
 
 // Request Product
@@ -55,6 +57,19 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
     Route::post('/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.resend');
 });
+
+// Email Verification Routes (must work for both guests and authenticated users)
+Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
+    ->middleware('auth')
+    ->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
 
 // Social Authentication Routes (Google Only)
 
@@ -104,13 +119,6 @@ Route::post('/payment/webhook', [WebhookController::class, 'handle'])->name('pay
 Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-    
-    // Email Verification Routes
-    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
-    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-        ->middleware(['signed'])->name('verification.verify');
-    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
-        ->middleware(['throttle:6,1'])->name('verification.send');
     
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');

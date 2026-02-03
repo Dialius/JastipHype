@@ -16,24 +16,51 @@ class EmailVerificationController extends Controller
     }
 
     // Handle email verification
-    public function verify(EmailVerificationRequest $request)
+    public function verify(Request $request, $id, $hash)
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->route('home')->with('info', 'Email already verified.');
+        \Log::info('Email verification attempt', ['id' => $id, 'hash' => $hash]);
+        
+        $user = \App\Models\User::findOrFail($id);
+        $expectedHash = sha1($user->getEmailForVerification());
+        
+        \Log::info('Verification details', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'expected_hash' => $expectedHash,
+            'received_hash' => $hash,
+            'hash_match' => hash_equals($hash, $expectedHash)
+        ]);
+
+        // Verify the hash matches the user's email
+        if (!hash_equals($hash, $expectedHash)) {
+            \Log::error('Hash mismatch for verification', [
+                'user_id' => $id,
+                'expected' => $expectedHash,
+                'received' => $hash
+            ]);
+            abort(403, 'Invalid verification link.');
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+        if ($user->hasVerifiedEmail()) {
+            \Log::info('Email already verified', ['user_id' => $user->id]);
+            return redirect()->route('login')->with('info', 'Email already verified. You can now login.');
+        }
+
+        $verified = $user->markEmailAsVerified();
+        \Log::info('Mark as verified result', ['user_id' => $user->id, 'result' => $verified]);
+
+        if ($verified) {
+            event(new Verified($user));
             
             // Send welcome email
             try {
-                \Mail::to($request->user()->email)->send(new \App\Mail\WelcomeMail($request->user()->name));
+                \Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user->name));
             } catch (\Exception $e) {
                 \Log::error('Failed to send welcome email: ' . $e->getMessage());
             }
         }
 
-        return redirect()->route('home')->with('success', 'Email verified successfully! Welcome to JastipHype!');
+        return redirect()->route('login')->with('success', 'Email verified successfully! You can now login.');
     }
 
     // Resend verification email

@@ -7,7 +7,10 @@
     {{-- Chat Button --}}
     <button 
         @click="toggleChat()"
-        :class="isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'"
+        :class="[
+            isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100',
+            isDarkBackground ? 'ring-2 ring-accent-gold ring-offset-2 ring-offset-gray-900' : ''
+        ]"
         class="w-14 h-14 bg-black text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
     >
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,7 +25,7 @@
         ></span>
         
         {{-- Pulse Animation --}}
-        <span class="absolute w-14 h-14 rounded-full bg-black opacity-30 animate-ping"></span>
+        <span :class="isDarkBackground ? 'bg-accent-gold' : 'bg-black'" class="absolute w-14 h-14 rounded-full opacity-30 animate-ping"></span>
     </button>
 
     {{-- Chat Window --}}
@@ -250,6 +253,7 @@ function liveChatWidget() {
         isLoading: false,
         isSending: false,
         isTyping: false,
+        isDarkBackground: false,
         pollingInterval: null,
         lastMessageId: 0,
         form: {
@@ -263,6 +267,37 @@ function liveChatWidget() {
         init() {
             // Check for active ticket on load
             this.checkActiveTicket();
+            // Check background color on load and scroll
+            this.checkBackgroundColor();
+            window.addEventListener('scroll', () => this.checkBackgroundColor());
+        },
+
+        checkBackgroundColor() {
+            const viewportHeight = window.innerHeight;
+            const buttonY = viewportHeight - 50; // Button is at bottom-6 (~24px + 56px button height / 2)
+            const scrollY = window.pageYOffset;
+            
+            const footer = document.querySelector('footer');
+            const darkSections = document.querySelectorAll('[class*="bg-black"], [class*="bg-gray-900"], [class*="bg-gray-800"]');
+            
+            this.isDarkBackground = false;
+            
+            // Check if button overlaps with footer
+            if (footer) {
+                const footerRect = footer.getBoundingClientRect();
+                if (footerRect.top < viewportHeight && footerRect.bottom > buttonY) {
+                    this.isDarkBackground = true;
+                    return;
+                }
+            }
+            
+            // Check other dark sections
+            darkSections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < buttonY && rect.bottom > buttonY - 56) {
+                    this.isDarkBackground = true;
+                }
+            });
         },
 
         toggleChat() {
