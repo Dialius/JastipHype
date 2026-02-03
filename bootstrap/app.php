@@ -29,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\TrackVisitor::class,
             \App\Http\Middleware\UpdateOnlineStatus::class,
+            \App\Http\Middleware\EnsureStorageDirectories::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

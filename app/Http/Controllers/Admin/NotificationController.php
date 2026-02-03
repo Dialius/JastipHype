@@ -58,11 +58,30 @@ class NotificationController extends Controller
                 ->with('error', 'Template not found.');
         }
 
-        $templatePath = $this->getTemplatePath($template);
-        file_put_contents($templatePath, $request->input('content'));
+        try {
+            $templatePath = $this->getTemplatePath($template);
+            
+            // In serverless environments, we can't write to the filesystem
+            // Store template content in database or cache instead
+            if (env('VERCEL_ENV')) {
+                // Store in cache for serverless
+                \Cache::put("email_template_{$template}", $request->input('content'), now()->addYears(1));
+                
+                return redirect()->route('admin.notifications.templates')
+                    ->with('warning', 'Template updated in cache. Note: Changes will be lost on deployment. Consider using a database-backed template system for production.');
+            }
+            
+            // For local/traditional hosting, write to file
+            file_put_contents($templatePath, $request->input('content'));
 
-        return redirect()->route('admin.notifications.templates')
-            ->with('success', 'Template updated successfully.');
+            return redirect()->route('admin.notifications.templates')
+                ->with('success', 'Template updated successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Template update failed: ' . $e->getMessage());
+            
+            return redirect()->route('admin.notifications.templates')
+                ->with('error', 'Failed to update template: ' . $e->getMessage());
+        }
     }
 
     /**

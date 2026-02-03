@@ -8,10 +8,14 @@ use Illuminate\Support\Facades\Storage;
 class BannerService
 {
     protected $bannerRepository;
+    protected $fileUploadService;
 
-    public function __construct(BannerRepositoryInterface $bannerRepository)
-    {
+    public function __construct(
+        BannerRepositoryInterface $bannerRepository,
+        FileUploadService $fileUploadService
+    ) {
         $this->bannerRepository = $bannerRepository;
+        $this->fileUploadService = $fileUploadService;
     }
 
     /**
@@ -100,8 +104,7 @@ class BannerService
      */
     protected function uploadImage($image)
     {
-        $path = $image->store('banners', 'public');
-        return $path;
+        return $this->fileUploadService->upload($image, 'banners', 'public');
     }
 
     /**
@@ -109,8 +112,6 @@ class BannerService
      */
     protected function deleteImage($imagePath)
     {
-        if (Storage::disk('public')->exists($imagePath)) {
-            Storage::disk('public')->delete($imagePath);
-        }
+        $this->fileUploadService->delete($imagePath, 'public');
     }
 }

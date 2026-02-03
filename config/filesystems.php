@@ -40,7 +40,9 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => env('FILESYSTEM_DRIVER') === 'local' 
+                ? storage_path('app/public') 
+                : (env('VERCEL_ENV') ? '/tmp/storage' : storage_path('app/public')),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,

@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Services\FileUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
 class CategoryImageController extends Controller
 {
+    protected $fileUploadService;
+
+    public function __construct(FileUploadService $fileUploadService)
+    {
+        $this->fileUploadService = $fileUploadService;
+    }
     /**
      * Show the form for editing category images.
      */
@@ -50,13 +57,13 @@ class CategoryImageController extends Controller
                 // Check if there's a file for this category
                 if ($request->hasFile("categories.{$categoryId}.image")) {
                     // Delete old image if exists
-                    if ($category->image && Storage::disk('public')->exists($category->image)) {
-                        Storage::disk('public')->delete($category->image);
+                    if ($category->image) {
+                        $this->fileUploadService->delete($category->image, 'public');
                     }
                     
                     // Store new image
                     $file = $request->file("categories.{$categoryId}.image");
-                    $path = $file->store('categories', 'public');
+                    $path = $this->fileUploadService->upload($file, 'categories', 'public');
                     
                     $category->image = $path;
                     $category->save();

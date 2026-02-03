@@ -9,10 +9,14 @@ use Illuminate\Support\Str;
 class ProductService
 {
     protected $productRepository;
+    protected $fileUploadService;
 
-    public function __construct(ProductRepositoryInterface $productRepository)
-    {
+    public function __construct(
+        ProductRepositoryInterface $productRepository,
+        FileUploadService $fileUploadService
+    ) {
         $this->productRepository = $productRepository;
+        $this->fileUploadService = $fileUploadService;
     }
 
     /**
@@ -143,8 +147,7 @@ class ProductService
      */
     protected function uploadImage($image)
     {
-        $path = $image->store('products', 'public');
-        return $path;
+        return $this->fileUploadService->upload($image, 'products', 'public');
     }
 
     /**
@@ -152,9 +155,7 @@ class ProductService
      */
     protected function deleteImage($imagePath)
     {
-        if (Storage::disk('public')->exists($imagePath)) {
-            Storage::disk('public')->delete($imagePath);
-        }
+        $this->fileUploadService->delete($imagePath, 'public');
     }
 
     /**

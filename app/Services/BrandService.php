@@ -9,10 +9,14 @@ use Illuminate\Support\Str;
 class BrandService
 {
     protected $brandRepository;
+    protected $fileUploadService;
 
-    public function __construct(BrandRepositoryInterface $brandRepository)
-    {
+    public function __construct(
+        BrandRepositoryInterface $brandRepository,
+        FileUploadService $fileUploadService
+    ) {
         $this->brandRepository = $brandRepository;
+        $this->fileUploadService = $fileUploadService;
     }
 
     /**
@@ -138,8 +142,7 @@ class BrandService
      */
     protected function uploadLogo($logo)
     {
-        $path = $logo->store('brands', 'public');
-        return $path;
+        return $this->fileUploadService->upload($logo, 'brands', 'public');
     }
 
     /**
@@ -147,8 +150,6 @@ class BrandService
      */
     protected function deleteLogo($logoPath)
     {
-        if (Storage::disk('public')->exists($logoPath)) {
-            Storage::disk('public')->delete($logoPath);
-        }
+        $this->fileUploadService->delete($logoPath, 'public');
     }
 }

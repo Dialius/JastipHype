@@ -11,10 +11,14 @@ use Illuminate\Support\Facades\Validator;
 class SettingsController extends Controller
 {
     protected SettingsRepositoryInterface $settingsRepository;
+    protected \App\Services\ServerlessCompatibilityService $serverlessService;
 
-    public function __construct(SettingsRepositoryInterface $settingsRepository)
-    {
+    public function __construct(
+        SettingsRepositoryInterface $settingsRepository,
+        \App\Services\ServerlessCompatibilityService $serverlessService
+    ) {
         $this->settingsRepository = $settingsRepository;
+        $this->serverlessService = $serverlessService;
     }
 
     /**
@@ -247,27 +251,17 @@ class SettingsController extends Controller
      */
     protected function updateEnvFile(array $data): void
     {
-        $envFile = base_path('.env');
-        $envContent = file_get_contents($envFile);
-
         foreach ($data as $key => $value) {
-            // Escape special characters in value
-            $value = str_replace('"', '\"', $value);
+            $success = $this->serverlessService->setEnv($key, $value);
             
-            // Check if key exists
-            if (preg_match("/^{$key}=/m", $envContent)) {
-                // Update existing key
-                $envContent = preg_replace(
-                    "/^{$key}=.*/m",
-                    "{$key}=\"{$value}\"",
-                    $envContent
-                );
-            } else {
-                // Add new key
-                $envContent .= "\n{$key}=\"{$value}\"";
+            if (!$success) {
+                Log::warning("Failed to update environment variable: {$key}");
             }
         }
-
-        file_put_contents($envFile, $envContent);
+        
+        // Show warning if in serverless
+        if ($this->serverlessService->isServerless()) {
+            session()->flash('warning', 'Settings saved to database. For permanent changes in serverless environment, please update environment variables in your hosting dashboard (Vercel/AWS/etc).');
+        }
     }
 }
