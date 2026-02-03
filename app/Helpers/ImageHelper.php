@@ -50,12 +50,14 @@ class ImageHelper
             // In serverless local, we can only serve what's in public/storage (build assets)
             // We cannot serve what's in /tmp/storage (uploaded files)
             // So this will likely only work for pre-deployed assets
-            $cleanPath = str_replace('storage/', '', $path);
+            $cleanPath = ltrim($path, '/');
+            $cleanPath = str_replace('storage/', '', $cleanPath);
             return asset('storage/' . $cleanPath);
         }
         
         // Default fallback
-        return asset('storage/' . $path);
+        $cleanPath = ltrim($path, '/');
+        return asset('storage/' . $cleanPath);
     }
     
     /**
