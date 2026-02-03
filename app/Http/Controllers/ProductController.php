@@ -12,7 +12,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::query()
-            ->with(['brand', 'category'])
+            ->with(['brand', 'category', 'productImages'])
             ->where('is_active', true);
 
         // Search functionality
@@ -182,7 +182,10 @@ class ProductController extends Controller
             ->limit(8)
             ->get();
         
-        return view('products.show', compact('product', 'relatedProducts'));
+        // Get available vouchers
+        $availableVouchers = \App\Models\Discount::active()->get();
+        
+        return view('products.show', compact('product', 'relatedProducts', 'availableVouchers'));
     }
 
     /**

@@ -31,5 +31,8 @@
     
     <!-- Back to Top Button -->
     @include('components.back-to-top')
+    
+    <!-- Live Chat Widget -->
+    @include('components.live-chat-widget')
 </body>
 </html>

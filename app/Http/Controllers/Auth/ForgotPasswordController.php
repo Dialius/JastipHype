@@ -46,9 +46,17 @@ class ForgotPasswordController extends Controller
                 'message' => 'OTP has been sent to your email.'
             ]);
         } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Failed to send password reset email', [
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send email. Please try again.'
+                'message' => 'Failed to send email. Please check SMTP configuration.'
             ], 500);
         }
     }

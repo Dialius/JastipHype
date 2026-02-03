@@ -179,7 +179,7 @@
                         
                         <!-- Active Range (Black bar between thumbs) -->
                         <div class="slider-range" 
-                             :style="`left: ${minPercent}%; right: ${100 - maxPercent}%`"></div>
+                             :style="`left: ${minPercent}%; width: ${maxPercent - minPercent}%; right: auto`"></div>
                         
                         <!-- Min Range Input -->
                         <input type="range" 
@@ -262,37 +262,48 @@ input[type="checkbox"]:checked::after {
     transform: rotate(45deg);
 }
 
-/* Custom Radio Button */
+/* Custom Radio Button - CONCENTRIC CIRCLES ◉ */
 input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 2px solid #d1d5db;
-    border-radius: 50%;
-    background-color: white;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    border: 3px solid #d1d5db !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    cursor: pointer !important;
+    position: relative !important;
+    transition: all 0.15s ease !important;
+    flex-shrink: 0 !important;
 }
 
 input[type="radio"]:hover {
-    border-color: #9ca3af;
+    border-color: #9ca3af !important;
 }
 
 input[type="radio"]:checked {
-    border-color: #000000;
+    border-color: #000000 !important;
+    border-width: 3px !important;
+    background: #ffffff !important;
 }
 
+/* Dot tengah dengan whitespace */
 input[type="radio"]:checked::after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #000000;
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50% !important;
+    background: #000000 !important;
+}
+
+input[type="radio"]:active {
+    transform: scale(0.98) !important;
 }
 
 /* Focus states */
@@ -303,55 +314,67 @@ input[type="radio"]:focus {
 }
 
 /* ============================================
-   DUAL RANGE SLIDER STYLES (BLACK THEME)
+   DUAL RANGE SLIDER STYLES - CLEAN BLUE DESIGN
    ============================================ */
 
 /* Slider Container */
 .slider-wrapper {
-    position: relative;
-    height: 50px;
-    display: flex;
-    align-items: center;
+    position: relative !important;
+    height: 70px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 14px !important;
 }
 
-/* Background Track (Gray) */
+/* Background Track (Hidden - only show active range) */
 .slider-track {
-    position: absolute;
-    width: 100%;
-    height: 4px;
-    background-color: #e5e7eb;
-    border-radius: 4px;
-    z-index: 1;
+    position: absolute !important;
+    width: calc(100% - 28px) !important;
+    height: 4px !important;
+    background: #e5e7eb !important;
+    border-radius: 4px !important;
+    z-index: 1 !important;
+    left: 14px !important;
+    right: 14px !important;
 }
 
-/* Active Range (Black bar between thumbs) */
+/* Active Range (Black Bar) */
 .slider-range {
-    position: absolute;
-    height: 4px;
-    background-color: #000000;
-    border-radius: 4px;
-    z-index: 2;
+    position: absolute !important;
+    height: 4px !important;
+    background: #000000 !important;
+    border-radius: 4px !important;
+    z-index: 2 !important;
 }
 
 /* Base Range Input Styles */
 .thumb {
-    position: absolute;
-    width: 100%;
-    height: 4px;
-    background: none;
-    pointer-events: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    position: absolute !important;
+    width: 100% !important;
+    left: 0 !important;
+    height: 4px !important;
+    background: none !important;
+    pointer-events: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
 }
 
-/* Z-index layering */
+/* Z-index layering - INCREASED */
 .thumb-left {
-    z-index: 3;
+    z-index: 5;
 }
 
 .thumb-right {
-    z-index: 4;
+    z-index: 6;
+}
+
+/* Z-index bump on hover/active to fix usability when close */
+.thumb:hover {
+    z-index: 50 !important;
+}
+.thumb:active {
+    z-index: 51 !important;
 }
 
 /* Remove default focus outline */
@@ -361,69 +384,71 @@ input[type="radio"]:focus {
 
 /* ===== Webkit (Chrome, Safari, Edge) ===== */
 .thumb::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 4px;
-    background: transparent;
-    border: none;
-    outline: none;
+    width: 100% !important;
+    height: 4px !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
 }
 
 .thumb::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid #000000;
-    cursor: pointer;
-    pointer-events: auto;
-    margin-top: -8px; /* Center thumb on track */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    box-sizing: border-box !important; /* Added border for better visibility */
+    cursor: grab !important;
+    pointer-events: auto !important;
+    margin-top: -12px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease !important;
 }
 
 .thumb::-webkit-slider-thumb:hover {
-    transform: scale(1.1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    transform: scale(1.1) !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .thumb::-webkit-slider-thumb:active {
-    cursor: grabbing;
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    cursor: grabbing !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* ===== Firefox ===== */
 .thumb::-moz-range-track {
-    width: 100%;
-    height: 4px;
-    background: transparent;
-    border: none;
-    outline: none;
+    width: 100% !important;
+    height: 4px !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
 }
 
 .thumb::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid #000000;
-    cursor: pointer;
-    pointer-events: auto;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    box-sizing: border-box !important; /* Added border for better visibility */
+    cursor: grab !important;
+    pointer-events: auto !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease !important;
 }
 
 .thumb::-moz-range-thumb:hover {
-    transform: scale(1.1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    transform: scale(1.1) !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .thumb::-moz-range-thumb:active {
-    cursor: grabbing;
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    cursor: grabbing !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* ===== Edge Legacy ===== */
@@ -441,13 +466,14 @@ input[type="radio"]:focus {
 }
 
 .thumb::-ms-thumb {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     background: #ffffff;
-    border: 3px solid #000000;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    border: 1px solid #d1d5db; /* Added border for better visibility */
+    border: none;
+    cursor: grab;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 </style>
 
@@ -482,16 +508,18 @@ function priceSlider(min, max) {
         updateMin() {
             const min = parseInt(this.minValue);
             const max = parseInt(this.maxValue);
-            if (min >= max) {
-                this.minValue = max - 10000;
+            const gap = 10000;
+            if (min > max - gap) {
+                this.minValue = Math.floor(max - gap);
             }
         },
         
         updateMax() {
             const min = parseInt(this.minValue);
             const max = parseInt(this.maxValue);
-            if (max <= min) {
-                this.maxValue = min + 10000;
+            const gap = 10000;
+            if (max < min + gap) {
+                this.maxValue = Math.ceil(min + gap);
             }
         },
         

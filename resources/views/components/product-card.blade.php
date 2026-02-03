@@ -1,17 +1,24 @@
 @php
-    // Get images array
-    $images = [];
-    if ($product->images) {
-        $imagesDecoded = json_decode($product->images, true);
-        if (is_array($imagesDecoded)) {
-            $images = $imagesDecoded;
-        }
+    // Get product images from relationship
+    $productImages = $product->productImages ?? collect([]);
+    
+    // Primary image (first image or null)
+    if ($productImages->first()) {
+        $primaryImage = str_starts_with($productImages->first()->image_path, 'http')
+            ? $productImages->first()->image_path
+            : asset('storage/' . $productImages->first()->image_path);
+    } else {
+        $primaryImage = asset('images/placeholder-product.svg');
     }
     
-    // Primary image
-    $primaryImage = $product->image;
-    // Second image for hover effect
-    $secondImage = isset($images[1]) ? $images[1] : $primaryImage;
+    // Second image for hover effect (second image or same as primary)
+    if ($productImages->count() > 1) {
+        $secondImage = str_starts_with($productImages->skip(1)->first()->image_path, 'http')
+            ? $productImages->skip(1)->first()->image_path
+            : asset('storage/' . $productImages->skip(1)->first()->image_path);
+    } else {
+        $secondImage = $primaryImage;
+    }
     
     // Calculate discount
     $discount = 0;

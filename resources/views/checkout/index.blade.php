@@ -323,13 +323,23 @@
                             <dt class="text-sm text-gray-600">Shipping</dt>
                             <dd class="text-sm font-medium text-gray-900" id="shipping-cost-display">Rp {{ number_format($shippingCost, 0, ',', '.') }}</dd>
                         </div>
+                        @if(session('discount'))
+                        <div class="flex items-center justify-between text-green-600">
+                            <dt class="text-sm font-medium">
+                                Discount ({{ session('discount.code') }})
+                            </dt>
+                            <dd class="text-sm font-semibold">
+                                - Rp {{ number_format(session('discount.amount'), 0, ',', '.') }}
+                            </dd>
+                        </div>
+                        @endif
                         <div class="flex items-center justify-between">
                             <dt class="text-sm text-gray-600">Tax</dt>
                             <dd class="text-sm text-gray-500">Included</dd>
                         </div>
                         <div class="flex items-center justify-between border-t border-gray-200 pt-4">
                             <dt class="text-lg font-bold text-gray-900">Total</dt>
-                            <dd class="text-2xl font-bold text-gray-900">Rp {{ number_format($total, 0, ',', '.') }}</dd>
+                            <dd class="text-2xl font-bold text-gray-900">Rp {{ number_format($total - (session('discount.amount') ?? 0), 0, ',', '.') }}</dd>
                         </div>
                     </dl>
 
@@ -377,8 +387,18 @@
     <template x-teleport="body">
         <div x-show="isOpen" 
              @keydown.escape.window="close()"
-             class="fixed inset-0 z-[99999]" 
+             class="fixed inset-0 z-[99999] overflow-hidden" 
              style="display: none;">
+            
+            {{-- Global Style to Prevent Body Scroll --}}
+            <style>
+                body.modal-open {
+                    overflow: hidden !important;
+                    position: fixed;
+                    width: 100%;
+                    height: 100%;
+                }
+            </style>
             
             {{-- Backdrop --}}
             <div x-show="isOpen"
@@ -389,16 +409,16 @@
                  class="fixed inset-0 bg-black/50"></div>
 
             {{-- Modal Container --}}
-            <div class="flex min-h-screen items-end lg:items-center justify-center p-0 lg:p-4">
+            <div class="fixed inset-0 flex items-end lg:items-center justify-center p-0 lg:p-4 pointer-events-none">
                 <div x-show="isOpen"
                      x-transition:enter="ease-out duration-300"
                      x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-4 lg:scale-95"
                      x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
                      @click.outside="close()"
-                     class="relative bg-white w-full lg:max-w-lg shadow-2xl transform transition-all rounded-t-3xl lg:rounded-3xl flex flex-col"
-                     style="max-height: 90vh;">
+                     class="relative bg-white w-full lg:max-w-lg shadow-2xl transform transition-all rounded-t-3xl lg:rounded-3xl flex flex-col pointer-events-auto"
+                     style="max-height: 85vh;">
                     
-                    {{-- Header --}}
+                    {{-- Header (Fixed) --}}
                     <div class="px-6 py-5 border-b border-gray-200 bg-white flex-shrink-0 rounded-t-3xl">
                         <div class="flex items-center justify-between">
                             <div>
@@ -414,36 +434,130 @@
                         </div>
                     </div>
 
-                    {{-- Body --}}
-                    <div class="p-6 flex-1" style="overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
+                    {{-- Body (Scrollable) --}}
+                    <div class="flex-1 overflow-y-auto px-6 py-6 voucher-modal-body" style="scrollbar-width: thin;">
                         <style>
-                            .hide-scrollbar::-webkit-scrollbar { display: none; }
+                            .voucher-modal-body::-webkit-scrollbar {
+                                width: 6px;
+                            }
+                            .voucher-modal-body::-webkit-scrollbar-track {
+                                background: #f1f1f1;
+                                border-radius: 10px;
+                            }
+                            .voucher-modal-body::-webkit-scrollbar-thumb {
+                                background: #888;
+                                border-radius: 10px;
+                            }
+                            .voucher-modal-body::-webkit-scrollbar-thumb:hover {
+                                background: #555;
+                            }
                         </style>
-                        <div class="hide-scrollbar">
-                            <div class="mb-6">
+                        <div>
+                            <!-- Applied Voucher Display -->
+                            <div x-show="appliedVoucher" class="mb-6 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-green-900" x-text="appliedVoucher?.code"></p>
+                                            <p class="text-sm text-green-700">
+                                                Discount: <span x-text="appliedVoucher?.formatted_amount"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button @click="removeVoucher()" 
+                                            class="text-red-600 hover:text-red-800 font-medium text-sm">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Voucher Input -->
+                            <div x-show="!appliedVoucher" class="mb-6">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Enter Voucher Code</label>
                                 <div class="flex gap-2">
                                     <input type="text" 
                                            x-model="voucherCode" 
+                                           @keyup.enter="applyVoucher()"
                                            placeholder="e.g. DISCOUNT20"
                                            class="flex-1 px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black">
                                     <button type="button" 
-                                            class="px-6 py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-colors whitespace-nowrap">
-                                        Apply
+                                            @click="applyVoucher()"
+                                            :disabled="isApplying"
+                                            class="px-6 py-3 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <span x-show="!isApplying">Apply</span>
+                                        <span x-show="isApplying">...</span>
                                     </button>
                                 </div>
+                                
+                                <!-- Error Message -->
+                                <p x-show="errorMessage" 
+                                   x-text="errorMessage" 
+                                   class="mt-2 text-sm text-red-600"></p>
                             </div>
 
-                            <div class="text-center py-8 text-gray-500">
-                                <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                </svg>
-                                <p class="font-medium text-gray-700">No vouchers available</p>
-                                <p class="text-sm mt-1 text-gray-500">Enter a voucher code above to redeem your discount</p>
+                            <!-- Available Vouchers List -->
+                            <div x-show="!appliedVoucher">
+                                @if($availableVouchers->count() > 0)
+                                    <h3 class="text-lg font-bold text-gray-900 mb-4">Available Vouchers</h3>
+                                    <div class="space-y-3">
+                                        @foreach($availableVouchers as $voucher)
+                                        <div class="border-2 border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <h4 class="text-lg font-bold text-gray-900">{{ $voucher->code }}</h4>
+                                                        @if($voucher->type === 'percentage')
+                                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">{{ $voucher->value }}% Off</span>
+                                                        @else
+                                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">Rp {{ number_format($voucher->value, 0, ',', '.') }} Off</span>
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    @if($voucher->type === 'percentage')
+                                                        <p class="text-sm text-gray-600 mb-1">{{ $voucher->value }}% discount</p>
+                                                    @else
+                                                        <p class="text-sm text-gray-600 mb-1">Rp {{ number_format($voucher->value, 0, ',', '.') }} discount</p>
+                                                    @endif
+                                                    
+                                                    @if($voucher->min_order_amount)
+                                                        <p class="text-xs text-gray-500">Min. spend Rp {{ number_format($voucher->min_order_amount, 0, ',', '.') }}</p>
+                                                    @else
+                                                        <p class="text-xs text-gray-500">No minimum spend</p>
+                                                    @endif
+                                                    
+                                                    @if($voucher->end_date)
+                                                        <p class="text-xs text-gray-500 mt-1">Valid until {{ $voucher->end_date->format('d M Y') }}</p>
+                                                    @endif
+                                                </div>
+                                                <button type="button" 
+                                                        @click="voucherCode = '{{ $voucher->code }}'; applyVoucher()"
+                                                        class="px-4 py-2 bg-gray-100 text-gray-900 font-bold text-sm rounded-lg hover:bg-gray-200 transition-colors">
+                                                    COPY
+                                                </button>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-center py-8 text-gray-500">
+                                        <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                        </svg>
+                                        <p class="font-medium text-gray-700">No vouchers available</p>
+                                        <p class="text-sm mt-1 text-gray-500">Enter a voucher code above to redeem your discount</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
+                    {{-- End Body --}}
                 </div>
+                {{-- End Modal Container --}}
             </div>
         </div>
     </template>
@@ -454,7 +568,7 @@
     <template x-teleport="body">
         <div x-show="isOpen" 
              @keydown.escape.window="close()"
-             class="fixed inset-0 z-[99999]" 
+             class="fixed inset-0 z-[99999] overflow-hidden" 
              style="display: none;">
             
             {{-- Backdrop --}}
@@ -466,13 +580,13 @@
                  class="fixed inset-0 bg-black/50"></div>
 
             {{-- Modal Container --}}
-            <div class="flex min-h-screen items-end lg:items-center justify-center p-0 lg:p-4">
+            <div class="fixed inset-0 flex items-end lg:items-center justify-center p-0 lg:p-4 pointer-events-none">
                 <div x-show="isOpen"
                      x-transition:enter="ease-out duration-300"
                      x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-4 lg:scale-95"
                      x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
                      @click.outside="close()"
-                     class="relative bg-white w-full lg:max-w-lg shadow-2xl transform transition-all rounded-t-3xl lg:rounded-3xl flex flex-col"
+                     class="relative bg-white w-full lg:max-w-lg shadow-2xl transform transition-all rounded-t-3xl lg:rounded-3xl flex flex-col pointer-events-auto"
                      style="max-height: 90vh;">
                     
                     {{-- Header --}}
@@ -548,21 +662,116 @@ function voucherModal() {
     return {
         isOpen: false,
         voucherCode: '',
+        isApplying: false,
+        appliedVoucher: null,
+        errorMessage: '',
         
         init() {
             window.addEventListener('open-voucher-modal', () => {
                 this.open();
             });
+            
+            // Check if voucher already applied in session
+            this.checkAppliedVoucher();
         },
         
         open() {
             this.isOpen = true;
             document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open');
         },
         
         close() {
             this.isOpen = false;
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
+            document.body.classList.remove('modal-open');
+            this.errorMessage = '';
+        },
+        
+        async applyVoucher() {
+            if (!this.voucherCode.trim()) {
+                this.errorMessage = 'Please enter a voucher code';
+                return;
+            }
+            
+            this.isApplying = true;
+            this.errorMessage = '';
+            
+            try {
+                const response = await fetch('{{ route("checkout.apply-discount") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: this.voucherCode
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.appliedVoucher = data.discount;
+                    this.voucherCode = '';
+                    
+                    // Show success toast
+                    window.showToast(data.message, 'success');
+                    
+                    // Reload page to update totals
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    this.errorMessage = data.message;
+                }
+            } catch (error) {
+                console.error('Error applying voucher:', error);
+                this.errorMessage = 'Failed to apply voucher. Please try again.';
+            } finally {
+                this.isApplying = false;
+            }
+        },
+        
+        async removeVoucher() {
+            try {
+                const response = await fetch('{{ route("checkout.remove-discount") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.appliedVoucher = null;
+                    window.showToast(data.message, 'success');
+                    
+                    // Reload page to update totals
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error removing voucher:', error);
+            }
+        },
+        
+        checkAppliedVoucher() {
+            // This will be populated from backend session
+            @if(session('discount'))
+                this.appliedVoucher = {
+                    code: '{{ session("discount.code") }}',
+                    type: '{{ session("discount.type") }}',
+                    value: {{ session('discount.value') }},
+                    amount: {{ session('discount.amount') }},
+                    formatted_amount: 'Rp {{ number_format(session("discount.amount"), 0, ",", ".") }}'
+                };
+            @endif
         }
     }
 }
@@ -582,11 +791,13 @@ function deliveryModal() {
         open() {
             this.isOpen = true;
             document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open');
         },
         
         close() {
             this.isOpen = false;
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
+            document.body.classList.remove('modal-open');
         }
     }
 }

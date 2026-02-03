@@ -25,11 +25,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'avatar',
         'address',
+        'is_admin',
         'password_reset_otp',
         'password_reset_otp_expires_at',
         'password_change_otp',
         'password_change_otp_expires_at',
         'pending_password',
+        'suspension_reason',
+        'suspended_at',
     ];
 
 
@@ -53,7 +56,18 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    /**
+     * Check if the user is an administrator
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->is_admin ?? false;
     }
 
     /**
@@ -78,5 +92,29 @@ class User extends Authenticatable implements MustVerifyEmail
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get the user's reviews
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get status attribute (virtual attribute based on suspension_reason)
+     */
+    public function getStatusAttribute()
+    {
+        return $this->suspension_reason ? 'suspended' : 'active';
+    }
+
+    /**
+     * Check if user is suspended
+     */
+    public function isSuspended()
+    {
+        return !is_null($this->suspension_reason);
     }
 }

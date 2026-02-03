@@ -125,7 +125,7 @@
                     {{-- Size Guide Modal Component --}}
                     <x-size-guide-modal :product="$product" />
                     {{-- Voucher Modal Component --}}
-                    <x-voucher-modal />
+                    <x-voucher-modal :availableVouchers="$availableVouchers" />
                     {{-- Delivery Modal Component --}}
                     <x-delivery-modal />
                 </div>

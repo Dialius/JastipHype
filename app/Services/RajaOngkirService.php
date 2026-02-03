@@ -375,6 +375,14 @@ class RajaOngkirService
     }
 
     /**
+     * Get city by ID (alias for getCity)
+     */
+    public function getCityById($cityId)
+    {
+        return $this->getCity($cityId);
+    }
+
+    /**
      * Get subdistricts by city ID
      * HYBRID APPROACH: Combines data from BOTH RajaOngkir AND Kodepos APIs
      * This ensures maximum coverage and completeness

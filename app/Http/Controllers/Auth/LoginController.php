@@ -20,6 +20,14 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home'))->with('success', 'Welcome back!');
+        // Check if user is admin and redirect to admin panel
+        if (auth()->user()->is_admin) {
+            return redirect()->intended(route('admin.dashboard'))
+                ->with('success', 'Welcome to Admin Panel!');
+        }
+
+        // Regular users go to homepage
+        return redirect()->intended(route('home'))
+            ->with('success', 'Welcome back!');
     }
 }

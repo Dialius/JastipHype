@@ -117,8 +117,8 @@
                         <div class="flex items-center justify-center space-x-8">
                         <a href="{{ route('products.index') }}" class="text-sm font-medium text-red-600 hover:text-red-700 transition-colors whitespace-nowrap animate-shake">SALE</a>
                         <a href="{{ route('products.index', ['new' => true]) }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">NEW</a>
-                        <a href="#" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">REQUEST</a>
-                        <a href="{{ route('products.index') }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">BRANDS</a>
+                        <a href="{{ route('request.index') }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">REQUEST</a>
+                        <a href="{{ route('brands.index') }}" class="text-sm font-medium hover:text-accent-gold transition-colors whitespace-nowrap">BRANDS</a>
                     </div>
                 </nav>
 
@@ -474,6 +474,17 @@
                                 My Wishlist
                             </a>
                             
+                            @if(auth()->user()->is_admin)
+                                <div class="border-t border-gray-100 my-1"></div>
+                                
+                                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 font-medium">
+                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Admin Panel
+                                </a>
+                            @endif
+                            
                             <div class="border-t border-gray-100 my-1"></div>
                             
                             <form method="POST" action="{{ route('logout') }}">
@@ -511,8 +522,8 @@
         <nav class="px-4 py-4 space-y-3">
             <a href="{{ route('products.index') }}" class="block text-sm font-medium text-red-600 hover:text-red-700 transition-colors animate-shake">SALE</a>
             <a href="{{ route('products.index', ['new' => true]) }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">NEW</a>
-            <a href="#" class="block text-sm font-medium hover:text-accent-gold transition-colors">REQUEST</a>
-            <a href="{{ route('products.index') }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">BRANDS</a>
+            <a href="{{ route('request.index') }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">REQUEST</a>
+            <a href="{{ route('brands.index') }}" class="block text-sm font-medium hover:text-accent-gold transition-colors">BRANDS</a>
         </nav>
     </div>
 

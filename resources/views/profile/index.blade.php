@@ -350,13 +350,18 @@
                 </div>
 
                 {{-- Password Tab --}}
-                <div x-show="activeTab === 'password'" x-transition style="display: none;">
+                <div x-show="activeTab === 'password'" x-transition style="display: none;" x-data="{ showOtpModal: {{ session('otp_sent') ? 'true' : 'false' }} }">
                     <div class="bg-white rounded-lg shadow-sm p-6">
                         <h2 class="text-xl font-bold text-gray-900 mb-6">Change Password</h2>
                         
-                        <form method="POST" action="{{ route('profile.password.update') }}">
+                        @if(session('otp_sent'))
+                            <div class="mb-6 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+                                {{ session('otp_sent') }}
+                            </div>
+                        @endif
+                        
+                        <form method="POST" action="{{ route('profile.password.request-otp') }}">
                             @csrf
-                            @method('PUT')
                             
                             <div class="space-y-6">
                                 {{-- Current Password --}}
@@ -368,6 +373,7 @@
                                         type="password" 
                                         id="current_password" 
                                         name="current_password" 
+                                        required
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-gold focus:border-transparent @error('current_password') border-red-500 @enderror"
                                     >
                                     @error('current_password')
@@ -384,12 +390,14 @@
                                         type="password" 
                                         id="password" 
                                         name="password" 
+                                        required
+                                        minlength="8"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-gold focus:border-transparent @error('password') border-red-500 @enderror"
                                     >
                                     @error('password')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
-                                    <p class="mt-1 text-xs text-gray-500">Minimum 8 characters with uppercase, lowercase and numbers</p>
+                                    <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
                                 </div>
 
                                 {{-- Confirm Password --}}
@@ -401,6 +409,8 @@
                                         type="password" 
                                         id="password_confirmation" 
                                         name="password_confirmation" 
+                                        required
+                                        minlength="8"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-gold focus:border-transparent"
                                     >
                                 </div>
@@ -411,10 +421,114 @@
                                     type="submit"
                                     class="px-6 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
                                 >
-                                    Update Password
+                                    Send OTP to Email
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    {{-- OTP Verification Modal --}}
+                    <div 
+                        x-show="showOtpModal" 
+                        x-transition
+                        class="fixed inset-0 z-50 overflow-y-auto"
+                        style="display: none;"
+                    >
+                        <div class="flex items-center justify-center min-h-screen px-4">
+                            {{-- Backdrop --}}
+                            <div 
+                                class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+                                @click="showOtpModal = false"
+                            ></div>
+
+                            {{-- Modal Content --}}
+                            <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                                {{-- Close Button --}}
+                                <button 
+                                    @click="showOtpModal = false"
+                                    class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                                >
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+
+                                {{-- Header --}}
+                                <div class="text-center mb-6">
+                                    <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Verify OTP</h3>
+                                    <p class="text-sm text-gray-600">Enter the 6-digit code sent to your email</p>
+                                </div>
+
+                                {{-- OTP Form --}}
+                                <form method="POST" action="{{ route('profile.password.verify-otp') }}">
+                                    @csrf
+                                    
+                                    {{-- OTP Inputs --}}
+                                    <div class="mb-6">
+                                        <div class="flex gap-2 justify-center">
+                                            <input 
+                                                type="text" 
+                                                maxlength="1" 
+                                                class="otp-input-profile w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                                                data-index="0"
+                                            >
+                                            <input 
+                                                type="text" 
+                                                maxlength="1" 
+                                                class="otp-input-profile w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                                                data-index="1"
+                                            >
+                                            <input 
+                                                type="text" 
+                                                maxlength="1" 
+                                                class="otp-input-profile w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                                                data-index="2"
+                                            >
+                                            <input 
+                                                type="text" 
+                                                maxlength="1" 
+                                                class="otp-input-profile w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                                                data-index="3"
+                                            >
+                                            <input 
+                                                type="text" 
+                                                maxlength="1" 
+                                                class="otp-input-profile w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                                                data-index="4"
+                                            >
+                                            <input 
+                                                type="text" 
+                                                maxlength="1" 
+                                                class="otp-input-profile w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                                                data-index="5"
+                                            >
+                                        </div>
+                                        <input type="hidden" name="otp" id="otp-value-profile">
+                                        @error('otp')
+                                            <p class="text-red-600 text-sm mt-2 text-center">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Submit Button --}}
+                                    <button 
+                                        type="submit"
+                                        class="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                                    >
+                                        Verify & Change Password
+                                    </button>
+                                </form>
+
+                                {{-- Info --}}
+                                <p class="text-xs text-gray-500 text-center mt-4">
+                                    OTP expires in 10 minutes
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -504,4 +618,67 @@ function phoneInput() {
         }
     }
 }
+</script>
+
+<script>
+// OTP Input Handler for Profile Password Change
+document.addEventListener('DOMContentLoaded', function() {
+    const otpInputs = document.querySelectorAll('.otp-input-profile');
+    const otpValue = document.getElementById('otp-value-profile');
+    
+    if (otpInputs.length > 0) {
+        otpInputs.forEach((input, index) => {
+            // Handle input
+            input.addEventListener('input', function(e) {
+                // Only allow numbers
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Update hidden input with complete OTP
+                updateOtpValueProfile();
+                
+                // Auto-focus next input
+                if (this.value && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+            
+            // Handle backspace
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+            
+            // Handle paste
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
+                
+                // Distribute pasted digits across inputs
+                for (let i = 0; i < pastedData.length && index + i < otpInputs.length; i++) {
+                    otpInputs[index + i].value = pastedData[i];
+                }
+                
+                updateOtpValueProfile();
+                
+                // Focus last filled input or next empty
+                const lastIndex = Math.min(index + pastedData.length, otpInputs.length - 1);
+                otpInputs[lastIndex].focus();
+            });
+        });
+        
+        // Update hidden input value
+        function updateOtpValueProfile() {
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            otpValue.value = otp;
+        }
+        
+        // Auto-focus first input when modal opens
+        setTimeout(() => {
+            if (otpInputs[0]) {
+                otpInputs[0].focus();
+            }
+        }, 300);
+    }
+});
 </script>

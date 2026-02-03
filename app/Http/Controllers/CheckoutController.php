@@ -49,7 +49,10 @@ class CheckoutController extends Controller
         // Get User Address if available
         $user = Auth::user();
 
-        return view('checkout.index', compact('cartItems', 'subtotal', 'shippingCost', 'total', 'user'));
+        // Get available vouchers
+        $availableVouchers = \App\Models\Discount::active()->get();
+
+        return view('checkout.index', compact('cartItems', 'subtotal', 'shippingCost', 'total', 'user', 'availableVouchers'));
     }
 
     public function process(Request $request)
@@ -215,4 +218,112 @@ class CheckoutController extends Controller
                 ->with('error', 'Failed to process order: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Apply discount/voucher code
+     */
+    public function applyDiscount(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $code = strtoupper(trim($request->code));
+
+        // Find discount
+        $discount = \App\Models\Discount::where('code', $code)->first();
+
+        if (!$discount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid voucher code.',
+            ], 404);
+        }
+
+        // Check if discount is valid
+        if (!$discount->isValid()) {
+            $message = 'This voucher is not available.';
+            
+            if ($discount->status !== 'active') {
+                $message = 'This voucher is inactive.';
+            } elseif ($discount->start_date && $discount->start_date > now()) {
+                $message = 'This voucher is not yet active.';
+            } elseif ($discount->end_date && $discount->end_date < now()) {
+                $message = 'This voucher has expired.';
+            } elseif ($discount->max_uses && $discount->uses_count >= $discount->max_uses) {
+                $message = 'This voucher has reached its usage limit.';
+            }
+            
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+            ], 400);
+        }
+
+        // Get cart
+        $cart = null;
+        if (Auth::check()) {
+            $cart = Auth::user()->cart;
+        } else {
+            $sessionId = Session::getId();
+            $cart = \App\Models\Cart::where('session_id', $sessionId)->first();
+        }
+
+        if (!$cart || $cart->items->count() == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your cart is empty.',
+            ], 400);
+        }
+
+        // Calculate subtotal
+        $subtotal = $cart->items->sum(function($item) {
+            return $item->quantity * $item->product->price;
+        });
+
+        // Check minimum order amount
+        if ($discount->min_order_amount && $subtotal < $discount->min_order_amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Minimum order amount is Rp ' . number_format($discount->min_order_amount, 0, ',', '.'),
+            ], 400);
+        }
+
+        // Calculate discount amount
+        $discountAmount = $discount->calculateDiscount($subtotal);
+
+        // Store discount in session
+        Session::put('discount', [
+            'code' => $discount->code,
+            'type' => $discount->type,
+            'value' => $discount->value,
+            'amount' => $discountAmount,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Voucher applied successfully!',
+            'discount' => [
+                'code' => $discount->code,
+                'type' => $discount->type,
+                'value' => $discount->value,
+                'amount' => $discountAmount,
+                'formatted_amount' => 'Rp ' . number_format($discountAmount, 0, ',', '.'),
+            ],
+        ]);
+    }
+
+    /**
+     * Remove discount/voucher code
+     */
+    public function removeDiscount()
+    {
+        Session::forget('discount');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Voucher removed successfully.',
+        ]);
+    }
 }
+

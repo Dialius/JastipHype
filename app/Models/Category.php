@@ -16,6 +16,7 @@ class Category extends Model
         'image',
         'order',
         'is_active',
+        'parent_id',
     ];
 
     protected $casts = [
@@ -23,11 +24,47 @@ class Category extends Model
     ];
 
     /**
+     * Get the parent category
+     */
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get the child categories
+     */
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get all descendants recursively
+     */
+    public function descendants()
+    {
+        return $this->children()->with('descendants');
+    }
+
+    /**
      * Get the products for the category.
      */
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Get products count including children categories
+     */
+    public function getProductsCountAttribute()
+    {
+        $count = $this->products()->count();
+        foreach ($this->children as $child) {
+            $count += $child->products_count;
+        }
+        return $count;
     }
 
     /**

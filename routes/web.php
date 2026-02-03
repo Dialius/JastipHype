@@ -13,8 +13,32 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InfoController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\BrandController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Unauthorized Access Page
+Route::get('/unauthorized', function () {
+    return view('unauthorized');
+})->name('unauthorized');
+
+// Info Pages
+Route::prefix('info')->name('info.')->group(function () {
+    Route::get('/contact', [InfoController::class, 'contact'])->name('contact');
+    Route::get('/shipping', [InfoController::class, 'shipping'])->name('shipping');
+    Route::get('/returns', [InfoController::class, 'returns'])->name('returns');
+    Route::get('/faq', [InfoController::class, 'faq'])->name('faq');
+});
+
+// Request Product
+Route::get('/request', [RequestController::class, 'index'])->name('request.index');
+Route::post('/request', [RequestController::class, 'store'])->name('request.store');
+
+// Brands
+Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
+Route::get('/brands/{slug}', [BrandController::class, 'show'])->name('brands.show');
 
 // Guest Routes (only for non-authenticated users)
 Route::middleware('guest')->group(function () {
@@ -63,6 +87,8 @@ Route::controller(CartController::class)->group(function () {
 use App\Http\Controllers\CheckoutController;
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::post('/checkout/apply-discount', [CheckoutController::class, 'applyDiscount'])->name('checkout.apply-discount');
+Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDiscount'])->name('checkout.remove-discount');
 
 // Payment Routes
 use App\Http\Controllers\PaymentController;
@@ -113,3 +139,16 @@ Route::prefix('api/location')->name('location.')->group(function () {
     Route::get('/subdistricts/{city}', [LocationController::class, 'getSubdistricts'])->name('subdistricts');
     Route::post('/cost', [LocationController::class, 'getCost'])->name('cost');
 });
+
+// Support Ticket Routes (Customer Side)
+use App\Http\Controllers\SupportController;
+Route::prefix('support')->name('support.')->group(function () {
+    Route::post('/tickets', [SupportController::class, 'store'])->name('store');
+    Route::get('/tickets/active', [SupportController::class, 'getActiveTicket'])->name('active');
+    Route::get('/tickets/{ticket}', [SupportController::class, 'show'])->name('show');
+    Route::post('/tickets/{ticket}/messages', [SupportController::class, 'sendMessage'])->name('send-message');
+    Route::get('/tickets/{ticket}/messages', [SupportController::class, 'getMessages'])->name('messages');
+});
+
+// Contact form route
+Route::post('/contact/send', [InfoController::class, 'sendContact'])->name('contact.send');

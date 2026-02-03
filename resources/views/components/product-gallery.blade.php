@@ -10,12 +10,18 @@
         {{-- Main Image Display --}}
         <div class="relative aspect-square bg-gray-100 overflow-hidden group cursor-pointer" @click="openLightbox()">
             @foreach($productImages as $index => $image)
+                @php
+                    // Check if image_path is a full URL or a storage path
+                    $imageSrc = str_starts_with($image->image_path, 'http') 
+                        ? $image->image_path 
+                        : asset('storage/' . $image->image_path);
+                @endphp
                 <img 
                     x-show="selectedIndex === {{ $index }}"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
-                    src="{{ asset('storage/' . $image->image_path) }}" 
+                    src="{{ $imageSrc }}" 
                     alt="{{ $product->name }}"
                     class="absolute inset-0 w-full h-full object-cover"
                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
@@ -34,6 +40,11 @@
         @if($imageCount > 1)
             <div class="grid grid-cols-4 gap-2 lg:gap-3">
                 @foreach($productImages as $index => $image)
+                    @php
+                        $imageSrc = str_starts_with($image->image_path, 'http') 
+                            ? $image->image_path 
+                            : asset('storage/' . $image->image_path);
+                    @endphp
                     <button
                         type="button"
                         @click="selectImage({{ $index }})"
@@ -41,7 +52,7 @@
                         :class="selectedIndex === {{ $index }} ? 'border-black' : 'border-gray-200'"
                     >
                         <img 
-                            src="{{ asset('storage/' . $image->image_path) }}" 
+                            src="{{ $imageSrc }}" 
                             alt="{{ $product->name }} - View {{ $index + 1 }}"
                             class="w-full h-full object-cover"
                             loading="lazy"
@@ -92,9 +103,14 @@
             {{-- Lightbox Image --}}
             <div class="relative max-w-6xl max-h-screen">
                 @foreach($productImages as $index => $image)
+                    @php
+                        $imageSrc = str_starts_with($image->image_path, 'http') 
+                            ? $image->image_path 
+                            : asset('storage/' . $image->image_path);
+                    @endphp
                     <img 
                         x-show="selectedIndex === {{ $index }}"
-                        src="{{ asset('storage/' . $image->image_path) }}" 
+                        src="{{ $imageSrc }}" 
                         alt="{{ $product->name }}"
                         class="max-w-full max-h-screen object-contain"
                     >

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -14,16 +15,22 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Featured drop for hero section
+        // Active banners for hero carousel (with product relationship)
+        $banners = Banner::active()
+            ->with(['product.brand', 'product.productImages'])
+            ->ordered()
+            ->get();
+
+        // Featured drop for hero section (fallback if no banners)
         $featuredDrop = Product::where('is_featured', true)
             ->where('is_limited_edition', true)
             ->with(['brand', 'productImages'])
             ->first();
 
-        // Categories for featured categories section
-        $categories = Category::active()
+        // Categories for featured categories section (4 specific categories)
+        $categories = Category::whereIn('slug', ['accessories', 'clothing', 'hoodies', 'sneakers'])
+            ->active()
             ->ordered()
-            ->limit(4)
             ->get();
 
         // New arrivals
@@ -46,6 +53,7 @@ class HomeController extends Controller
             ->get();
 
         return view('home.index', compact(
+            'banners',
             'featuredDrop',
             'categories',
             'newArrivals',

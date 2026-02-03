@@ -43,19 +43,49 @@
 
                 <!-- OTP Code -->
                 <div>
-                    <label for="otp" class="block text-sm font-medium text-gray-700 mb-2">OTP Code</label>
-                    <input 
-                        type="text" 
-                        id="otp" 
-                        name="otp" 
-                        required
-                        maxlength="6"
-                        pattern="[0-9]{6}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-center text-2xl tracking-widest font-bold @error('otp') border-red-500 @enderror"
-                        placeholder="000000"
-                    >
+                    <label class="block text-sm font-medium text-gray-700 mb-2">OTP Code</label>
+                    <div class="flex gap-2 justify-center">
+                        <input 
+                            type="text" 
+                            maxlength="1" 
+                            class="otp-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                            data-index="0"
+                        >
+                        <input 
+                            type="text" 
+                            maxlength="1" 
+                            class="otp-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                            data-index="1"
+                        >
+                        <input 
+                            type="text" 
+                            maxlength="1" 
+                            class="otp-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                            data-index="2"
+                        >
+                        <input 
+                            type="text" 
+                            maxlength="1" 
+                            class="otp-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                            data-index="3"
+                        >
+                        <input 
+                            type="text" 
+                            maxlength="1" 
+                            class="otp-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                            data-index="4"
+                        >
+                        <input 
+                            type="text" 
+                            maxlength="1" 
+                            class="otp-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black @error('otp') border-red-500 @enderror"
+                            data-index="5"
+                        >
+                    </div>
+                    <!-- Hidden input to store complete OTP -->
+                    <input type="hidden" name="otp" id="otp-value">
                     @error('otp')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-600 text-sm mt-2 text-center">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -135,6 +165,59 @@
 </div>
 
 <script>
+// OTP Input Handler
+const otpInputs = document.querySelectorAll('.otp-input');
+const otpValue = document.getElementById('otp-value');
+
+otpInputs.forEach((input, index) => {
+    // Handle input
+    input.addEventListener('input', function(e) {
+        // Only allow numbers
+        this.value = this.value.replace(/[^0-9]/g, '');
+        
+        // Update hidden input with complete OTP
+        updateOtpValue();
+        
+        // Auto-focus next input
+        if (this.value && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+        }
+    });
+    
+    // Handle backspace
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !this.value && index > 0) {
+            otpInputs[index - 1].focus();
+        }
+    });
+    
+    // Handle paste
+    input.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
+        
+        // Distribute pasted digits across inputs
+        for (let i = 0; i < pastedData.length && index + i < otpInputs.length; i++) {
+            otpInputs[index + i].value = pastedData[i];
+        }
+        
+        updateOtpValue();
+        
+        // Focus last filled input or next empty
+        const lastIndex = Math.min(index + pastedData.length, otpInputs.length - 1);
+        otpInputs[lastIndex].focus();
+    });
+});
+
+// Update hidden input value
+function updateOtpValue() {
+    const otp = Array.from(otpInputs).map(input => input.value).join('');
+    otpValue.value = otp;
+}
+
+// Auto-focus first input on page load
+otpInputs[0].focus();
+
 async function resendOtp() {
     const resendBtn = document.getElementById('resendBtn');
     const email = document.querySelector('input[name="email"]').value;
@@ -156,6 +239,10 @@ async function resendOtp() {
         
         if (data.success) {
             alert('OTP has been resent to your email!');
+            // Clear OTP inputs
+            otpInputs.forEach(input => input.value = '');
+            otpValue.value = '';
+            otpInputs[0].focus();
         } else {
             alert(data.message || 'Failed to resend OTP. Please try again.');
         }
@@ -166,10 +253,5 @@ async function resendOtp() {
         resendBtn.textContent = 'Resend OTP';
     }
 }
-
-// Auto-focus OTP input and format
-document.getElementById('otp').addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
 </script>
 @endsection

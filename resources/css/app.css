@@ -1,4 +1,6 @@
 @import './components/toast.css';
+@import './admin/design-system.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +10,11 @@
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Alpine.js x-cloak */
+    [x-cloak] {
+        display: none !important;
     }
 }
 
@@ -44,42 +51,60 @@
     .toast-success {
         @apply border-green-200 text-green-900;
     }
-    
+
     .toast-error {
         @apply border-red-200 text-red-900;
     }
-    
+
     .toast-warning {
         @apply border-yellow-200 text-yellow-900;
     }
-    
+
     .toast-info {
         @apply border-blue-200 text-blue-900;
     }
 
     /* Shake animation for SALE link - goyang pelan setiap 5 detik */
     @keyframes shake {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: translateX(0);
         }
+
         3% {
             transform: translateX(-3px);
         }
+
         6% {
             transform: translateX(3px);
         }
+
         9% {
             transform: translateX(-3px);
         }
+
         12% {
             transform: translateX(3px);
         }
-        15%, 100% {
+
+        15%,
+        100% {
             transform: translateX(0);
         }
     }
 
     .animate-shake {
         animation: shake 5s ease-in-out infinite;
+    }
+
+    /* Hide scrollbar but keep scroll functionality */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }
