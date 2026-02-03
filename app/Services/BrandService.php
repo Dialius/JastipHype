@@ -63,9 +63,17 @@ class BrandService
 
         // Handle logo upload
         if (isset($data['logo']) && $data['logo']) {
-            // Delete old logo
+            // Try to delete old logo, but don't fail if it doesn't work
             if ($brand->logo_path) {
-                $this->deleteLogo($brand->logo_path);
+                try {
+                    $this->deleteLogo($brand->logo_path);
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to delete old brand logo, continuing with update', [
+                        'brand_id' => $id,
+                        'logo_path' => $brand->logo_path,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
             $data['logo_path'] = $this->uploadLogo($data['logo']);
         }
@@ -97,9 +105,17 @@ class BrandService
             return false;
         }
 
-        // Delete logo
+        // Try to delete logo, but don't fail if it doesn't work
         if ($brand->logo_path) {
-            $this->deleteLogo($brand->logo_path);
+            try {
+                $this->deleteLogo($brand->logo_path);
+            } catch (\Exception $e) {
+                \Log::warning('Failed to delete brand logo, continuing with brand deletion', [
+                    'brand_id' => $id,
+                    'logo_path' => $brand->logo_path,
+                    'error' => $e->getMessage()
+                ]);
+            }
         }
 
         return $this->brandRepository->delete($id);

@@ -68,9 +68,17 @@ class ProductService
 
         // Handle image upload
         if (isset($data['image']) && $data['image']) {
-            // Delete old image
+            // Try to delete old image, but don't fail if it doesn't work
             if ($product->image) {
-                $this->deleteImage($product->image);
+                try {
+                    $this->deleteImage($product->image);
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to delete old product image, continuing with update', [
+                        'product_id' => $id,
+                        'image_path' => $product->image,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
             $data['image'] = $this->uploadImage($data['image']);
         }

@@ -67,15 +67,34 @@ class FileUploadService
     {
         $disk = $disk ?? config('filesystems.default');
         try {
-            if (Storage::disk($disk)->exists($path)) {
-                return Storage::disk($disk)->delete($path);
+            // In serverless, files in /tmp are ephemeral and may not exist
+            // Don't fail if file doesn't exist
+            if (!Storage::disk($disk)->exists($path)) {
+                \Log::info('File does not exist, skipping deletion', [
+                    'path' => $path,
+                    'disk' => $disk,
+                ]);
+                return true;
             }
-            return true;
+            
+            $result = Storage::disk($disk)->delete($path);
+            
+            if (!$result) {
+                \Log::warning('File deletion returned false', [
+                    'path' => $path,
+                    'disk' => $disk,
+                ]);
+            }
+            
+            return $result;
         } catch (\Exception $e) {
             \Log::error('File deletion failed: ' . $e->getMessage(), [
                 'path' => $path,
                 'disk' => $disk,
+                'trace' => $e->getTraceAsString()
             ]);
+            // Don't throw exception, just return false
+            // This prevents 500 errors when deleting files in serverless
             return false;
         }
     }
@@ -110,12 +129,18 @@ class FileUploadService
      */
     protected function ensureDirectoryExists(string $directory, string $disk = 'public'): void
     {
-        // For S3/Cloudinary, we often don't need to explicitly create directories
+        // For S3/Cloudinary, we don't need to explicitly create directories
         if (in_array($disk, ['s3', 'cloudinary'])) {
             return;
         }
 
+        // In serverless environments, skip directory creation
+        if ($this->isServerless()) {
+            return;
+        }
+
         try {
+            // Only try to get path if we're not in serverless
             $fullPath = Storage::disk($disk)->path($directory);
             
             if (!file_exists($fullPath)) {
@@ -132,6 +157,16 @@ class FileUploadService
                 'disk' => $disk,
             ]);
         }
+    }
+    
+    /**
+     * Check if running in serverless environment
+     */
+    protected function isServerless(): bool
+    {
+        return !empty(getenv('VERCEL_ENV')) || 
+               !empty(getenv('AWS_LAMBDA_FUNCTION_NAME')) ||
+               !empty(getenv('NETLIFY'));
     }
     
     /**

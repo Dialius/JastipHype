@@ -44,9 +44,17 @@ class BannerService
     {
         // Handle image upload
         if ($image) {
-            // Delete old image
+            // Try to delete old image, but don't fail if it doesn't work
             if ($banner->image_path) {
-                $this->deleteImage($banner->image_path);
+                try {
+                    $this->deleteImage($banner->image_path);
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to delete old banner image, continuing with update', [
+                        'banner_id' => $banner->id,
+                        'image_path' => $banner->image_path,
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
             $data['image_path'] = $this->uploadImage($image);
         }
@@ -59,9 +67,18 @@ class BannerService
      */
     public function deleteBanner($banner)
     {
-        // Delete image
+        // Try to delete image, but don't fail if it doesn't work
+        // In serverless, files may be ephemeral
         if ($banner->image_path) {
-            $this->deleteImage($banner->image_path);
+            try {
+                $this->deleteImage($banner->image_path);
+            } catch (\Exception $e) {
+                \Log::warning('Failed to delete banner image, continuing with banner deletion', [
+                    'banner_id' => $banner->id,
+                    'image_path' => $banner->image_path,
+                    'error' => $e->getMessage()
+                ]);
+            }
         }
 
         return $this->bannerRepository->delete($banner->id);
