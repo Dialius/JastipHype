@@ -28,12 +28,20 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\VisitorLog::observe(\App\Observers\VisitorLogObserver::class);
 
         // Share admin notifications with all admin views
-        view()->composer('admin.layouts.navbar', function ($view) {
-            if (auth()->check() && auth()->user()->is_admin) {
-                $notificationService = app(\App\Services\AdminNotificationService::class);
-                $view->with('adminNotifications', $notificationService->getNotifications(10));
-                $view->with('adminNotificationCount', $notificationService->getUnreadCount());
+        // IMPORTANT: Wrap in try-catch for Vercel serverless environment
+        try {
+            if (app()->bound('view')) {
+                view()->composer('admin.layouts.navbar', function ($view) {
+                    if (auth()->check() && auth()->user()->is_admin) {
+                        $notificationService = app(\App\Services\AdminNotificationService::class);
+                        $view->with('adminNotifications', $notificationService->getNotifications(10));
+                        $view->with('adminNotificationCount', $notificationService->getUnreadCount());
+                    }
+                });
             }
-        });
+        } catch (\Exception $e) {
+            // Silently fail in serverless environment
+            \Log::warning('View composer registration failed: ' . $e->getMessage());
+        }
     }
 }
