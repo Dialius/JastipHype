@@ -1,0 +1,34 @@
+.git
+.gitignore
+.gitattributes
+.env
+.env.*
+!.env.example
+
+# Dependencies (will be installed during build)
+node_modules
+vendor
+
+# Storage files (not needed in image)
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+!storage/logs/.gitignore
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore
+
+# Development files
+tests
+phpunit.xml
+.phpunit.result.cache
+README.md
+.vscode
+.kiro
+.editorconfig
+
+# Build scripts (not needed in production)
+download.bat
+download_assets.ps1
+download_missing_logos.ps1
