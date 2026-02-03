@@ -2,16 +2,26 @@
 
 ## What Was Fixed
 
-The deployment was failing because Railway was using the Dockerfile instead of Nixpacks. The Dockerfile had issues with:
-- Database connection during startup
-- Missing environment variables
-- Healthcheck timing out
+The deployment was failing because:
+1. Railway was using the Dockerfile instead of Nixpacks
+2. Composer wasn't available in the Nix environment when using custom nixpacks.toml
 
 ## Changes Made
 
 1. **Renamed Dockerfile** → `Dockerfile.backup` (so Railway uses Nixpacks)
-2. **Created nixpacks.toml** → Proper Nixpacks configuration
-3. **Updated railway.toml** → Simplified configuration
+2. **Created .nixpacks.json** → Explicitly includes Composer in the build environment
+3. **Updated railway.toml** → Simplified configuration for Nixpacks
+4. **Set execute permissions** → Made init-app.sh executable
+
+## How It Works Now
+
+Railway's Nixpacks will:
+- Use PHP 8.3 with Composer pre-installed
+- Install Node.js 20 for asset building
+- Auto-detect Laravel and run `composer install`
+- Run `npm ci && npm run build` for frontend assets
+- Execute the init script to run migrations and cache
+- Start the application with `php artisan serve`
 
 ## Required Environment Variables in Railway
 
