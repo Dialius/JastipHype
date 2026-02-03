@@ -47,7 +47,19 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
                                     @if($category->image)
                                     <div class="relative overflow-hidden rounded-lg border-2 border-gray-200 bg-gray-50">
-                                        <img src="{{ image_url($category->image) }}" 
+                                        @php
+                                            // Fallback if helper not loaded
+                                            if (function_exists('image_url')) {
+                                                $adminCatImageUrl = image_url($category->image);
+                                            } else {
+                                                if (filter_var($category->image, FILTER_VALIDATE_URL)) {
+                                                    $adminCatImageUrl = $category->image;
+                                                } else {
+                                                    $adminCatImageUrl = asset('storage/' . ltrim($category->image, '/'));
+                                                }
+                                            }
+                                        @endphp
+                                        <img src="{{ $adminCatImageUrl }}" 
                                              alt="{{ $category->name }}" 
                                              class="h-48 w-full object-cover">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>

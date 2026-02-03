@@ -14,7 +14,20 @@
             <div class="carousel-item h-full {{ $index === 0 ? 'active' : '' }}" x-data="countdownTimer('{{ $banner->countdown_target ? $banner->countdown_target->format('Y-m-d H:i:s') : '2026-01-20 00:00:00' }}')">
                 <div class="hero-image absolute inset-0">
                     @php
-                        $imageUrl = banner_image_url($banner);
+                        // Fallback if helper not loaded
+                        if (function_exists('banner_image_url')) {
+                            $imageUrl = banner_image_url($banner);
+                        } else {
+                            // Manual fallback
+                            $imageUrl = asset('images/placeholder-product.svg');
+                            if ($banner->image_path) {
+                                if (filter_var($banner->image_path, FILTER_VALIDATE_URL)) {
+                                    $imageUrl = $banner->image_path;
+                                } else {
+                                    $imageUrl = asset('storage/' . ltrim($banner->image_path, '/'));
+                                }
+                            }
+                        }
                     @endphp
                     
                     <img src="{{ $imageUrl }}" 
@@ -200,7 +213,22 @@
             @foreach($categories as $category)
                 <a href="{{ route('products.index', ['category' => $category->slug]) }}" 
                    class="category-card group relative overflow-hidden rounded-lg aspect-square">
-                    <img src="{{ category_image_url($category) }}" 
+                    @php
+                        // Fallback if helper not loaded
+                        if (function_exists('category_image_url')) {
+                            $catImageUrl = category_image_url($category);
+                        } else {
+                            $catImageUrl = asset('images/placeholder-product.svg');
+                            if ($category->image) {
+                                if (filter_var($category->image, FILTER_VALIDATE_URL)) {
+                                    $catImageUrl = $category->image;
+                                } else {
+                                    $catImageUrl = asset('storage/' . ltrim($category->image, '/'));
+                                }
+                            }
+                        }
+                    @endphp
+                    <img src="{{ $catImageUrl }}" 
                          alt="{{ $category->name }}"
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors">
@@ -242,7 +270,19 @@
         <div class="grid md:grid-cols-2 gap-8 items-center">
             <div>
                 @php
-                    $showcaseImageUrl = product_image_url($limitedShowcase);
+                    // Fallback if helper not loaded
+                    if (function_exists('product_image_url')) {
+                        $showcaseImageUrl = product_image_url($limitedShowcase);
+                    } else {
+                        $showcaseImageUrl = asset('images/placeholder-product.svg');
+                        if ($limitedShowcase->primaryImage) {
+                            if (filter_var($limitedShowcase->primaryImage->image_path, FILTER_VALIDATE_URL)) {
+                                $showcaseImageUrl = $limitedShowcase->primaryImage->image_path;
+                            } else {
+                                $showcaseImageUrl = asset('storage/' . ltrim($limitedShowcase->primaryImage->image_path, '/'));
+                            }
+                        }
+                    }
                 @endphp
                 
                 <img src="{{ $showcaseImageUrl }}" 

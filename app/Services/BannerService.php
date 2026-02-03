@@ -104,7 +104,7 @@ class BannerService
      */
     protected function uploadImage($image)
     {
-        return $this->fileUploadService->upload($image, 'banners', 'public');
+        return $this->fileUploadService->upload($image, 'banners');
     }
 
     /**
@@ -112,6 +112,6 @@ class BannerService
      */
     protected function deleteImage($imagePath)
     {
-        $this->fileUploadService->delete($imagePath, 'public');
+        $this->fileUploadService->delete($imagePath);
     }
 }

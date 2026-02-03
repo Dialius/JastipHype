@@ -145,9 +145,12 @@ class ProductService
     /**
      * Upload product image
      */
+    /**
+     * Upload product image
+     */
     protected function uploadImage($image)
     {
-        return $this->fileUploadService->upload($image, 'products', 'public');
+        return $this->fileUploadService->upload($image, 'products');
     }
 
     /**
@@ -155,7 +158,7 @@ class ProductService
      */
     protected function deleteImage($imagePath)
     {
-        $this->fileUploadService->delete($imagePath, 'public');
+        $this->fileUploadService->delete($imagePath);
     }
 
     /**
