@@ -10,11 +10,12 @@ class ImageHelper
      * Get image URL with proper handling for different environments
      * 
      * @param string|null $path
-     * @param string $disk
+     * @param string|null $disk
      * @return string
      */
-    public static function getImageUrl(?string $path, string $disk = 'public'): string
+    public static function getImageUrl(?string $path, ?string $disk = null): string
     {
+        $disk = $disk ?? config('filesystems.default');
         try {
             if (empty($path)) {
                 return self::getPlaceholderUrl();
