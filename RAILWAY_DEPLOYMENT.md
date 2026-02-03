@@ -19,9 +19,16 @@ Railway's Nixpacks will:
 - Use PHP 8.3 with Composer pre-installed
 - Install Node.js 20 for asset building
 - Auto-detect Laravel and run `composer install`
-- Run `npm ci && npm run build` for frontend assets
+- Run `npm ci` to install frontend dependencies
+- Run `npm run build` to compile assets with Vite (CSS & JS akan di-compile ke `public/build/`)
 - Execute the init script to run migrations and cache
 - Start the application with `php artisan serve`
+
+**Penting:** Tidak perlu `npm run dev` di production! Yang penting adalah:
+1. `npm run build` sudah dijalankan saat build (✓ sudah dikonfigurasi)
+2. File hasil build ada di `public/build/` (✓ akan di-generate otomatis)
+3. Blade templates menggunakan `@vite()` directive (✓ sudah benar)
+4. `APP_ENV=production` di Railway environment variables (⚠️ pastikan ini di-set!)
 
 ## Required Environment Variables in Railway
 
@@ -94,6 +101,13 @@ RAJAONGKIR_API_KEY=your_rajaongkir_key
    - Verify healthcheck passes
 
 ## Troubleshooting
+
+### Jika design/CSS tidak muncul:
+1. **Cek build logs** - Pastikan `npm run build` berhasil dijalankan
+2. **Cek file manifest** - Seharusnya ada `public/build/manifest.json` setelah build
+3. **Cek APP_ENV** - Harus di-set ke `production` di Railway
+4. **Cek browser console** - Lihat apakah ada error 404 untuk file CSS/JS
+5. **Cek APP_URL** - Harus sesuai dengan URL Railway Anda (misal: `https://your-app.railway.app`)
 
 ### If healthcheck still fails:
 1. Check Railway logs for errors

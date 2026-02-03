@@ -25,7 +25,8 @@ echo "🔗 Creating storage symlink..."
 php artisan storage:link || true
 
 echo "🗄️ Running database migrations..."
-php artisan migrate --force
+# Use --force to skip confirmation and --no-interaction for non-interactive mode
+php artisan migrate --force --no-interaction || echo "⚠️ Migration had issues, continuing..."
 
 echo "🧹 Clearing cache..."
 php artisan optimize:clear

@@ -2,6 +2,17 @@
   "phases": {
     "setup": {
       "nixPkgs": ["php83", "php83Packages.composer", "nodejs_20"]
+    },
+    "install": {
+      "cmds": [
+        "composer install --no-dev --optimize-autoloader --no-interaction",
+        "npm ci"
+      ]
+    },
+    "build": {
+      "cmds": [
+        "npm run build"
+      ]
     }
   }
 }
