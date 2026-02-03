@@ -3,7 +3,7 @@
 ## 🔧 Perubahan yang Sudah Dilakukan
 
 1. ✅ **vercel.json** - Updated dengan konfigurasi yang benar
-2. ✅ **package.json** - Added `"engines": { "node": "18.x" }`
+2. ✅ **package.json** - Added `"engines": { "node": "24.x" }` (Updated Feb 2026)
 3. ✅ **api/index.php** - Sudah ada
 4. ✅ **.vercelignore** - Sudah ada
 5. ✅ **bootstrap/app.php** - Trust proxies sudah di-set
@@ -190,7 +190,7 @@ Test website Anda:
 ✅ **FIXED!** vercel.json sudah di-update dengan `"outputDirectory": "public"`
 
 ### Error: "php: error while loading shared libraries: libssl.so.10"
-✅ **FIXED!** package.json sudah di-update dengan `"engines": { "node": "18.x" }`
+✅ **FIXED!** package.json sudah di-update dengan `"engines": { "node": "24.x" }` (Updated Feb 2026)
 
 ### Error: "Database connection failed"
 - Cek Railway database masih running
@@ -223,13 +223,13 @@ Test website Anda:
 | vercel.json runtime | `vercel-php@0.7.0` | `vercel-php@0.7.3` |
 | vercel.json routes | Kompleks | Simplified |
 | vercel.json env | Di vercel.json | Di Vercel Dashboard |
-| package.json | No engines | `"node": "18.x"` |
+| package.json | No engines | `"node": "24.x"` (Feb 2026) |
 | .gitignore | No .vercel | Added `.vercel` |
 
 ## 🎯 Kenapa Sekarang Bisa?
 
 1. **Runtime PHP terbaru** (`0.7.3`) lebih stabil
-2. **Node 18.x** mengatasi masalah libssl.so
+2. **Node 24.x** (Feb 2026) - versi terbaru yang didukung Vercel
 3. **Routes simplified** lebih mudah di-handle Vercel
 4. **Environment variables** di dashboard lebih aman
 5. **outputDirectory** explicit di vercel.json
