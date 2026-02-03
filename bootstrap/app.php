@@ -32,5 +32,28 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle exceptions in Vercel serverless environment
+        // Prevent View service errors from crashing the app
+        $exceptions->render(function (\Throwable $e, $request) {
+            // If View service is not available (serverless cold start)
+            // Return JSON response instead of trying to render view
+            if ($e instanceof \Illuminate\Contracts\Container\BindingResolutionException) {
+                if (str_contains($e->getMessage(), 'view')) {
+                    return response()->json([
+                        'error' => 'Application initialization error',
+                        'message' => 'The application is starting up. Please refresh in a moment.',
+                        'details' => config('app.debug') ? $e->getMessage() : null,
+                    ], 503);
+                }
+            }
+            
+            // For other errors, try to return JSON if view fails
+            if (!app()->bound('view') || !config('view.compiled')) {
+                return response()->json([
+                    'error' => 'Server Error',
+                    'message' => config('app.debug') ? $e->getMessage() : 'An error occurred',
+                    'trace' => config('app.debug') ? $e->getTraceAsString() : null,
+                ], 500);
+            }
+        });
     })->create();
