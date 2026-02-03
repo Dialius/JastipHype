@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust Vercel proxies
+        $middleware->trustProxies(at: '*');
+
         // Register admin middleware alias
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
