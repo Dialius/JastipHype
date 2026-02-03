@@ -58,12 +58,12 @@ class CategoryImageController extends Controller
                 if ($request->hasFile("categories.{$categoryId}.image")) {
                     // Delete old image if exists
                     if ($category->image) {
-                        $this->fileUploadService->delete($category->image, 'public');
+                        $this->fileUploadService->delete($category->image);
                     }
                     
                     // Store new image
                     $file = $request->file("categories.{$categoryId}.image");
-                    $path = $this->fileUploadService->upload($file, 'categories', 'public');
+                    $path = $this->fileUploadService->upload($file, 'categories');
                     
                     $category->image = $path;
                     $category->save();

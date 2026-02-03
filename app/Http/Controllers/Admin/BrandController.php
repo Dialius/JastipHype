@@ -78,7 +78,7 @@ class BrandController extends Controller
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            $validated['logo_path'] = $this->fileUploadService->upload($request->file('logo'), 'brands', 'public');
+            $validated['logo_path'] = $this->fileUploadService->upload($request->file('logo'), 'brands');
             // Remove logo file object from validated data
             unset($validated['logo']);
         }
@@ -165,7 +165,7 @@ class BrandController extends Controller
         // Handle logo removal
         if ($request->has('remove_logo') && $request->remove_logo) {
             if ($brand->logo_path) {
-                $this->fileUploadService->delete($brand->logo_path, 'public');
+                $this->fileUploadService->delete($brand->logo_path);
                 $validated['logo_path'] = null;
             }
         }
@@ -174,9 +174,9 @@ class BrandController extends Controller
         if ($request->hasFile('logo')) {
             // Delete old logo
             if ($brand->logo_path) {
-                $this->fileUploadService->delete($brand->logo_path, 'public');
+                $this->fileUploadService->delete($brand->logo_path);
             }
-            $validated['logo_path'] = $this->fileUploadService->upload($request->file('logo'), 'brands', 'public');
+            $validated['logo_path'] = $this->fileUploadService->upload($request->file('logo'), 'brands');
             // Remove logo file object from validated data
             unset($validated['logo']);
         }
@@ -211,7 +211,7 @@ class BrandController extends Controller
 
         // Delete logo
         if ($brand->logo_path) {
-            $this->fileUploadService->delete($brand->logo_path, 'public');
+            $this->fileUploadService->delete($brand->logo_path);
         }
 
         $this->brandService->deleteBrand($id);

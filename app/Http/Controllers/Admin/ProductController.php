@@ -116,7 +116,7 @@ class ProductController extends Controller
         foreach ($imageTypes as $type) {
             if ($request->hasFile("images.{$type}")) {
                 foreach ($request->file("images.{$type}") as $image) {
-                    $path = $this->fileUploadService->upload($image, 'products', 'public');
+                    $path = $this->fileUploadService->upload($image, 'products');
                     
                     \App\Models\ProductImage::create([
                         'product_id' => $product->id,
@@ -212,7 +212,7 @@ class ProductController extends Controller
         if ($request->has('remove_images')) {
             foreach ($request->input('remove_images') as $imagePath) {
                 if (($key = array_search($imagePath, $existingImages)) !== false) {
-                    $this->fileUploadService->delete($imagePath, 'public');
+                    $this->fileUploadService->delete($imagePath);
                     unset($existingImages[$key]);
                 }
             }
@@ -222,7 +222,7 @@ class ProductController extends Controller
         // Handle new image uploads
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $this->fileUploadService->upload($image, 'products', 'public');
+                $path = $this->fileUploadService->upload($image, 'products');
                 $existingImages[] = $path;
             }
         }
@@ -253,7 +253,7 @@ class ProductController extends Controller
         // Delete product images
         $images = json_decode($product->images, true) ?? [];
         foreach ($images as $imagePath) {
-            $this->fileUploadService->delete($imagePath, 'public');
+            $this->fileUploadService->delete($imagePath);
         }
 
         $this->productService->deleteProduct($id);

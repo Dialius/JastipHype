@@ -24,27 +24,38 @@ class ImageHelper
             return $path;
         }
         
-        // Check if running in serverless environment
-        if (self::isServerless()) {
-            // In serverless, use asset() for public files
-            // Remove 'storage/' prefix if exists
-            $cleanPath = str_replace('storage/', '', $path);
-            return asset('storage/' . $cleanPath);
-        }
+        // Check if it's external storage (S3, Cloudinary, etc.)
+        $isExternal = in_array($disk, ['s3', 'cloudinary', 'gcs']);
         
-        // For traditional hosting, use Storage::url()
         try {
-            return Storage::disk($disk)->url($path);
+            // Always try to get URL from Storage driver first
+            // This handles S3/Cloudinary URLs correctly
+            $url = Storage::disk($disk)->url($path);
+            
+            // If we got a valid URL, return it
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return $url;
+            }
         } catch (\Exception $e) {
+            // Log error but continue to fallback
             \Log::warning('Failed to get storage URL', [
                 'path' => $path,
                 'disk' => $disk,
                 'error' => $e->getMessage(),
             ]);
-            
-            // Fallback to asset()
-            return asset('storage/' . $path);
         }
+        
+        // Fallback for local/public disk in serverless
+        if (self::isServerless() && !$isExternal) {
+            // In serverless local, we can only serve what's in public/storage (build assets)
+            // We cannot serve what's in /tmp/storage (uploaded files)
+            // So this will likely only work for pre-deployed assets
+            $cleanPath = str_replace('storage/', '', $path);
+            return asset('storage/' . $cleanPath);
+        }
+        
+        // Default fallback
+        return asset('storage/' . $path);
     }
     
     /**

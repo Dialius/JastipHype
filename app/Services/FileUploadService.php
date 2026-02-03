@@ -11,8 +11,9 @@ class FileUploadService
     /**
      * Upload file with proper error handling for serverless environments
      */
-    public function upload(UploadedFile $file, string $directory = 'uploads', string $disk = 'public'): string
+    public function upload(UploadedFile $file, string $directory = 'uploads', ?string $disk = null): string
     {
+        $disk = $disk ?? config('filesystems.default');
         try {
             // Ensure directory exists
             $this->ensureDirectoryExists($directory, $disk);
@@ -42,8 +43,12 @@ class FileUploadService
     /**
      * Upload multiple files
      */
-    public function uploadMultiple(array $files, string $directory = 'uploads', string $disk = 'public'): array
+    /**
+     * Upload multiple files
+     */
+    public function uploadMultiple(array $files, string $directory = 'uploads', ?string $disk = null): array
     {
+        $disk = $disk ?? config('filesystems.default');
         $paths = [];
         
         foreach ($files as $file) {
@@ -58,8 +63,9 @@ class FileUploadService
     /**
      * Delete file
      */
-    public function delete(string $path, string $disk = 'public'): bool
+    public function delete(string $path, ?string $disk = null): bool
     {
+        $disk = $disk ?? config('filesystems.default');
         try {
             if (Storage::disk($disk)->exists($path)) {
                 return Storage::disk($disk)->delete($path);
@@ -77,8 +83,9 @@ class FileUploadService
     /**
      * Delete multiple files
      */
-    public function deleteMultiple(array $paths, string $disk = 'public'): bool
+    public function deleteMultiple(array $paths, ?string $disk = null): bool
     {
+        $disk = $disk ?? config('filesystems.default');
         try {
             $existingPaths = array_filter($paths, function($path) use ($disk) {
                 return Storage::disk($disk)->exists($path);
@@ -103,6 +110,11 @@ class FileUploadService
      */
     protected function ensureDirectoryExists(string $directory, string $disk = 'public'): void
     {
+        // For S3/Cloudinary, we often don't need to explicitly create directories
+        if (in_array($disk, ['s3', 'cloudinary'])) {
+            return;
+        }
+
         try {
             $fullPath = Storage::disk($disk)->path($directory);
             
@@ -137,10 +149,11 @@ class FileUploadService
     /**
      * Get file URL
      */
-    public function getUrl(string $path, string $disk = 'public'): string
+    public function getUrl(string $path, ?string $disk = null): string
     {
+        $disk = $disk ?? config('filesystems.default');
         try {
-            return Storage::disk($disk)->url($path);
+            return \App\Helpers\ImageHelper::getImageUrl($path, $disk);
         } catch (\Exception $e) {
             \Log::error('Failed to get file URL: ' . $e->getMessage(), [
                 'path' => $path,
@@ -153,8 +166,9 @@ class FileUploadService
     /**
      * Check if file exists
      */
-    public function exists(string $path, string $disk = 'public'): bool
+    public function exists(string $path, ?string $disk = null): bool
     {
+        $disk = $disk ?? config('filesystems.default');
         try {
             return Storage::disk($disk)->exists($path);
         } catch (\Exception $e) {
