@@ -18,16 +18,11 @@
                     <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         {{-- Product Image --}}
                         <a href="{{ route('products.show', $wishlist->product->slug) }}" class="block aspect-[3/4] bg-gray-100">
-                            @if($wishlist->product->productImages->first())
-                                <img 
-                                    src="{{ $wishlist->product->productImages->first()->image_url }}" 
-                                    alt="{{ $wishlist->product->name }}"
-                                    class="w-full h-full object-cover"
-                                >
-                            @else
-                                <img 
-                                    src="{{ $wishlist->product->image }}" 
-                                    alt="{{ $wishlist->product->name }}"
+                            <img 
+                                src="{{ product_image_url($wishlist->product) }}" 
+                                alt="{{ $wishlist->product->name }}"
+                                class="w-full h-full object-cover"
+                            >
                                     class="w-full h-full object-cover"
                                 >
                             @endif

@@ -16,7 +16,7 @@
             <a href="{{ route('products.index', ['brands' => [$brand->id]]) }}" 
                class="group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <div class="aspect-square flex items-center justify-center p-8 bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                    <img src="{{ \App\Helpers\ImageHelper::getBrandLogoUrl($brand) }}" 
+                    <img src="{{ brand_logo_url($brand) }}" 
                          alt="{{ $brand->name }}" 
                          class="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300">
                 </div>

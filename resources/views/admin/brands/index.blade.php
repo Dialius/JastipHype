@@ -135,6 +135,13 @@
         </div>
         @endforelse
     </div>
+
+    {{-- Pagination --}}
+    @if($brands->hasPages())
+    <div class="mt-6">
+        {{ $brands->links() }}
+    </div>
+    @endif
 </div>
 
 {{-- Delete Confirmation Modal --}}

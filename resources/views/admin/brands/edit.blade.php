@@ -93,7 +93,7 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-900 mb-2">Current Logo</label>
                         <div class="flex justify-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
-                            <img src="{{ \App\Helpers\ImageHelper::getBrandLogoUrl($brand) }}" alt="Current Logo" class="h-32 w-32 object-contain bg-gray-50 rounded-lg p-2 border border-gray-200">
+                            <img src="{{ brand_logo_url($brand) }}" alt="Current Logo" class="h-32 w-32 object-contain bg-gray-50 rounded-lg p-2 border border-gray-200">
                         </div>
                         <div class="mt-3 relative flex items-start rounded-lg border-2 border-gray-200 p-3 transition-colors duration-200 hover:border-red-300 hover:bg-red-50">
                             <div class="flex h-6 items-center">

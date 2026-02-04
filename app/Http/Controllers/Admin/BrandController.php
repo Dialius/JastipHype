@@ -30,10 +30,28 @@ class BrandController extends Controller
      */
     public function index()
     {
-        // Use pagination for brands
+        // Use pagination for brands with product count and revenue
         $brands = \App\Models\Brand::withCount('products')
+            ->with(['products' => function($query) {
+                $query->select('brand_id')
+                    ->selectRaw('SUM(COALESCE((SELECT SUM(order_items.quantity * order_items.price) 
+                        FROM order_items 
+                        JOIN orders ON order_items.order_id = orders.id 
+                        WHERE order_items.product_id = products.id 
+                        AND orders.status = "delivered"), 0)) as total_revenue')
+                    ->groupBy('brand_id');
+            }])
             ->latest()
             ->paginate(20);
+
+        // Calculate total revenue for each brand
+        foreach ($brands as $brand) {
+            $brand->total_revenue = $brand->products()
+                ->join('order_items', 'products.id', '=', 'order_items.product_id')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->where('orders.status', 'delivered')
+                ->sum(\DB::raw('order_items.quantity * order_items.price'));
+        }
 
         return view('admin.brands.index', compact('brands'));
     }

@@ -209,67 +209,32 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.tailwindcss.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.tailwindcss.min.css">
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <style>
-    /* Custom DataTables styling for TailAdmin */
-    .dataTables_wrapper .dataTables_filter input {
-        @apply rounded-lg border border-gray-200 bg-gray-50 py-2 pl-4 pr-4 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200;
-    }
-    .dataTables_wrapper .dataTables_length select {
-        @apply rounded-lg border border-gray-200 bg-gray-50 py-2 pl-4 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200;
-    }
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-        @apply rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800;
-    }
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        @apply bg-blue-600 text-white border-blue-600 hover:bg-blue-700;
-    }
-    .dataTables_wrapper .dataTables_info {
-        @apply text-sm text-gray-500 dark:text-gray-400;
+    /* Custom table styling */
+    .product-table tbody tr:hover {
+        @apply bg-gray-50 dark:bg-gray-800/50;
     }
 </style>
 @endpush
 
 @push('scripts')
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.tailwindcss.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 <script>
 $(document).ready(function() {
-    // Initialize DataTable
-    var table = $('#productsTable').DataTable({
-        dom: '<"flex flex-wrap items-center justify-between gap-4 mb-4"lf>rt<"flex flex-wrap items-center justify-between gap-4 mt-4"ip>',
-        pageLength: 25,
-        order: [[1, 'asc']],
-        columnDefs: [
-            { orderable: false, targets: [0, 8] }
-        ],
-        language: {
-            search: "",
-            searchPlaceholder: "Search products...",
-            lengthMenu: "Show _MENU_",
-        }
-    });
-
-    // Custom export buttons
-    $('.dt-button-excel').on('click', function() {
-        // Trigger Excel export
-        table.button('.buttons-excel').trigger();
-    });
-
-    $('.dt-button-csv').on('click', function() {
-        // Trigger CSV export
-        table.button('.buttons-csv').trigger();
-    });
-
     // Select all checkbox
     $('#selectAll').on('change', function() {
         $('.product-checkbox').prop('checked', this.checked);
+    });
+    
+    // Bulk delete
+    $('#bulkDeleteBtn').on('click', function() {
+        const selected = $('.product-checkbox:checked').length;
+        if (selected === 0) {
+            alert('Please select at least one product');
+            return;
+        }
+        if (confirm(`Are you sure you want to delete ${selected} product(s)?`)) {
+            $('#bulkDeleteForm').submit();
+        }
     });
 });
 </script>

@@ -297,7 +297,7 @@
                                     <div class="space-y-3 mb-4">
                                         @foreach($order->items->take(2) as $item)
                                         <div class="flex items-center gap-4">
-                                            <img src="{{ $item->product->productImages->first()?->image_url ?? '/images/placeholder.png' }}" 
+                                            <img src="{{ product_image_url($item->product) }}" 
                                                  alt="{{ $item->product->name }}"
                                                  class="w-16 h-16 object-cover rounded-lg">
                                             <div class="flex-1 min-w-0">

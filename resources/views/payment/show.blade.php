@@ -52,7 +52,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     @foreach($order->items as $item)
                     <div class="bg-gray-50 rounded-lg p-4 flex items-center gap-4">
-                        <img src="{{ $item->product->productImages->first()?->image_url ?? '/images/placeholder.png' }}" 
+                        <img src="{{ product_image_url($item->product) }}" 
                              alt="{{ $item->product->name }}"
                              class="w-20 h-20 object-cover rounded-lg flex-shrink-0">
                         <div class="flex-1 min-w-0">
