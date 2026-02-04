@@ -48,16 +48,7 @@
                                     @if($category->image)
                                     <div class="relative overflow-hidden rounded-lg border-2 border-gray-200 bg-gray-50">
                                         @php
-                                            // Fallback if helper not loaded
-                                            if (function_exists('image_url')) {
-                                                $adminCatImageUrl = image_url($category->image);
-                                            } else {
-                                                if (filter_var($category->image, FILTER_VALIDATE_URL)) {
-                                                    $adminCatImageUrl = $category->image;
-                                                } else {
-                                                    $adminCatImageUrl = \App\Helpers\ImageHelper::getImageUrl($category->image);
-                                                }
-                                            }
+                                            $adminCatImageUrl = \App\Helpers\ImageHelper::getImageUrl($category->image);
                                         @endphp
                                         <img src="{{ $adminCatImageUrl }}" 
                                              alt="{{ $category->name }}" 
