@@ -26,9 +26,9 @@
                         <div class="flex flex-col sm:flex-row gap-6">
                             <!-- Product Image -->
                             <div class="w-full sm:w-32 h-32 flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden">
-                                <img src="{{ $item->product->productImages->first() ? asset('storage/' . $item->product->productImages->first()->image_path) : asset('images/placeholder.jpg') }}" 
-                                     alt="{{ $item->product->name }}" 
-                                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                                            <img src="{{ \App\Helpers\ImageHelper::getImageUrl($item->product->productImages->where('is_primary', true)->first()->image_path ?? null) }}" 
+                                                 alt="{{ $item->product->name }}" 
+                                                 class="h-full w-full object-cover object-center">-105 transition-transform duration-300">
                             </div>
 
                             <!-- Product Details -->

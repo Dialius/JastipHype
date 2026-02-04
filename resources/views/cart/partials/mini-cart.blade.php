@@ -2,12 +2,10 @@
     <div class="max-h-80 overflow-y-auto scrollbar-hide p-4 space-y-4">
         @foreach($cartItems as $item)
             <div class="flex items-start gap-3">
-                <div class="w-16 h-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
-                    @if($item->product->productImages->first())
-                        <img src="{{ asset('storage/' . $item->product->productImages->first()->image_path) }}" 
-                             alt="{{ $item->product->name }}" 
-                             class="w-full h-full object-cover">
-                    @endif
+                <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                    <img src="{{ \App\Helpers\ImageHelper::getImageUrl($item->product->productImages->where('is_primary', true)->first()->image_path ?? null) }}" 
+                         alt="{{ $item->product->name }}" 
+                         class="h-full w-full object-cover object-center">
                 </div>
                 <div class="flex-1 min-w-0">
                     <h4 class="text-sm font-medium text-gray-900 truncate">{{ $item->product->name }}</h4>

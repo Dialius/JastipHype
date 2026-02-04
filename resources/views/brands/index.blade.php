@@ -16,27 +16,9 @@
             <a href="{{ route('products.index', ['brands' => [$brand->id]]) }}" 
                class="group bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <div class="aspect-square flex items-center justify-center p-8 bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                    @php
-                        // Check both logo and logo_path
-                        $logoSrc = null;
-                        if ($brand->logo) {
-                            $logoSrc = asset('images/brands/' . $brand->logo);
-                        } elseif ($brand->logo_path) {
-                            $logoSrc = Storage::url($brand->logo_path);
-                        }
-                    @endphp
-                    
-                    @if($logoSrc)
-                        <img src="{{ $logoSrc }}" 
-                             alt="{{ $brand->name }}" 
-                             class="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300">
-                    @else
-                        <div class="text-center">
-                            <h3 class="text-2xl font-bold text-gray-800 group-hover:text-accent-gold transition-colors">
-                                {{ $brand->name }}
-                            </h3>
-                        </div>
-                    @endif
+                    <img src="{{ \App\Helpers\ImageHelper::getBrandLogoUrl($brand) }}" 
+                         alt="{{ $brand->name }}" 
+                         class="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300">
                 </div>
                 <div class="p-4 border-t border-gray-200">
                     <h3 class="font-semibold text-center group-hover:text-accent-gold transition-colors">

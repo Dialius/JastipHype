@@ -276,7 +276,7 @@
                             @foreach($categories as $category)
                             <div class="relative overflow-hidden rounded-md bg-gray-800" style="aspect-ratio: 1/1;">
                                 @if($category->image)
-                                <img src="{{ Storage::url($category->image) }}" 
+                                <img src="{{ \App\Helpers\ImageHelper::getImageUrl($category->image) }}" 
                                      alt="{{ $category->name }}"
                                      class="h-full w-full object-cover opacity-70">
                                 @else

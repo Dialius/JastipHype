@@ -263,14 +263,11 @@
                                 :class="showProducts ? 'max-h-[600px]' : 'max-h-[180px]'">
                                 @foreach($cartItems as $item)
                                     <li class="flex py-3 gap-3">
-                                        <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
-                                            @if($item->product->productImages->first())
-                                                <img src="{{ asset('storage/' . $item->product->productImages->first()->image_path) }}" 
-                                                     alt="{{ $item->product->name }}" 
-                                                     class="h-full w-full object-cover object-center">
-                                            @endif
+                                        <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                            <img src="{{ \App\Helpers\ImageHelper::getImageUrl($item->product->productImages->where('is_primary', true)->first()->image_path ?? null) }}" 
+                                                 alt="{{ $item->product->name }}" 
+                                                 class="h-full w-full object-cover object-center">
                                         </div>
-
                                         <div class="flex flex-1 flex-col justify-between text-sm">
                                             <div>
                                                 <h3 class="font-medium text-gray-900 line-clamp-1">{{ $item->product->name }}</h3>

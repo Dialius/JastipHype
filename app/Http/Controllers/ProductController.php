@@ -208,7 +208,12 @@ class ProductController extends Controller
             })
             ->with(['brand', 'productImages'])
             ->limit(8)
-            ->get();
+            ->get()
+            ->map(function($product) {
+                // Add full image URL for frontend
+                $product->image_url = \App\Helpers\ImageHelper::getProductImageUrl($product);
+                return $product;
+            });
         
         return response()->json($products);
     }

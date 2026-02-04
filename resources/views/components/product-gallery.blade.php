@@ -14,7 +14,7 @@
                     // Check if image_path is a full URL or a storage path
                     $imageSrc = str_starts_with($image->image_path, 'http') 
                         ? $image->image_path 
-                        : asset('storage/' . $image->image_path);
+                        : \App\Helpers\ImageHelper::getImageUrl($image->image_path);
                 @endphp
                 <img 
                     x-show="selectedIndex === {{ $index }}"

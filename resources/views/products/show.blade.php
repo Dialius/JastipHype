@@ -557,7 +557,7 @@ document.addEventListener('alpine:init', () => {
                 {{-- Product Preview --}}
                 <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-lg mb-6 text-left">
                     @if($product->productImages->count() > 0)
-                        <img src="{{ asset('storage/' . $product->productImages->first()->image_path) }}" 
+                        <img src="{{ \App\Helpers\ImageHelper::getImageUrl($product->productImages->first()->image_path) }}" 
                              alt="{{ $product->name }}" 
                              class="h-16 w-16 object-cover rounded-md border border-gray-200">
                     @else
