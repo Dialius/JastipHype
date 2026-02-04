@@ -56,7 +56,7 @@
             <div class="p-6">
                 <div class="flex items-center">
                     @if($review->product->productImages->first())
-                    <img src="{{ asset('storage/' . $review->product->productImages->first()->image_path) }}" 
+                    <img src="{{ \App\Helpers\ImageHelper::getImageUrl($review->product->productImages->first()->image_path) }}" 
                          alt="{{ $review->product->name }}" 
                          class="h-20 w-20 rounded-lg object-cover mr-4">
                     @else
@@ -136,8 +136,8 @@
                     <label class="block text-sm font-medium text-gray-700 mb-3">Review Images</label>
                     <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                         @foreach($review->images as $image)
-                        <a href="{{ asset('storage/' . $image->image_path) }}" target="_blank" class="group">
-                            <img src="{{ asset('storage/' . $image->image_path) }}" 
+                        <a href="{{ \App\Helpers\ImageHelper::getImageUrl($image->image_path) }}" target="_blank" class="group">
+                            <img src="{{ \App\Helpers\ImageHelper::getImageUrl($image->image_path) }}" 
                                  alt="Review Image" 
                                  class="h-32 w-full rounded-lg object-cover ring-1 ring-gray-200 group-hover:ring-2 group-hover:ring-blue-500">
                         </a>

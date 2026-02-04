@@ -104,7 +104,7 @@
                                     if ($firstImage) {
                                         $imageSrc = str_starts_with($firstImage->image_path, 'http')
                                             ? $firstImage->image_path
-                                            : asset('storage/' . $firstImage->image_path);
+                                            : \App\Helpers\ImageHelper::getImageUrl($firstImage->image_path);
                                     } else {
                                         $imageSrc = asset('images/placeholder-product.svg');
                                     }

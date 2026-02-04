@@ -80,7 +80,7 @@
                     {{-- Banner Image --}}
                     <div class="relative">
                         @if($banner->image_path)
-                        <img src="{{ asset('storage/' . $banner->image_path) }}" 
+                        <img src="{{ \App\Helpers\ImageHelper::getImageUrl($banner->image_path) }}" 
                              class="h-40 w-full object-cover" 
                              alt="{{ $banner->title }}">
                         @else

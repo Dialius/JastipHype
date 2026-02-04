@@ -55,7 +55,7 @@
                                                 if (filter_var($category->image, FILTER_VALIDATE_URL)) {
                                                     $adminCatImageUrl = $category->image;
                                                 } else {
-                                                    $adminCatImageUrl = asset('storage/' . ltrim($category->image, '/'));
+                                                    $adminCatImageUrl = \App\Helpers\ImageHelper::getImageUrl($category->image);
                                                 }
                                             }
                                         @endphp

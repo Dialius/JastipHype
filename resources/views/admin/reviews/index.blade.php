@@ -125,7 +125,7 @@
                         <td class="whitespace-nowrap px-5 py-4 md:px-6">
                             <div class="flex items-center gap-3">
                                 @if($review->product->productImages->first())
-                                <img src="{{ asset('storage/' . $review->product->productImages->first()->image_path) }}" 
+                                <img src="{{ \App\Helpers\ImageHelper::getImageUrl($review->product->productImages->first()->image_path) }}" 
                                      alt="{{ $review->product->name }}" 
                                      class="h-10 w-10 rounded-lg object-cover">
                                 @else
