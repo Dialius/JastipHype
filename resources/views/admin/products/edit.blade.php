@@ -441,7 +441,7 @@
 @push('scripts')
 <script>
     // Configuration
-    const MAX_TOTAL_SIZE_MB = 4.5;
+    const MAX_TOTAL_SIZE_MB = 3.5;
     const MAX_TOTAL_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
     const COMPRESSION_QUALITY = 0.7;
     const MAX_IMAGE_WIDTH = 1500;

@@ -182,7 +182,7 @@
                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                                        accept=".csv,.txt"
                                        required>
-                                <p class="mt-1 text-xs text-gray-500">Accepted formats: CSV (Max: 10MB)</p>
+                                <p class="mt-1 text-xs text-gray-500">Accepted formats: CSV (Max: 3.5MB)</p>
                             </div>
                             <button type="submit" class="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 inline-flex items-center gap-2 text-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,7 +267,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show loading indicator on form submit
     const importForm = document.getElementById('importProductsForm');
     if (importForm) {
-        importForm.addEventListener('submit', function() {
+        importForm.addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('products_file');
+            const file = fileInput.files[0];
+            const maxSizeMB = 3.5;
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+            if (file && file.size > maxSizeBytes) {
+                e.preventDefault();
+                alert(`File size (${(file.size / 1024 / 1024).toFixed(2)} MB) exceeds the limit of ${maxSizeMB} MB. Please upload a smaller file.`);
+                return;
+            }
+
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<svg class="animate-spin h-4 w-4 mr-2 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Importing...';

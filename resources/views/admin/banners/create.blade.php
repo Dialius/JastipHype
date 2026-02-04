@@ -401,7 +401,7 @@
 @push('scripts')
 <script>
     // Configuration
-    const MAX_TOTAL_SIZE_MB = 4.5;
+    const MAX_TOTAL_SIZE_MB = 3.5;
     const MAX_TOTAL_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
     const COMPRESSION_QUALITY = 0.8; // Higher quality for banners
     const MAX_IMAGE_WIDTH = 1920; // Specialized for Hero Banners
