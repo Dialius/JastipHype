@@ -77,14 +77,10 @@
             </div>
 
             {{-- Statistics --}}
-            <div class="mb-4 grid grid-cols-2 gap-4 border-t border-gray-100 pt-4 dark:border-gray-800">
+            <div class="mb-4 grid grid-cols-1 gap-4 border-t border-gray-100 pt-4 dark:border-gray-800">
                 <div class="text-center">
                     <p class="text-xs text-gray-500 dark:text-gray-400">Products</p>
-                    <p class="text-lg font-semibold text-gray-800 dark:text-white/90">{{ $brand->product_count ?? 0 }}</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Revenue</p>
-                    <p class="text-lg font-semibold text-gray-800 dark:text-white/90">Rp {{ number_format(($brand->total_revenue ?? 0) / 1000, 0) }}K</p>
+                    <p class="text-lg font-semibold text-gray-800 dark:text-white/90">{{ $brand->products_count ?? 0 }}</p>
                 </div>
             </div>
 

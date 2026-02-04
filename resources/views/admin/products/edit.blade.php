@@ -440,6 +440,147 @@
 
 @push('scripts')
 <script>
+    // Configuration
+    const MAX_TOTAL_SIZE_MB = 4.5;
+    const MAX_TOTAL_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
+    const COMPRESSION_QUALITY = 0.7;
+    const MAX_IMAGE_WIDTH = 1500;
+    const MAX_IMAGE_HEIGHT = 1500;
+
+    // Image Compression Helper
+    async function compressImage(file) {
+        return new Promise((resolve, reject) => {
+            if (!file.type.match(/image.*/)) {
+                resolve(file);
+                return;
+            }
+
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Resume dimensions if needed
+                if (width > MAX_IMAGE_WIDTH || height > MAX_IMAGE_HEIGHT) {
+                    if (width > height) {
+                        height *= MAX_IMAGE_WIDTH / width;
+                        width = MAX_IMAGE_WIDTH;
+                    } else {
+                        width *= MAX_IMAGE_HEIGHT / height;
+                        height = MAX_IMAGE_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        reject(new Error('Canvas compression failed'));
+                        return;
+                    }
+                    
+                    const compressedFile = new File([blob], file.name, {
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                    });
+                    
+                    resolve(compressedFile);
+                }, 'image/jpeg', COMPRESSION_QUALITY);
+            };
+            
+            img.onerror = () => reject(new Error('Image loading failed'));
+        });
+    }
+
+    // Form Submission Interceptor
+    const form = document.querySelector('form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Calculate total size of NEW files only
+        let totalSize = 0;
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        const filesToProcess = [];
+
+        fileInputs.forEach(input => {
+            if (input.files.length) {
+                Array.from(input.files).forEach(file => {
+                    totalSize += file.size;
+                    filesToProcess.push({ input, file });
+                });
+            }
+        });
+
+        if (totalSize > MAX_TOTAL_BYTES) {
+            // Show loading state
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Compressing Images... (${(totalSize / 1024 / 1024).toFixed(2)} MB)
+            `;
+
+            try {
+                // Compress all images
+                const compressionPromises = filesToProcess.map(async (item) => {
+                    const compressed = await compressImage(item.file);
+                    return { ...item, compressed };
+                });
+
+                const results = await Promise.all(compressionPromises);
+                
+                // Group by input to reassign
+                const inputMap = new Map();
+                let newTotalSize = 0;
+
+                results.forEach(({ input, compressed }) => {
+                    if (!inputMap.has(input)) {
+                        inputMap.set(input, new DataTransfer());
+                    }
+                    inputMap.get(input).items.add(compressed);
+                    newTotalSize += compressed.size;
+                });
+
+                // Update inputs with compressed files
+                inputMap.forEach((dataTransfer, input) => {
+                    input.files = dataTransfer.files;
+                });
+
+                // Check size again
+                if (newTotalSize > MAX_TOTAL_BYTES) {
+                    alert(`Total file size (${(newTotalSize / 1024 / 1024).toFixed(2)} MB) still exceeds the limit of ${MAX_TOTAL_SIZE_MB} MB even after compression. Please upload fewer or smaller images.`);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                    return;
+                }
+
+                // Proceed with submission
+                form.submit();
+
+            } catch (error) {
+                console.error('Compression error:', error);
+                alert('An error occurred while compressing images. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        } else {
+            // Size is okay, just submit
+            form.submit();
+        }
+    });
+
     // Image Preview for new uploads
     const imageInput = document.getElementById('imageInput');
     const previewContainer = document.getElementById('imagePreview');
@@ -461,11 +602,11 @@
                         
                         col.innerHTML = `
                             <div class="aspect-square overflow-hidden rounded-xl border-2 border-purple-200 bg-purple-50 transition-all duration-200 group-hover:border-purple-400 group-hover:shadow-lg">
-                                <img src="${e.target.result}" alt="Preview" class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-110">
+                                <img src="\${e.target.result}" alt="Preview" class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-110">
                             </div>
                             <div class="mt-2">
-                                <p class="text-xs text-gray-600 truncate font-medium">${file.name}</p>
-                                <p class="text-xs text-gray-500">${(file.size / 1024).toFixed(1)} KB</p>
+                                <p class="text-xs text-gray-600 truncate font-medium">\${file.name}</p>
+                                <p class="text-xs text-gray-500">\${(file.size / 1024).toFixed(1)} KB</p>
                             </div>
                         `;
                         
