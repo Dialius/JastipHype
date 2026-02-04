@@ -35,8 +35,11 @@ class ReviewController extends Controller
         $reviews = $this->reviewService->getWithFilters($filters, 15);
         $statistics = $this->reviewService->getStatistics();
         
-        // Get all products for filter dropdown
-        $products = $this->productRepository->all();
+        // Get products for filter dropdown (only active products with reviews)
+        $products = \App\Models\Product::whereHas('reviews')
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
 
         return view('admin.reviews.index', compact('reviews', 'statistics', 'products', 'filters'));
     }

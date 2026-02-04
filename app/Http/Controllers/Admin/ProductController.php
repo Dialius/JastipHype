@@ -38,11 +38,48 @@ class ProductController extends Controller
             'stock_status' => $request->input('stock_status'), // low, out, in_stock
         ];
 
-        // Get all products for DataTables (client-side processing)
-        $products = $this->productRepository->all();
-        
-        // Eager load relationships
-        $products->load(['category', 'brand', 'productImages']);
+        // Use pagination instead of loading all products
+        $query = \App\Models\Product::query()
+            ->with(['category', 'brand', 'productImages' => function($q) {
+                $q->where('is_primary', true)->orWhere('order', 0)->limit(1);
+            }]);
+
+        // Apply filters
+        if (!empty($filters['search'])) {
+            $query->where(function($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('sku', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['brand_id'])) {
+            $query->where('brand_id', $filters['brand_id']);
+        }
+
+        if (isset($filters['is_active']) && $filters['is_active'] !== '') {
+            $query->where('is_active', $filters['is_active']);
+        }
+
+        if (!empty($filters['stock_status'])) {
+            switch ($filters['stock_status']) {
+                case 'out':
+                    $query->where('stock', 0);
+                    break;
+                case 'low':
+                    $query->where('stock', '>', 0)->where('stock', '<=', 10);
+                    break;
+                case 'in_stock':
+                    $query->where('stock', '>', 10);
+                    break;
+            }
+        }
+
+        // Paginate results (20 per page)
+        $products = $query->latest()->paginate(20)->withQueryString();
         
         $categories = \App\Models\Category::all();
         $brands = \App\Models\Brand::all();

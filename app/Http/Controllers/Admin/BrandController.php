@@ -30,17 +30,10 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = $this->brandRepository->all();
-        
-        // Get statistics for each brand
-        foreach ($brands as $brand) {
-            $brand->product_count = $brand->products()->count();
-            $brand->total_revenue = $brand->products()
-                ->join('order_items', 'products.id', '=', 'order_items.product_id')
-                ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->where('orders.status', 'delivered')
-                ->sum(\DB::raw('order_items.quantity * order_items.price'));
-        }
+        // Use pagination for brands
+        $brands = \App\Models\Brand::withCount('products')
+            ->latest()
+            ->paginate(20);
 
         return view('admin.brands.index', compact('brands'));
     }
