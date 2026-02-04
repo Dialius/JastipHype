@@ -167,7 +167,7 @@
                         <div class="mb-6">
                             <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Current Image</label>
                             <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
-                                <img src="{{ \App\Helpers\ImageHelper::getImageUrl($banner->image_path) }}" 
+                                <img src="{{ banner_image_url($banner) }}" 
                                      alt="{{ $banner->title }}" 
                                      class="mx-auto max-h-72 rounded-lg">
                             </div>

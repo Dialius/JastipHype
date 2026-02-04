@@ -81,7 +81,7 @@
                 <div class="p-6 max-h-[70vh] overflow-y-auto hide-scrollbar">
                     @if(isset($product) && $product->size_guide_image)
                         <img 
-                            src="{{ \App\Helpers\ImageHelper::getImageUrl($product->size_chart) }}" 
+                            src="{{ image_url($product->size_chart) }}" 
                             alt="Size Chart" 
                             class="w-full h-auto rounded-lg"
                             loading="lazy"

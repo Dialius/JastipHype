@@ -83,7 +83,7 @@
                                             $firstImage = !empty($images) ? $images[0] : null;
                                         @endphp
                                         @if($firstImage)
-                                            <img src="{{ \App\Helpers\ImageHelper::getImageUrl($item->product->productImages->where('is_primary', true)->first()->image_path ?? null) }}" 
+                                            <img src="{{ image_url($firstImage->image_path) }}" 
                                                  alt="{{ $item->product_name }}" 
                                                  class="h-12 w-12 object-cover rounded-md border border-gray-700">
                                         @endif

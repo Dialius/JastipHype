@@ -268,7 +268,7 @@
                             @foreach($existingImages as $index => $imagePath)
                             <div class="relative group">
                                 <div class="aspect-square overflow-hidden rounded-xl border-2 border-gray-200 bg-gray-50 transition-all duration-200 group-hover:border-purple-400 group-hover:shadow-lg">
-                                    <img src="{{ Storage::url($imagePath) }}" alt="Product Image" class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-110">
+                                    <img src="{{ image_url($imagePath) }}" alt="Product Image" class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-110">
                                 </div>
                                 <div class="mt-2">
                                     <label class="relative flex items-center cursor-pointer">

@@ -228,7 +228,7 @@
                                                class="block hover:bg-gray-50 rounded-lg p-2 transition-colors">
                                                 <div class="relative">
                                                     @if($product->productImages->count() > 0)
-                                                        <img src="{{ asset('storage/' . $product->productImages->first()->image_path) }}" 
+                                                        <img src="{{ product_image_url($product) }}" 
                                                              alt="{{ $product->name }}"
                                                              class="w-full aspect-square object-cover rounded">
                                                     @else
@@ -608,7 +608,7 @@
                                    class="block hover:bg-gray-50 rounded-lg p-2 transition-colors">
                                     <div class="relative">
                                         @if($product->productImages->count() > 0)
-                                            <img src="{{ asset('storage/' . $product->productImages->first()->image_path) }}" 
+                                            <img src="{{ product_image_url($product) }}" 
                                                  alt="{{ $product->name }}"
                                                  class="w-full aspect-square object-cover rounded">
                                         @else

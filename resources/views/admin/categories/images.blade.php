@@ -48,7 +48,7 @@
                                     @if($category->image)
                                     <div class="relative overflow-hidden rounded-lg border-2 border-gray-200 bg-gray-50">
                                         @php
-                                            $adminCatImageUrl = \App\Helpers\ImageHelper::getImageUrl($category->image);
+                                            $adminCatImageUrl = category_image_url($category);
                                         @endphp
                                         <img src="{{ $adminCatImageUrl }}" 
                                              alt="{{ $category->name }}" 
@@ -267,7 +267,7 @@
                             @foreach($categories as $category)
                             <div class="relative overflow-hidden rounded-md bg-gray-800" style="aspect-ratio: 1/1;">
                                 @if($category->image)
-                                <img src="{{ \App\Helpers\ImageHelper::getImageUrl($category->image) }}" 
+                                <img src="{{ category_image_url($category) }}" 
                                      alt="{{ $category->name }}"
                                      class="h-full w-full object-cover opacity-70">
                                 @else

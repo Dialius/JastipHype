@@ -26,7 +26,7 @@
                         <div class="flex flex-col sm:flex-row gap-6">
                             <!-- Product Image -->
                             <div class="w-full sm:w-32 h-32 flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden">
-                                            <img src="{{ \App\Helpers\ImageHelper::getImageUrl($item->product->productImages->where('is_primary', true)->first()->image_path ?? null) }}" 
+                                            <img src="{{ product_image_url($item->product) }}" 
                                                  alt="{{ $item->product->name }}" 
                                                  class="h-full w-full object-cover object-center">-105 transition-transform duration-300">
                             </div>
@@ -169,7 +169,7 @@
                 @foreach($relatedProducts as $related)
                     <div class="group cursor-pointer">
                         <div class="relative overflow-hidden mb-4 rounded-lg bg-gray-100 aspect-[3/4]">
-                            <img src="{{ $related->productImages->first() ? asset('storage/' . $related->productImages->first()->image_path) : asset('images/placeholder.jpg') }}" 
+                            <img src="{{ product_image_url($related) }}" 
                                  class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" 
                                  alt="{{ $related->name }}">
                             

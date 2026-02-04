@@ -37,7 +37,7 @@
                          alt="{{ $brand->name }}" 
                          class="h-24 w-24 object-contain">
                 @elseif($brand->logo_path)
-                    <img src="{{ \App\Helpers\ImageHelper::getImageUrl($brand->logo_path) }}" 
+                    <img src="{{ brand_logo_url($brand) }}" 
                          alt="{{ $brand->name }}" 
                          class="h-24 w-24 object-contain">
                 @else

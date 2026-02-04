@@ -11,10 +11,7 @@
         <div class="relative aspect-square bg-gray-100 overflow-hidden group cursor-pointer" @click="openLightbox()">
             @foreach($productImages as $index => $image)
                 @php
-                    // Check if image_path is a full URL or a storage path
-                    $imageSrc = str_starts_with($image->image_path, 'http') 
-                        ? $image->image_path 
-                        : \App\Helpers\ImageHelper::getImageUrl($image->image_path);
+                    $imageSrc = image_url($image->image_path);
                 @endphp
                 <img 
                     x-show="selectedIndex === {{ $index }}"
@@ -41,9 +38,7 @@
             <div class="grid grid-cols-4 gap-2 lg:gap-3">
                 @foreach($productImages as $index => $image)
                     @php
-                        $imageSrc = str_starts_with($image->image_path, 'http') 
-                            ? $image->image_path 
-                            : asset('storage/' . $image->image_path);
+                        $imageSrc = image_url($image->image_path);
                     @endphp
                     <button
                         type="button"
@@ -104,9 +99,7 @@
             <div class="relative max-w-6xl max-h-screen">
                 @foreach($productImages as $index => $image)
                     @php
-                        $imageSrc = str_starts_with($image->image_path, 'http') 
-                            ? $image->image_path 
-                            : asset('storage/' . $image->image_path);
+                        $imageSrc = image_url($image->image_path);
                     @endphp
                     <img 
                         x-show="selectedIndex === {{ $index }}"

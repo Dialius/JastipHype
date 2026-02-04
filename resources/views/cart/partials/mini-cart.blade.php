@@ -3,7 +3,7 @@
         @foreach($cartItems as $item)
             <div class="flex items-start gap-3">
                 <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                    <img src="{{ \App\Helpers\ImageHelper::getImageUrl($item->product->productImages->where('is_primary', true)->first()->image_path ?? null) }}" 
+                    <img src="{{ product_image_url($item->product) }}" 
                          alt="{{ $item->product->name }}" 
                          class="h-full w-full object-cover object-center">
                 </div>

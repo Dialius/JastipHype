@@ -102,9 +102,7 @@
                                 @php
                                     $firstImage = $product->productImages->first();
                                     if ($firstImage) {
-                                        $imageSrc = str_starts_with($firstImage->image_path, 'http')
-                                            ? $firstImage->image_path
-                                            : \App\Helpers\ImageHelper::getImageUrl($firstImage->image_path);
+                                        $imageSrc = image_url($firstImage->image_path);
                                     } else {
                                         $imageSrc = asset('images/placeholder-product.svg');
                                     }

@@ -13,16 +13,7 @@
             @foreach($banners as $index => $banner)
             <div class="carousel-item h-full {{ $index === 0 ? 'active' : '' }}" x-data="countdownTimer('{{ $banner->countdown_target ? $banner->countdown_target->format('Y-m-d H:i:s') : '2026-01-20 00:00:00' }}')">
                 <div class="hero-image absolute inset-0">
-                    @php
-                        // Fallback if helper not loaded
-                        if (function_exists('banner_image_url')) {
-                            $imageUrl = banner_image_url($banner);
-                        } else {
-                            $imageUrl = \App\Helpers\ImageHelper::getImageUrl($banner->image_path);
-                        }
-                    @endphp
-                    
-                    <img src="{{ $imageUrl }}" 
+                    <img src="{{ banner_image_url($banner) }}" 
                          alt="{{ $banner->title }}" 
                          class="w-full h-full object-cover opacity-60">
                     <div class="overlay absolute inset-0 bg-black/40"></div>
@@ -132,7 +123,7 @@
 <section class="hero relative h-screen bg-black text-white overflow-hidden" x-data="countdownTimer('2026-01-20 00:00:00')">
     <div class="hero-image absolute inset-0">
         @if($featuredDrop && $featuredDrop->primaryImage)
-            <img src="{{ $featuredDrop->primaryImage->image_path }}" 
+            <img src="{{ product_image_url($featuredDrop) }}" 
                  alt="{{ $featuredDrop->name }}" 
                  class="w-full h-full object-cover opacity-60">
         @else
@@ -205,15 +196,7 @@
             @foreach($categories as $category)
                 <a href="{{ route('products.index', ['category' => $category->slug]) }}" 
                    class="category-card group relative overflow-hidden rounded-lg aspect-square">
-                    @php
-                        // Fallback if helper not loaded
-                        if (function_exists('category_image_url')) {
-                            $catImageUrl = category_image_url($category);
-                        } else {
-                            $catImageUrl = \App\Helpers\ImageHelper::getImageUrl($category->image);
-                        }
-                    @endphp
-                    <img src="{{ $catImageUrl }}" 
+                    <img src="{{ category_image_url($category) }}" 
                          alt="{{ $category->name }}"
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors">
@@ -254,16 +237,7 @@
         
         <div class="grid md:grid-cols-2 gap-8 items-center">
             <div>
-                @php
-                    // Fallback if helper not loaded
-                    if (function_exists('product_image_url')) {
-                        $showcaseImageUrl = product_image_url($limitedShowcase);
-                    } else {
-                        $showcaseImageUrl = \App\Helpers\ImageHelper::getImageUrl($limitedShowcase->primaryImage ? $limitedShowcase->primaryImage->image_path : null);
-                    }
-                @endphp
-                
-                <img src="{{ $showcaseImageUrl }}" 
+                <img src="{{ product_image_url($limitedShowcase) }}" 
                      alt="{{ $limitedShowcase->name }}" 
                      class="rounded-lg">
             </div>
