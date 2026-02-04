@@ -178,6 +178,20 @@
 
     <!-- Global JavaScript Functions -->
     <script>
+        // Global Image Error Handler
+        document.addEventListener('error', function(e) {
+            if (e.target.tagName.toLowerCase() === 'img') {
+                e.target.onerror = null; // Prevent infinite loop
+                if (!e.target.getAttribute('data-has-error')) {
+                    e.target.setAttribute('data-has-error', 'true');
+                    // Fallback to placeholder
+                    e.target.src = "{{ asset('images/placeholder-product.svg') }}";
+                    // Add classes to make placeholder look decent
+                    e.target.classList.add('bg-gray-50', 'dark:bg-gray-800', 'p-2', 'object-contain');
+                }
+            }
+        }, true); // Capture phase to catch non-bubbling error events
+
         let confirmCallback = null;
 
         function showConfirmModal(options) {

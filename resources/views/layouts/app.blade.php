@@ -34,5 +34,18 @@
     
     <!-- Live Chat Widget -->
     @include('components.live-chat-widget')
+    <!-- Global Image Error Handler -->
+    <script>
+        document.addEventListener('error', function(e) {
+            if (e.target.tagName.toLowerCase() === 'img') {
+                e.target.onerror = null;
+                if (!e.target.getAttribute('data-has-error')) {
+                    e.target.setAttribute('data-has-error', 'true');
+                    e.target.src = "{{ asset('images/placeholder-product.svg') }}";
+                    e.target.classList.add('bg-gray-50', 'object-contain');
+                }
+            }
+        }, true);
+    </script>
 </body>
 </html>
