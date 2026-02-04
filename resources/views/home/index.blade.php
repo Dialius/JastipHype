@@ -18,15 +18,7 @@
                         if (function_exists('banner_image_url')) {
                             $imageUrl = banner_image_url($banner);
                         } else {
-                            // Manual fallback
-                            $imageUrl = asset('images/placeholder-product.svg');
-                            if ($banner->image_path) {
-                                if (filter_var($banner->image_path, FILTER_VALIDATE_URL)) {
-                                    $imageUrl = $banner->image_path;
-                                } else {
-                                    $imageUrl = asset('storage/' . ltrim($banner->image_path, '/'));
-                                }
-                            }
+                            $imageUrl = \App\Helpers\ImageHelper::getImageUrl($banner->image_path);
                         }
                     @endphp
                     
@@ -218,14 +210,7 @@
                         if (function_exists('category_image_url')) {
                             $catImageUrl = category_image_url($category);
                         } else {
-                            $catImageUrl = asset('images/placeholder-product.svg');
-                            if ($category->image) {
-                                if (filter_var($category->image, FILTER_VALIDATE_URL)) {
-                                    $catImageUrl = $category->image;
-                                } else {
-                                    $catImageUrl = asset('storage/' . ltrim($category->image, '/'));
-                                }
-                            }
+                            $catImageUrl = \App\Helpers\ImageHelper::getImageUrl($category->image);
                         }
                     @endphp
                     <img src="{{ $catImageUrl }}" 
@@ -274,14 +259,7 @@
                     if (function_exists('product_image_url')) {
                         $showcaseImageUrl = product_image_url($limitedShowcase);
                     } else {
-                        $showcaseImageUrl = asset('images/placeholder-product.svg');
-                        if ($limitedShowcase->primaryImage) {
-                            if (filter_var($limitedShowcase->primaryImage->image_path, FILTER_VALIDATE_URL)) {
-                                $showcaseImageUrl = $limitedShowcase->primaryImage->image_path;
-                            } else {
-                                $showcaseImageUrl = asset('storage/' . ltrim($limitedShowcase->primaryImage->image_path, '/'));
-                            }
-                        }
+                        $showcaseImageUrl = \App\Helpers\ImageHelper::getImageUrl($limitedShowcase->primaryImage ? $limitedShowcase->primaryImage->image_path : null);
                     }
                 @endphp
                 

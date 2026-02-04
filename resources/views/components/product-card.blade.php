@@ -4,18 +4,14 @@
     
     // Primary image (first image or null)
     if ($productImages->first()) {
-        $primaryImage = str_starts_with($productImages->first()->image_path, 'http')
-            ? $productImages->first()->image_path
-            : asset('storage/' . $productImages->first()->image_path);
+        $primaryImage = \App\Helpers\ImageHelper::getImageUrl($productImages->first()->image_path);
     } else {
-        $primaryImage = asset('images/placeholder-product.svg');
+        $primaryImage = \App\Helpers\ImageHelper::getPlaceholderUrl();
     }
     
     // Second image for hover effect (second image or same as primary)
     if ($productImages->count() > 1) {
-        $secondImage = str_starts_with($productImages->skip(1)->first()->image_path, 'http')
-            ? $productImages->skip(1)->first()->image_path
-            : asset('storage/' . $productImages->skip(1)->first()->image_path);
+        $secondImage = \App\Helpers\ImageHelper::getImageUrl($productImages->skip(1)->first()->image_path);
     } else {
         $secondImage = $primaryImage;
     }
