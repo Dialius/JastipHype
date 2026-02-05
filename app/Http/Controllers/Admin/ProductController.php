@@ -38,11 +38,18 @@ class ProductController extends Controller
             'stock_status' => $request->input('stock_status'), // low, out, in_stock
         ];
 
+        // Get stats separately (lightweight queries)
+        $stats = [
+            'total' => \App\Models\Product::count(),
+            'active' => \App\Models\Product::where('is_active', true)->count(),
+            'low_stock' => \App\Models\Product::where('stock', '>', 0)->where('stock', '<=', 10)->count(),
+            'out_of_stock' => \App\Models\Product::where('stock', 0)->count(),
+        ];
+
         // Use pagination instead of loading all products
         $query = \App\Models\Product::query()
-            ->with(['category', 'brand', 'productImages' => function($q) {
-                $q->where('is_primary', true)->orWhere('order', 0)->limit(1);
-            }]);
+            ->with(['category', 'brand'])
+            ->select(['id', 'name', 'sku', 'category_id', 'brand_id', 'price', 'sale_price', 'stock', 'is_active', 'slug']);
 
         // Apply filters
         if (!empty($filters['search'])) {
@@ -78,13 +85,14 @@ class ProductController extends Controller
             }
         }
 
-        // Paginate results (20 per page)
-        $products = $query->latest()->paginate(20)->withQueryString();
+        // Paginate results (15 per page for smaller payload)
+        $products = $query->latest()->paginate(15)->withQueryString();
         
-        $categories = \App\Models\Category::all();
-        $brands = \App\Models\Brand::all();
+        // Only load categories and brands for filters (minimal data)
+        $categories = \App\Models\Category::select('id', 'name')->get();
+        $brands = \App\Models\Brand::select('id', 'name')->get();
 
-        return view('admin.products.index', compact('products', 'categories', 'brands', 'filters'));
+        return view('admin.products.index', compact('products', 'categories', 'brands', 'filters', 'stats'));
     }
 
     /**

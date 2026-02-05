@@ -24,26 +24,26 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-admin.metric-card 
             title="Total Products"
-            :value="$products->count()"
+            :value="$stats['total']"
             icon="shopping"
         />
         <x-admin.metric-card 
             title="Active Products"
-            :value="$products->where('is_active', true)->count()"
+            :value="$stats['active']"
             icon="chart"
             trend="up"
             trendValue="Active"
         />
         <x-admin.metric-card 
             title="Low Stock"
-            :value="$products->where('stock', '<', 10)->where('stock', '>', 0)->count()"
+            :value="$stats['low_stock']"
             icon="chart"
             trend="down"
             trendValue="Warning"
         />
         <x-admin.metric-card 
             title="Out of Stock"
-            :value="$products->where('stock', 0)->count()"
+            :value="$stats['out_of_stock']"
             icon="chart"
             trendValue="Critical"
         />
@@ -98,21 +98,8 @@
                             <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 product-checkbox dark:border-gray-600 dark:bg-gray-800" value="{{ $product->id }}">
                         </td>
                         <td class="px-5 py-4 md:px-6">
-                            <div class="flex items-center gap-3">
-                                @php
-                                    $firstImage = $product->productImages->first();
-                                    if ($firstImage) {
-                                        $imageSrc = image_url($firstImage->image_path);
-                                    } else {
-                                        $imageSrc = asset('images/placeholder-product.svg');
-                                    }
-                                @endphp
-                                <div class="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg">
-                                    <img class="h-full w-full object-cover" src="{{ $imageSrc }}" alt="{{ $product->name }}">
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ Str::limit($product->name, 35) }}</p>
-                                </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ Str::limit($product->name, 50) }}</p>
                             </div>
                         </td>
                         <td class="whitespace-nowrap px-5 py-4 text-sm text-gray-600 dark:text-gray-400 md:px-6">
