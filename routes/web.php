@@ -162,3 +162,9 @@ Route::prefix('support')->name('support.')->group(function () {
 use App\Http\Controllers\ContactController;
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Storage File Serving Route (Alternative to symlink for Windows)
+use App\Http\Controllers\StorageController;
+Route::get('/storage/{path}', [StorageController::class, 'serve'])
+    ->where('path', '.*')
+    ->name('storage.serve');

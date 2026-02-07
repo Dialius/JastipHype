@@ -41,15 +41,12 @@
                         <tr>
                             <td>{{ $product->id }}</td>
                             <td>
-                                @if($product->image)
-                                    <img src="{{ asset('storage/' . $product->image) }}" 
+                                @if($product->productImages && $product->productImages->count() > 0)
+                                    <img src="{{ product_image_url($product) }}" 
                                          alt="{{ $product->name }}" 
                                          class="img-thumbnail" 
                                          style="width: 50px; height: 50px; object-fit: cover;">
-                                @elseif($product->productImages && $product->productImages->count() > 0)
-                                    <img src="{{ asset('storage/' . $product->productImages->first()->image_path) }}" 
-                                         alt="{{ $product->name }}" 
-                                         class="img-thumbnail" 
+                                @else
                                          style="width: 50px; height: 50px; object-fit: cover;">
                                 @else
                                     <div class="bg-light d-flex align-items-center justify-content-center" 
