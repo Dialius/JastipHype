@@ -144,20 +144,12 @@ class FileUploadService
                 }
             }
         } catch (\Exception $e) {
-            \Log::warning('Could not create directory', [
-                'directory' => $directory,
-                'disk' => $disk,
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-            }
-        } catch (\Exception $e) {
             // In serverless environments, we might not be able to create directories
             // Log the error but don't throw - let Laravel's storage handle it
             \Log::warning('Directory creation warning: ' . $e->getMessage(), [
                 'directory' => $directory,
                 'disk' => $disk,
+                'error' => $e->getMessage()
             ]);
         }
     }
