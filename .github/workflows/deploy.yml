@@ -33,11 +33,22 @@ jobs:
           chmod -R 775 storage bootstrap/cache
           chmod -R 755 public_html
           
+          # Clear all caches first
+          php artisan cache:clear
+          php artisan route:clear
+          php artisan config:clear
+          php artisan view:clear
+          
           # Run Laravel commands
           php artisan migrate --force
-          php artisan storage:link --force
+          
+          # Rebuild caches for production
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
+          
+          # Verify storage route
+          echo "Checking storage route..."
+          php artisan route:list --path=storage
           
           echo "✅ Deployment completed!"
