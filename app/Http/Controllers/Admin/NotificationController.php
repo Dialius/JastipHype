@@ -242,8 +242,8 @@ class NotificationController extends Controller
 
         $sampleOrder = (object) [
             'order_number' => 'ORD-2026-001',
-            'customer_name' => 'John Doe',
-            'customer_email' => 'john@example.com',
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
             'customer_phone' => '+62 812-3456-7890',
             'shipping_address' => 'Jl. Sudirman No. 123, Jakarta Selatan, DKI Jakarta 12190',
             'shipping_courier' => 'JNE',

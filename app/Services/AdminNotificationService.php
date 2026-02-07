@@ -21,7 +21,7 @@ class AdminNotificationService
 
             // New orders (pending/processing) - minimal data
             $newOrders = Order::whereIn('status', ['pending', 'processing'])
-                ->select('id', 'order_number', 'customer_name', 'created_at')
+                ->select('id', 'order_number', 'name', 'created_at')
                 ->orderBy('created_at', 'desc')
                 ->limit(3)
                 ->get();

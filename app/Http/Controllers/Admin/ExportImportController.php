@@ -97,8 +97,8 @@ class ExportImportController extends Controller
             foreach ($orders as $order) {
                 $rows[] = [
                     $order->order_number,
-                    $order->customer_name,
-                    $order->customer_email,
+                    $order->name,
+                    $order->email,
                     $order->total_amount,
                     $order->shipping_cost,
                     $order->status,
