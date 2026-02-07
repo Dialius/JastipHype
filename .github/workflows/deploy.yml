@@ -1,14 +1,11 @@
 name: Deploy to Hostinger
-
 on:
   push:
-    branches: [ master ]
+    branches: [ main, master ]
   workflow_dispatch:
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -18,13 +15,13 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
-        password: ${{ secrets.SSH_PASSWORD }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd /home/u909490256/domains/jastiphype.shop
           
           # Pull latest code
-          git pull origin master
+          git pull origin main
           
           # Install dependencies
           composer install --no-dev --optimize-autoloader --no-interaction
