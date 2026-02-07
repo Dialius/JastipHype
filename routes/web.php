@@ -158,5 +158,7 @@ Route::prefix('support')->name('support.')->group(function () {
     Route::get('/tickets/{ticket}/messages', [SupportController::class, 'getMessages'])->name('messages');
 });
 
-// Contact form route
-Route::post('/contact/send', [InfoController::class, 'sendContact'])->name('contact.send');
+// Contact form routes
+use App\Http\Controllers\ContactController;
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
