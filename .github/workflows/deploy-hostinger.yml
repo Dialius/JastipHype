@@ -10,10 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Deploy to Hostinger via SSH
+    - name: Deploy via SSH
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -21,33 +18,26 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          cd ${{ secrets.DEPLOY_PATH }}
+          cd /home/u909490256/domains/jastiphype.shop
           
-          echo "📥 Pulling latest code..."
+          # Pull latest code
           git pull origin master
           
-          echo "📦 Installing dependencies..."
+          # Install dependencies
           composer install --no-dev --optimize-autoloader --no-interaction
           
-          echo "🏗️ Building assets..."
-          npm install
-          npm run build
+          # Copy public files
+          cp -rf public/* public_html/
           
-          echo "📂 Copying files..."
-          cp -rf public/build/* public_html/build/
-          cp -f public/.htaccess public_html/.htaccess
-          
-          echo "🔧 Setting permissions..."
+          # Set permissions
           chmod -R 775 storage bootstrap/cache
           chmod -R 755 public_html
           
-          echo "🗄️ Running migrations..."
+          # Run migrations
           php artisan migrate --force
           
-          echo "🧹 Clearing cache..."
+          # Clear and cache
           php artisan optimize:clear
-          
-          echo "⚡ Caching for production..."
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
