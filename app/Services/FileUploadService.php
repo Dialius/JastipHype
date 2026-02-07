@@ -129,18 +129,12 @@ class FileUploadService
      */
     protected function ensureDirectoryExists(string $directory, string $disk = 'public'): void
     {
-        // For S3/Cloudinary, we don't need to explicitly create directories
-        if (in_array($disk, ['s3', 'cloudinary'])) {
-            return;
-        }
-
-        // In serverless environments, skip directory creation
-        if ($this->isServerless()) {
+        // For cloud storage (S3), directories are created automatically
+        if ($disk === 's3') {
             return;
         }
 
         try {
-            // Only try to get path if we're not in serverless
             $fullPath = Storage::disk($disk)->path($directory);
             
             if (!file_exists($fullPath)) {
@@ -148,6 +142,15 @@ class FileUploadService
                 if (!mkdir($fullPath, 0755, true) && !is_dir($fullPath)) {
                     throw new \Exception("Failed to create directory: {$fullPath}");
                 }
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Could not create directory', [
+                'directory' => $directory,
+                'disk' => $disk,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
             }
         } catch (\Exception $e) {
             // In serverless environments, we might not be able to create directories

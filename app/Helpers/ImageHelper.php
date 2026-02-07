@@ -26,40 +26,12 @@ class ImageHelper
                 return $path;
             }
             
-            // Check if it's external storage (S3, Cloudinary, etc.)
-            $isExternal = in_array($disk, ['s3', 'cloudinary', 'gcs']);
-            
-            try {
-                // Always try to get URL from Storage driver first
-                // This handles S3/Cloudinary URLs correctly
-                $url = Storage::disk($disk)->url($path);
-                
-                // If we got a valid URL, return it
-                if (filter_var($url, FILTER_VALIDATE_URL)) {
-                    return $url;
-                }
-            } catch (\Exception $e) {
-                // Log error but continue to fallback
-                \Log::warning('Failed to get storage URL', [
-                    'path' => $path,
-                    'disk' => $disk,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-            
-            // Fallback for local/public disk in serverless
-            if (self::isServerless() && !$isExternal) {
-                // In serverless local, we can only serve what's in public/storage (build assets)
-                // We cannot serve what's in /tmp/storage (uploaded files)
-                // So this will likely only work for pre-deployed assets
-                $cleanPath = ltrim($path, '/');
-                $cleanPath = str_replace('storage/', '', $cleanPath);
-                return asset('storage/' . $cleanPath);
-            }
-            
-            // Default fallback
+            // Clean path and generate URL
             $cleanPath = ltrim($path, '/');
+            
+            // Use asset helper for public disk
             return asset('storage/' . $cleanPath);
+            
         } catch (\Throwable $e) {
             \Log::error('ImageHelper::getImageUrl error', [
                 'path' => $path,
@@ -158,18 +130,6 @@ class ImageHelper
     public static function getPlaceholderUrl(): string
     {
         return asset('images/placeholder-product.svg');
-    }
-    
-    /**
-     * Check if running in serverless environment
-     * 
-     * @return bool
-     */
-    protected static function isServerless(): bool
-    {
-        return !empty(getenv('VERCEL_ENV')) || 
-               !empty(getenv('AWS_LAMBDA_FUNCTION_NAME')) ||
-               !empty(getenv('NETLIFY'));
     }
     
     /**

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', env('VERCEL_ENV') ? 'cloudinary' : 'local'),
+    'default' => env('FILESYSTEM_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,9 +40,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => env('FILESYSTEM_DRIVER') === 'local' 
-                ? storage_path('app/public') 
-                : (env('VERCEL_ENV') ? '/tmp/storage' : storage_path('app/public')),
+            'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
@@ -60,14 +58,6 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
-        ],
-
-        'cloudinary' => [
-            'driver' => 'cloudinary',
-            'api_key' => env('CLOUDINARY_API_KEY'),
-            'api_secret' => env('CLOUDINARY_API_SECRET'),
-            'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
-            'secure' => true,
         ],
 
     ],
