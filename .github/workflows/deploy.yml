@@ -28,11 +28,18 @@ jobs:
           # Install dependencies
           composer install --no-dev --optimize-autoloader --no-interaction
           
-          # Backup current .env
-          cp .env .env.backup.$(date +%Y%m%d_%H%M%S) || true
+          # Backup current .env (if exists)
+          if [ -f .env ]; then
+            cp .env .env.backup.$(date +%Y%m%d_%H%M%S)
+          fi
           
           # Copy .env.hostinger to .env (production config)
           cp .env.hostinger .env
+          
+          # Ensure APP_KEY is set
+          if ! grep -q "APP_KEY=base64:" .env; then
+            php artisan key:generate --force
+          fi
           
           # Copy public files to public_html
           cp -rf public/* public_html/
@@ -52,12 +59,18 @@ jobs:
           chmod -R 755 public_html
           chmod -R 755 public/uploads
           chmod -R 755 public_html/uploads
+          find storage -type f -exec chmod 664 {} \; 2>/dev/null || true
+          find bootstrap/cache -type f -exec chmod 664 {} \; 2>/dev/null || true
           
-          # Clear all caches first
-          php artisan cache:clear
-          php artisan route:clear
-          php artisan config:clear
-          php artisan view:clear
+          # Clear all caches first (remove files manually to avoid errors)
+          rm -f bootstrap/cache/config.php
+          rm -f bootstrap/cache/routes-*.php
+          rm -f bootstrap/cache/services.php
+          rm -f bootstrap/cache/packages.php
+          php artisan cache:clear 2>/dev/null || true
+          php artisan route:clear 2>/dev/null || true
+          php artisan config:clear 2>/dev/null || true
+          php artisan view:clear 2>/dev/null || true
           
           # Run Laravel commands
           php artisan migrate --force
