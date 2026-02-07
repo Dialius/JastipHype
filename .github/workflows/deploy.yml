@@ -28,12 +28,30 @@ jobs:
           # Install dependencies
           composer install --no-dev --optimize-autoloader --no-interaction
           
+          # Backup current .env
+          cp .env .env.backup.$(date +%Y%m%d_%H%M%S) || true
+          
+          # Copy .env.hostinger to .env (production config)
+          cp .env.hostinger .env
+          
           # Copy public files to public_html
           cp -rf public/* public_html/
+          
+          # Create uploads folders if not exist
+          mkdir -p public/uploads/products
+          mkdir -p public/uploads/brands
+          mkdir -p public/uploads/categories
+          mkdir -p public/uploads/banners
+          mkdir -p public_html/uploads/products
+          mkdir -p public_html/uploads/brands
+          mkdir -p public_html/uploads/categories
+          mkdir -p public_html/uploads/banners
           
           # Set permissions
           chmod -R 775 storage bootstrap/cache
           chmod -R 755 public_html
+          chmod -R 755 public/uploads
+          chmod -R 755 public_html/uploads
           
           # Clear all caches first
           php artisan cache:clear
@@ -44,17 +62,23 @@ jobs:
           # Run Laravel commands
           php artisan migrate --force
           
-          # Migrate images from storage to public/uploads (run once, safe to run multiple times)
-          echo "Migrating images to public folder..."
-          php migrate-images-to-public.php || echo "Migration script completed with warnings"
+          # Migrate images from storage/app/private to public/uploads
+          echo "🚚 Migrating images from private to public..."
+          php migrate-private-to-public.php || echo "⚠️  Migration script completed with warnings"
+          
+          # Sync uploads to public_html
+          echo "📋 Syncing uploads to public_html..."
+          rsync -av --delete public/uploads/ public_html/uploads/
           
           # Rebuild caches for production
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
           
-          # Verify storage route
-          echo "Checking storage route..."
-          php artisan route:list --path=storage
+          # Verify configuration
+          echo "🔍 Verifying FILESYSTEM_DISK..."
+          php artisan tinker --execute="echo 'FILESYSTEM_DISK: ' . config('filesystems.default') . PHP_EOL;" || true
           
           echo "✅ Deployment completed!"
+          echo "📊 Uploads folder status:"
+          ls -lh public_html/uploads/ || true
