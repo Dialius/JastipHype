@@ -29,8 +29,8 @@ class ImageHelper
             // Clean path and generate URL
             $cleanPath = ltrim($path, '/');
             
-            // Use asset helper for public disk
-            return asset('storage/' . $cleanPath);
+            // Use asset helper for public disk (now stored in public/uploads)
+            return asset('uploads/' . $cleanPath);
             
         } catch (\Throwable $e) {
             \Log::error('ImageHelper::getImageUrl error', [

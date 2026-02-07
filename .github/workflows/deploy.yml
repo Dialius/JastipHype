@@ -42,6 +42,10 @@ jobs:
           # Run Laravel commands
           php artisan migrate --force
           
+          # Migrate images from storage to public/uploads (run once, safe to run multiple times)
+          echo "Migrating images to public folder..."
+          php migrate-images-to-public.php || echo "Migration script completed with warnings"
+          
           # Rebuild caches for production
           php artisan config:cache
           php artisan route:cache
