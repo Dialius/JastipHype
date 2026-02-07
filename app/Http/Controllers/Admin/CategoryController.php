@@ -4,11 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Services\FileUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    protected $fileUploadService;
+
+    public function __construct(FileUploadService $fileUploadService)
+    {
+        $this->fileUploadService = $fileUploadService;
+    }
+
     /**
      * Display a listing of categories with hierarchy
      */
@@ -51,6 +59,7 @@ class CategoryController extends Controller
             'slug' => 'nullable|string|unique:categories,slug',
             'description' => 'nullable|string',
             'parent_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         // Generate slug if not provided
@@ -61,6 +70,11 @@ class CategoryController extends Controller
         // Set parent_id to null if empty
         if (empty($validated['parent_id'])) {
             $validated['parent_id'] = null;
+        }
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $validated['image'] = $this->fileUploadService->upload($request->file('image'), 'categories');
         }
 
         Category::create($validated);
@@ -114,6 +128,8 @@ class CategoryController extends Controller
             'slug' => 'nullable|string|unique:categories,slug,' . $id,
             'description' => 'nullable|string',
             'parent_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'remove_image' => 'nullable|boolean',
         ]);
 
         // Generate slug if not provided
@@ -140,6 +156,23 @@ class CategoryController extends Controller
         // Set parent_id to null if empty
         if (empty($validated['parent_id'])) {
             $validated['parent_id'] = null;
+        }
+
+        // Handle image removal
+        if ($request->has('remove_image') && $request->remove_image) {
+            if ($category->image) {
+                $this->fileUploadService->delete($category->image);
+                $validated['image'] = null;
+            }
+        }
+
+        // Handle image upload (replace existing)
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($category->image) {
+                $this->fileUploadService->delete($category->image);
+            }
+            $validated['image'] = $this->fileUploadService->upload($request->file('image'), 'categories');
         }
 
         $category->update($validated);
@@ -169,6 +202,11 @@ class CategoryController extends Controller
             return redirect()
                 ->route('admin.categories.index')
                 ->with('error', "Cannot delete category. It has {$childrenCount} subcategories.");
+        }
+
+        // Delete category image
+        if ($category->image) {
+            $this->fileUploadService->delete($category->image);
         }
 
         $category->delete();
