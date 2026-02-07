@@ -156,16 +156,35 @@ class SystemMonitorController extends Controller
      */
     protected function getDiskUsage()
     {
-        $total = disk_total_space('/');
-        $free = disk_free_space('/');
-        $used = $total - $free;
-        
-        return [
-            'total' => $this->formatBytes($total),
-            'used' => $this->formatBytes($used),
-            'free' => $this->formatBytes($free),
-            'percentage' => round(($used / $total) * 100, 2),
-        ];
+        try {
+            $total = @disk_total_space('/');
+            $free = @disk_free_space('/');
+            
+            if ($total === false || $free === false) {
+                return [
+                    'total' => 'N/A',
+                    'used' => 'N/A',
+                    'free' => 'N/A',
+                    'percentage' => 0,
+                ];
+            }
+            
+            $used = $total - $free;
+            
+            return [
+                'total' => $this->formatBytes($total),
+                'used' => $this->formatBytes($used),
+                'free' => $this->formatBytes($free),
+                'percentage' => round(($used / $total) * 100, 2),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'total' => 'N/A',
+                'used' => 'N/A',
+                'free' => 'N/A',
+                'percentage' => 0,
+            ];
+        }
     }
 
     /**
@@ -192,8 +211,11 @@ class SystemMonitorController extends Controller
         }
         
         try {
-            $uptime = shell_exec('uptime -p');
-            return trim($uptime) ?: 'N/A';
+            if (function_exists('shell_exec') && !in_array('shell_exec', explode(',', ini_get('disable_functions')))) {
+                $uptime = @shell_exec('uptime -p 2>&1');
+                return trim($uptime) ?: 'N/A';
+            }
+            return 'N/A (shell_exec disabled)';
         } catch (\Exception $e) {
             return 'N/A';
         }
