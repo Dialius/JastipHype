@@ -18,13 +18,28 @@ class StorageController extends Controller
      */
     public function serve(Request $request, $path)
     {
+        // Log for debugging
+        \Log::info('StorageController::serve called', [
+            'path' => $path,
+            'full_url' => $request->fullUrl(),
+        ]);
+        
         // Security: Prevent directory traversal attacks
         $path = str_replace(['../', '..\\'], '', $path);
         
+        \Log::info('After security clean', ['path' => $path]);
+        
         // Check if file exists in public disk
         if (!Storage::disk('public')->exists($path)) {
-            abort(404, 'File not found');
+            \Log::warning('File not found in storage', [
+                'path' => $path,
+                'disk_root' => Storage::disk('public')->path(''),
+                'full_path' => Storage::disk('public')->path($path),
+            ]);
+            abort(404, 'File not found: ' . $path);
         }
+        
+        \Log::info('File found, serving', ['path' => $path]);
         
         // Get file path
         $filePath = Storage::disk('public')->path($path);

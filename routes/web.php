@@ -16,6 +16,29 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InfoController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\StorageController;
+
+// TEST ROUTE - Simple test
+Route::get('/test-route', function() {
+    return 'Route works!';
+});
+
+// Storage File Serving Route (MUST BE FIRST - Alternative to symlink)
+Route::any('/storage/{path}', function($path) {
+    $path = str_replace(['../', '..\\'], '', $path);
+    
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404, 'File not found in storage: ' . $path);
+    }
+    
+    $filePath = Storage::disk('public')->path($path);
+    $mimeType = Storage::disk('public')->mimeType($path);
+    
+    return response()->file($filePath, [
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'public, max-age=31536000',
+    ]);
+})->where('path', '.*')->name('storage.serve');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -162,9 +185,3 @@ Route::prefix('support')->name('support.')->group(function () {
 use App\Http\Controllers\ContactController;
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
-// Storage File Serving Route (Alternative to symlink for Windows)
-use App\Http\Controllers\StorageController;
-Route::get('/storage/{path}', [StorageController::class, 'serve'])
-    ->where('path', '.*')
-    ->name('storage.serve');
