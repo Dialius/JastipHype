@@ -3,7 +3,7 @@
 ## Overview
 Custom error pages yang sudah dibuat untuk memberikan user experience yang lebih baik saat terjadi error.
 
-## Error Pages yang Tersedia
+## Error Pages yang Tersedia.
 
 ### 1. **404 - Page Not Found** ✅
 **File:** `resources/views/errors/404.blade.php`
