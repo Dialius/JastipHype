@@ -134,28 +134,10 @@
                             <td class="py-3">
                                 <div class="d-flex align-items-center">
                                     <div class="me-3">
-                                        @php
-                                            $firstImage = $product->productImages->first();
-                                            if ($firstImage) {
-                                                $imageSrc = str_starts_with($firstImage->image_path, 'http')
-                                                    ? $firstImage->image_path
-                                                    : asset('storage/' . $firstImage->image_path);
-                                            } else {
-                                                $imageSrc = null;
-                                            }
-                                        @endphp
-                                        
-                                        @if($imageSrc)
-                                            <img src="{{ $imageSrc }}" 
-                                                 alt="{{ $product->name }}" 
-                                                 class="rounded"
-                                                 style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #e3e6f0;">
-                                        @else
-                                            <div class="bg-light d-flex align-items-center justify-content-center rounded" 
-                                                 style="width: 60px; height: 60px; border: 2px solid #e3e6f0;">
-                                                <i class="bi bi-image text-muted fs-4"></i>
-                                            </div>
-                                        @endif
+                                        <img src="{{ product_image_url($product) }}" 
+                                             alt="{{ $product->name }}" 
+                                             class="rounded"
+                                             style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #e3e6f0;">
                                     </div>
                                     <div>
                                         <div class="fw-semibold text-dark mb-1">{{ Str::limit($product->name, 40) }}</div>

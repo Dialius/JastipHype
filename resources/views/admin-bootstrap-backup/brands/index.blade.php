@@ -29,13 +29,8 @@
             <div class="card-body">
                 <!-- Logo -->
                 <div class="text-center mb-3 position-relative">
-                    @if($brand->logo)
-                        <img src="{{ asset('images/brands/' . $brand->logo) }}" 
-                             alt="{{ $brand->name }}" 
-                             class="brand-logo"
-                             style="max-width: 120px; max-height: 120px; object-fit: contain;">
-                    @elseif($brand->logo_path)
-                        <img src="{{ Storage::url($brand->logo_path) }}" 
+                    @if($brand->logo_path || $brand->logo)
+                        <img src="{{ brand_logo_url($brand) }}" 
                              alt="{{ $brand->name }}" 
                              class="brand-logo"
                              style="max-width: 120px; max-height: 120px; object-fit: contain;">

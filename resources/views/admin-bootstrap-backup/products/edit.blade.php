@@ -127,7 +127,7 @@
                             @foreach($existingImages as $index => $imagePath)
                             <div class="col-md-3">
                                 <div class="card">
-                                    <img src="{{ Storage::url($imagePath) }}" class="card-img-top" alt="Product Image" style="height: 150px; object-fit: cover;">
+                                    <img src="{{ image_url($imagePath) }}" class="card-img-top" alt="Product Image" style="height: 150px; object-fit: cover;">
                                     <div class="card-body p-2">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="remove_images[]" value="{{ $imagePath }}" id="remove{{ $index }}">

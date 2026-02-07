@@ -46,7 +46,7 @@
                                 <div class="mb-3">
                                     <label class="form-label small text-muted">Current Image</label>
                                     <div class="border rounded p-2 bg-light">
-                                        <img src="{{ Storage::url($category->image) }}" 
+                                        <img src="{{ category_image_url($category) }}" 
                                              alt="{{ $category->name }}" 
                                              class="img-fluid rounded"
                                              style="max-height: 200px; object-fit: cover;">
@@ -166,7 +166,7 @@
                             <div class="col-6">
                                 <div class="bg-dark rounded" style="aspect-ratio: 1/1; position: relative;">
                                     @if($category->image)
-                                    <img src="{{ Storage::url($category->image) }}" 
+                                    <img src="{{ category_image_url($category) }}" 
                                          alt="{{ $category->name }}"
                                          class="w-100 h-100 rounded"
                                          style="object-fit: cover; opacity: 0.7;">

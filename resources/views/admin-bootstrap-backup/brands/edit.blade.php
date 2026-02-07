@@ -74,7 +74,7 @@
                     <div class="mb-3">
                         <label class="form-label">Current Logo</label>
                         <div class="text-center p-3" style="background: #f8f9fc; border-radius: 0.5rem;">
-                            <img src="{{ Storage::url($brand->logo_path) }}" 
+                            <img src="{{ brand_logo_url($brand) }}" 
                                  alt="{{ $brand->name }}" 
                                  style="max-width: 200px; max-height: 200px; object-fit: contain;">
                         </div>

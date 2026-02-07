@@ -228,7 +228,7 @@
                                 <div class="grid grid-cols-4 gap-2 mt-4">
                                     @foreach($review->images as $image)
                                         <img 
-                                            src="{{ asset($image->image_path) }}" 
+                                            src="{{ image_url($image->image_path) }}" 
                                             alt="Review image" 
                                             class="w-full h-24 object-cover rounded-lg border border-gray-200 hover:opacity-75 transition-opacity cursor-pointer"
                                         >

@@ -49,17 +49,11 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        @if($item->product && $item->product->images)
-                                            @php
-                                                $images = json_decode($item->product->images, true);
-                                                $firstImage = !empty($images) ? $images[0] : null;
-                                            @endphp
-                                            @if($firstImage)
-                                                <img src="{{ Storage::url($firstImage) }}" 
-                                                     alt="{{ $item->product_name }}" 
-                                                     class="rounded me-3" 
-                                                     style="width: 50px; height: 50px; object-fit: cover;">
-                                            @endif
+                                        @if($item->product)
+                                            <img src="{{ product_image_url($item->product) }}" 
+                                                 alt="{{ $item->product_name }}" 
+                                                 class="rounded me-3" 
+                                                 style="width: 50px; height: 50px; object-fit: cover;">
                                         @endif
                                         <div>
                                             <div class="fw-semibold">{{ $item->product_name }}</div>

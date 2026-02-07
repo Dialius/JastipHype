@@ -33,7 +33,7 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     @if($review->product->productImages->first())
-                    <img src="{{ asset('storage/' . $review->product->productImages->first()->image_path) }}" 
+                    <img src="{{ product_image_url($review->product) }}" 
                          alt="{{ $review->product->name }}" 
                          class="rounded me-3"
                          style="width: 80px; height: 80px; object-fit: cover;">
@@ -101,8 +101,8 @@
                     <div class="row g-2">
                         @foreach($review->images as $image)
                         <div class="col-md-3">
-                            <a href="{{ asset('storage/' . $image->image_path) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $image->image_path) }}" 
+                            <a href="{{ image_url($image->image_path) }}" target="_blank">
+                                <img src="{{ image_url($image->image_path) }}" 
                                      alt="Review Image" 
                                      class="img-fluid rounded"
                                      style="width: 100%; height: 150px; object-fit: cover;">

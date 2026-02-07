@@ -77,7 +77,7 @@
                     <!-- Banner Image -->
                     <div class="position-relative">
                         @if($banner->image_path)
-                        <img src="{{ asset('storage/' . $banner->image_path) }}" 
+                        <img src="{{ banner_image_url($banner) }}" 
                              class="card-img-top" 
                              alt="{{ $banner->title }}"
                              style="height: 200px; object-fit: cover;">

@@ -143,7 +143,7 @@
                     <div class="mb-3">
                         <label class="form-label">Current Image</label>
                         <div class="border rounded p-2 bg-light">
-                            <img src="{{ asset('storage/' . $banner->image_path) }}" 
+                            <img src="{{ banner_image_url($banner) }}" 
                                  alt="{{ $banner->title }}" 
                                  class="img-fluid" 
                                  style="max-height: 300px;">

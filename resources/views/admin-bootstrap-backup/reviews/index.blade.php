@@ -158,7 +158,7 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 @if($review->product->productImages->first())
-                                <img src="{{ asset('storage/' . $review->product->productImages->first()->image_path) }}" 
+                                <img src="{{ product_image_url($review->product) }}" 
                                      alt="{{ $review->product->name }}" 
                                      class="rounded me-2"
                                      style="width: 40px; height: 40px; object-fit: cover;">
