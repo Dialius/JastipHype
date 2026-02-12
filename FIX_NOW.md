@@ -6,13 +6,15 @@
 Call to undefined function Illuminate\Support\mb_split()
 ```
 
-**Masalah:** PHP extension `mbstring` tidak ter-load dengan benar.
+**Masalah:** PHP environment mismatch - mbstring enabled di hPanel tapi web server menggunakan PHP handler yang berbeda.
+
+**Update:** Hostinger konfirmasi mbstring sudah enabled di PHP 8.3.24, tapi masih error. Ini berarti **CLI PHP vs Web PHP menggunakan environment berbeda**.
 
 ---
 
-## ⚡ COPY-PASTE COMMANDS INI (5 MENIT)
+## ⚡ COPY-PASTE COMMANDS INI (10 MENIT)
 
-### Step 1: Login SSH & Run Fix
+### Step 1: Check PHP Environment Mismatch
 
 ```bash
 ssh u909490256@id-dci-web1319.main-hosting.eu -p 65002
@@ -21,10 +23,63 @@ ssh u909490256@id-dci-web1319.main-hosting.eu -p 65002
 Setelah login, jalankan:
 
 ```bash
-cd /home/u909490256/domains/jastiphype.shop && bash fix-mbstring-error.sh
+cd /home/u909490256/domains/jastiphype.shop && bash check-php-environment.sh
 ```
 
-**Tunggu 5-10 menit**, lalu test website: https://jastiphype.shop
+**Ini akan:**
+- Cek PHP CLI vs Web environment
+- Buat test file untuk cek web PHP
+- Extract full error dari log
+
+### Step 2: Check Web PHP
+
+Buka browser: **https://jastiphype.shop/phpinfo-test-temp.php**
+
+**Cek:**
+- PHP Version (harus 8.3.24)
+- mbstring loaded (harus YES)
+- mb_split exists (harus YES)
+
+**⚠️ HAPUS file test setelah cek:**
+```bash
+rm public/phpinfo-test-temp.php
+```
+
+### Step 3: Force PHP 8.3 in .htaccess
+
+Jika ada mismatch, jalankan:
+
+```bash
+cd /home/u909490256/domains/jastiphype.shop
+
+# Backup .htaccess
+cp public/.htaccess public/.htaccess.backup
+
+# Force PHP 8.3
+cat > public/.htaccess.new << 'EOF'
+# Force PHP 8.3
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php83 .php .php8 .phtml
+</IfModule>
+
+EOF
+
+# Append original content
+cat public/.htaccess >> public/.htaccess.new
+mv public/.htaccess.new public/.htaccess
+
+# Copy to public_html
+cp public/.htaccess /home/u909490256/public_html/.htaccess
+
+# Clear caches
+rm -rf bootstrap/cache/*.php
+php artisan config:clear
+php artisan cache:clear
+
+echo "✅ Done! Wait 2-3 minutes, then test website"
+```
+
+**Tunggu 2-3 menit**, lalu test website: https://jastiphype.shop
 
 ---
 
