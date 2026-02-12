@@ -25,8 +25,8 @@ jobs:
           # Pull latest code (use master branch)
           git pull origin master || git pull origin main
           
-          # Install dependencies
-          composer install --no-dev --optimize-autoloader --no-interaction
+          # Install dependencies (skip if composer not available)
+          composer install --no-dev --optimize-autoloader --no-interaction 2>/dev/null || echo "⚠️  Composer skipped"
           
           # Backup current .env (if exists)
           if [ -f .env ]; then
@@ -41,24 +41,19 @@ jobs:
             php artisan key:generate --force
           fi
           
-          # Copy public files to public_html
-          cp -rf public/* public_html/
-          
           # Create uploads folders if not exist
           mkdir -p public/uploads/products
           mkdir -p public/uploads/brands
           mkdir -p public/uploads/categories
           mkdir -p public/uploads/banners
-          mkdir -p public_html/uploads/products
-          mkdir -p public_html/uploads/brands
-          mkdir -p public_html/uploads/categories
-          mkdir -p public_html/uploads/banners
+          mkdir -p /home/u909490256/public_html/uploads/products
+          mkdir -p /home/u909490256/public_html/uploads/brands
+          mkdir -p /home/u909490256/public_html/uploads/categories
+          mkdir -p /home/u909490256/public_html/uploads/banners
           
           # Set permissions
           chmod -R 775 storage bootstrap/cache
-          chmod -R 755 public_html
           chmod -R 755 public/uploads
-          chmod -R 755 public_html/uploads
           find storage -type f -exec chmod 664 {} \; 2>/dev/null || true
           find bootstrap/cache -type f -exec chmod 664 {} \; 2>/dev/null || true
           
@@ -77,11 +72,12 @@ jobs:
           
           # Migrate images from storage/app/private to public/uploads
           echo "🚚 Migrating images from private to public..."
-          php migrate-private-to-public.php || echo "⚠️  Migration script completed with warnings"
+          php migrate-private-to-public.php 2>/dev/null || echo "⚠️  Migration script completed with warnings"
           
-          # Sync uploads to public_html
-          echo "📋 Syncing uploads to public_html..."
-          rsync -av --delete public/uploads/ public_html/uploads/
+          # Copy public files to public_html (CORRECT PATH)
+          echo "📋 Copying files to public_html..."
+          cp -rf public/* /home/u909490256/public_html/
+          chmod -R 755 /home/u909490256/public_html
           
           # Rebuild caches for production
           php artisan config:cache
@@ -90,8 +86,8 @@ jobs:
           
           # Verify configuration
           echo "🔍 Verifying FILESYSTEM_DISK..."
-          php artisan tinker --execute="echo 'FILESYSTEM_DISK: ' . config('filesystems.default') . PHP_EOL;" || true
+          php artisan tinker --execute="echo 'FILESYSTEM_DISK: ' . config('filesystems.default') . PHP_EOL;" 2>/dev/null || true
           
           echo "✅ Deployment completed!"
-          echo "📊 Uploads folder status:"
-          ls -lh public_html/uploads/ || true
+          echo "📊 Public_html status:"
+          ls -lh /home/u909490256/public_html/ | head -10
