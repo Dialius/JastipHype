@@ -103,14 +103,18 @@
 
         /* Scrollbar */
         .cookie-scroll::-webkit-scrollbar {
-            width: 4px;
+            width: 6px;
         }
         .cookie-scroll::-webkit-scrollbar-track {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
         }
         .cookie-scroll::-webkit-scrollbar-thumb {
-            background: rgba(212, 168, 67, 0.3);
-            border-radius: 4px;
+            background: rgba(212, 168, 67, 0.4);
+            border-radius: 3px;
+        }
+        .cookie-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 168, 67, 0.6);
         }
 
         /* Gold Button */
@@ -224,29 +228,30 @@
 </div>
 
 <!-- Cookie Settings Modal -->
-<div id="cookieSettings" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 cookie-modal-overlay"
+<div id="cookieSettings" class="hidden fixed inset-0 z-[10000] cookie-modal-overlay"
      style="animation: fadeIn 0.3s ease forwards;">
-    <div class="cookie-modal-card rounded-2xl w-full max-w-xl max-h-[90vh] overflow-hidden shadow-2xl"
-         style="animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
-        
-        <!-- Modal Header -->
-        <div class="px-6 py-5 border-b border-white/10">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl font-bold text-white">Pengaturan Cookies</h2>
-                    <p class="text-gray-400 text-xs mt-1">Kelola preferensi privasi Anda</p>
+    <div class="h-full w-full flex items-center justify-center p-4 overflow-y-auto">
+        <div class="cookie-modal-card rounded-2xl w-full max-w-2xl my-8 shadow-2xl flex flex-col"
+             style="animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; max-height: calc(100vh - 4rem);">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-5 border-b border-white/10 flex-shrink-0">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Pengaturan Cookies</h2>
+                        <p class="text-gray-400 text-xs mt-1">Kelola preferensi privasi Anda</p>
+                    </div>
+                    <button onclick="closeCookieSettings()" 
+                            class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors flex-shrink-0">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
-                <button onclick="closeCookieSettings()" 
-                        class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
             </div>
-        </div>
 
-        <!-- Modal Body -->
-        <div class="px-6 py-5 overflow-y-auto cookie-scroll" style="max-height: calc(90vh - 180px);">
+            <!-- Modal Body -->
+            <div class="px-6 py-5 overflow-y-auto cookie-scroll flex-1">
             <p class="text-gray-400 text-sm mb-5 leading-relaxed">
                 Cookies penting diperlukan untuk fungsi dasar website dan tidak dapat dinonaktifkan. 
                 Anda dapat memilih untuk mengaktifkan atau menonaktifkan cookie lainnya.
@@ -346,7 +351,7 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="px-6 py-4 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+        <div class="px-6 py-4 border-t border-white/10 flex flex-col sm:flex-row gap-3 flex-shrink-0">
             <button 
                 onclick="saveCustomCookieSettings()" 
                 class="btn-cookie-gold flex-1 px-5 py-3 rounded-xl text-sm font-semibold"
@@ -360,6 +365,7 @@
                 Terima Semua
             </button>
         </div>
+    </div>
     </div>
 </div>
 
@@ -387,6 +393,9 @@ function showCookieSettings() {
     const modal = document.getElementById('cookieSettings');
     modal.classList.remove('hidden');
     
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    
     // Load current preferences if they exist
     const consent = getCookie('cookie_consent');
     if (consent) {
@@ -405,12 +414,20 @@ window.showCookieConsent = showCookieSettings;
 function closeCookieSettings() {
     const modal = document.getElementById('cookieSettings');
     modal.classList.add('hidden');
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
 }
 
 // Close modal when clicking outside (on overlay)
 document.addEventListener('click', function(event) {
     const modal = document.getElementById('cookieSettings');
-    if (event.target === modal) {
+    const modalCard = modal?.querySelector('.cookie-modal-card');
+    
+    // Check if click is on overlay (not on modal card)
+    if (modal && !modal.classList.contains('hidden') && 
+        event.target === modal || 
+        (event.target.classList.contains('cookie-modal-overlay') && !modalCard?.contains(event.target))) {
         closeCookieSettings();
     }
 });
@@ -419,19 +436,9 @@ document.addEventListener('click', function(event) {
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         const modal = document.getElementById('cookieSettings');
-        if (!modal.classList.contains('hidden')) {
+        if (modal && !modal.classList.contains('hidden')) {
             closeCookieSettings();
         }
-    }
-});
-
-// Prevent modal close when clicking inside modal content
-document.addEventListener('DOMContentLoaded', function() {
-    const modalContent = document.querySelector('#cookieSettings .cookie-modal-card');
-    if (modalContent) {
-        modalContent.addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
     }
 });
 
