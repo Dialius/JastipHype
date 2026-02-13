@@ -74,13 +74,15 @@
 
         /* Settings Modal */
         .cookie-modal-overlay {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
+            pointer-events: auto;
         }
         .cookie-modal-card {
             background: linear-gradient(145deg, #1a1a2e, #16213e);
             border: 1px solid rgba(212, 168, 67, 0.12);
+            pointer-events: auto;
         }
         .cookie-category-card {
             background: rgba(255, 255, 255, 0.04);
@@ -228,10 +230,10 @@
 </div>
 
 <!-- Cookie Settings Modal -->
-<div id="cookieSettings" class="hidden fixed inset-0 z-[10000] cookie-modal-overlay"
+<div id="cookieSettings" class="hidden fixed inset-0 z-[99999] cookie-modal-overlay"
      style="animation: fadeIn 0.3s ease forwards;">
     <div class="h-full w-full flex items-center justify-center p-4 overflow-y-auto">
-        <div class="cookie-modal-card rounded-2xl w-full max-w-2xl my-8 shadow-2xl flex flex-col"
+        <div class="cookie-modal-card rounded-2xl w-full max-w-2xl my-8 shadow-2xl flex flex-col relative"
              style="animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; max-height: calc(100vh - 4rem);">
             
             <!-- Modal Header -->
