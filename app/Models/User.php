@@ -103,6 +103,30 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user's data export requests
+     */
+    public function dataExportRequests()
+    {
+        return $this->hasMany(DataExportRequest::class);
+    }
+
+    /**
+     * Get the user's data deletion requests
+     */
+    public function dataDeletionRequests()
+    {
+        return $this->hasMany(DataDeletionRequest::class);
+    }
+
+    /**
+     * Get the user's security events
+     */
+    public function securityEvents()
+    {
+        return $this->hasMany(SecurityEvent::class);
+    }
+
+    /**
      * Get status attribute (virtual attribute based on suspension_reason)
      */
     public function getStatusAttribute()

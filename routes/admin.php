@@ -173,3 +173,21 @@ Route::get('support/{ticket}/messages', [SupportController::class, 'getMessages'
 
 // Redirect /admin to /admin/dashboard
 Route::redirect('/', '/admin/dashboard');
+
+// GDPR Management
+use App\Http\Controllers\Admin\GdprAdminController;
+Route::prefix('gdpr')->name('admin.gdpr.')->group(function () {
+    Route::get('/', [GdprAdminController::class, 'index'])->name('index');
+    Route::post('deletion/{deletionRequest}/approve', [GdprAdminController::class, 'approveDeletion'])->name('deletion.approve');
+    Route::post('deletion/{deletionRequest}/reject', [GdprAdminController::class, 'rejectDeletion'])->name('deletion.reject');
+    Route::post('deletion/{deletionRequest}/process', [GdprAdminController::class, 'processDeletion'])->name('deletion.process');
+});
+
+// Security Management
+use App\Http\Controllers\Admin\SecurityAdminController;
+Route::prefix('security')->name('admin.security.')->group(function () {
+    Route::get('/', [SecurityAdminController::class, 'index'])->name('index');
+    Route::post('block-ip', [SecurityAdminController::class, 'blockIp'])->name('block-ip');
+    Route::post('unblock-ip', [SecurityAdminController::class, 'unblockIp'])->name('unblock-ip');
+    Route::get('events/{event}', [SecurityAdminController::class, 'showEvent'])->name('event');
+});

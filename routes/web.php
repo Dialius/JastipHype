@@ -185,3 +185,20 @@ Route::prefix('support')->name('support.')->group(function () {
 use App\Http\Controllers\ContactController;
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// GDPR Routes
+use App\Http\Controllers\GdprController;
+Route::prefix('gdpr')->name('gdpr.')->group(function () {
+    Route::get('/privacy-policy', [GdprController::class, 'privacyPolicy'])->name('privacy-policy');
+    Route::get('/cookie-policy', [GdprController::class, 'cookiePolicy'])->name('cookie-policy');
+    Route::get('/terms-of-service', [GdprController::class, 'termsOfService'])->name('terms-of-service');
+    Route::post('/cookie-consent', [GdprController::class, 'storeCookieConsent'])->name('cookie-consent');
+    
+    // Authenticated GDPR routes
+    Route::middleware('auth')->group(function () {
+        Route::get('/dashboard', [GdprController::class, 'dashboard'])->name('dashboard');
+        Route::post('/request-export', [GdprController::class, 'requestExport'])->name('request-export');
+        Route::get('/download-export/{id}', [GdprController::class, 'downloadExport'])->name('download-export');
+        Route::post('/request-deletion', [GdprController::class, 'requestDeletion'])->name('request-deletion');
+    });
+});

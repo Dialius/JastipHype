@@ -34,6 +34,9 @@
     
     <!-- Live Chat Widget -->
     @include('components.live-chat-widget')
+    
+    <!-- Cookie Consent Banner -->
+    @include('components.cookie-consent')
     <!-- Global Image Error Handler -->
     <script>
         document.addEventListener('error', function(e) {

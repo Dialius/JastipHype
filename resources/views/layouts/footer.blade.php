@@ -44,6 +44,17 @@
 
         <div id="footer-copyright" class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
             <p>&copy; {{ date('Y') }} JastipHype. All rights reserved.</p>
+            <div class="mt-4 flex flex-wrap justify-center gap-4">
+                <a href="{{ route('info.terms') }}" class="hover:text-white transition-colors">Terms of Service</a>
+                <span>•</span>
+                <a href="{{ route('info.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a>
+                <span>•</span>
+                <a href="{{ route('gdpr.cookie-policy') }}" class="hover:text-white transition-colors">Cookie Policy</a>
+                @auth
+                <span>•</span>
+                <a href="{{ route('gdpr.dashboard') }}" class="hover:text-white transition-colors">My Data</a>
+                @endauth
+            </div>
         </div>
     </div>
 </footer>

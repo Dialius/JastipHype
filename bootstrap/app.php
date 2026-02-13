@@ -23,6 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register admin middleware alias
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'check.ip.blocked' => \App\Http\Middleware\CheckIpBlocked::class,
+            'log.security' => \App\Http\Middleware\LogSecurityEvents::class,
         ]);
         
         // Register tracking middleware for web routes
@@ -30,6 +32,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\TrackVisitor::class,
             \App\Http\Middleware\UpdateOnlineStatus::class,
             \App\Http\Middleware\EnsureStorageDirectories::class,
+            \App\Http\Middleware\CheckIpBlocked::class,
+            \App\Http\Middleware\LogSecurityEvents::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

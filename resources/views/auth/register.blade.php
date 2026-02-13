@@ -201,7 +201,7 @@
                     <label class="flex items-start cursor-pointer">
                         <input type="checkbox" name="terms" required class="mt-1 w-4 h-4 bg-gray-800 border-gray-700 rounded text-accent-gold focus:ring-accent-gold">
                         <span class="ml-3 text-sm text-gray-400">
-                            I agree to the <a href="{{ route('info.terms') }}" target="_blank" class="text-accent-gold hover:text-accent-gold/80">Terms of Service</a> and <a href="{{ route('info.privacy') }}" target="_blank" class="text-accent-gold hover:text-accent-gold/80">Privacy Policy</a>
+                            I agree to the <a href="{{ route('info.terms') }}" class="text-accent-gold hover:text-accent-gold/80">Terms of Service</a> and <a href="{{ route('info.privacy') }}" class="text-accent-gold hover:text-accent-gold/80">Privacy Policy</a>
                         </span>
                     </label>
 
