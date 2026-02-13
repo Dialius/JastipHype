@@ -1,124 +1,324 @@
 <!-- Cookie Consent Banner -->
-<div id="cookieConsent" class="hidden fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 shadow-lg z-50">
-    <div class="container mx-auto">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex-1">
-                <p class="text-sm">
-                    🍪 Kami menggunakan cookies untuk meningkatkan pengalaman Anda. 
-                    Dengan melanjutkan, Anda menyetujui penggunaan cookies kami.
-                    <a href="{{ route('gdpr.cookie-policy') }}" class="underline hover:text-gray-300">Pelajari lebih lanjut</a>
-                </p>
-            </div>
-            <div class="flex gap-3">
-                <button 
-                    onclick="acceptAllCookies()" 
-                    class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-sm font-medium"
-                >
-                    Terima Semua
-                </button>
-                <button 
-                    onclick="showCookieSettings()" 
-                    class="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded text-sm font-medium"
-                >
-                    Pengaturan
-                </button>
-                <button 
-                    onclick="rejectNonEssential()" 
-                    class="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded text-sm font-medium"
-                >
-                    Tolak
-                </button>
+<div id="cookieConsent" 
+     class="hidden fixed bottom-0 left-0 right-0 z-[9999]"
+     style="animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+    
+    <style>
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Custom Toggle Switch */
+        .cookie-toggle {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .cookie-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .cookie-toggle .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #374151;
+            border-radius: 28px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cookie-toggle .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .cookie-toggle input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #d4a843, #c49a38);
+        }
+        .cookie-toggle input:checked + .toggle-slider::before {
+            transform: translateX(24px);
+        }
+        .cookie-toggle input:disabled + .toggle-slider {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Glassmorphism Banner */
+        .cookie-banner-glass {
+            background: rgba(17, 17, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(212, 168, 67, 0.15);
+        }
+
+        /* Settings Modal */
+        .cookie-modal-overlay {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .cookie-modal-card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid rgba(212, 168, 67, 0.12);
+        }
+        .cookie-category-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .cookie-category-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(212, 168, 67, 0.2);
+        }
+        .cookie-category-card .category-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Scrollbar */
+        .cookie-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .cookie-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .cookie-scroll::-webkit-scrollbar-thumb {
+            background: rgba(212, 168, 67, 0.3);
+            border-radius: 4px;
+        }
+
+        /* Gold Button */
+        .btn-cookie-gold {
+            background: linear-gradient(135deg, #d4a843, #b8922e);
+            color: #000;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 168, 67, 0.25);
+        }
+        .btn-cookie-gold:hover {
+            background: linear-gradient(135deg, #e0b94e, #c49a38);
+            box-shadow: 0 6px 20px rgba(212, 168, 67, 0.35);
+            transform: translateY(-1px);
+        }
+        .btn-cookie-outline {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #e5e7eb;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-cookie-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+    </style>
+
+    <!-- Banner -->
+    <div class="cookie-banner-glass px-4 py-5 md:py-4 shadow-2xl">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+                <!-- Icon + Text -->
+                <div class="flex items-start gap-3 flex-1">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-600/20 to-yellow-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-white text-sm font-medium leading-relaxed">
+                            Kami menggunakan cookies untuk meningkatkan pengalaman belanja Anda.
+                        </p>
+                        <p class="text-gray-400 text-xs mt-1">
+                            Pilih preferensi cookies Anda atau pelajari lebih lanjut di 
+                            <a href="{{ route('gdpr.cookie-policy') }}" class="text-yellow-500 hover:text-yellow-400 underline underline-offset-2 transition-colors">Kebijakan Cookie</a> kami.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex items-center gap-2.5 w-full md:w-auto flex-shrink-0">
+                    <button 
+                        onclick="acceptAllCookies()" 
+                        class="btn-cookie-gold px-5 py-2.5 rounded-xl text-sm flex-1 md:flex-none"
+                    >
+                        Terima Semua
+                    </button>
+                    <button 
+                        onclick="showCookieSettings()" 
+                        class="btn-cookie-outline px-5 py-2.5 rounded-xl text-sm flex-1 md:flex-none"
+                    >
+                        Pengaturan
+                    </button>
+                    <button 
+                        onclick="rejectNonEssential()" 
+                        class="btn-cookie-outline px-5 py-2.5 rounded-xl text-sm flex-1 md:flex-none"
+                    >
+                        Tolak
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Cookie Settings Modal -->
-<div id="cookieSettings" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold">Pengaturan Cookies</h2>
-                <button onclick="closeCookieSettings()" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+<div id="cookieSettings" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4 cookie-modal-overlay"
+     style="animation: fadeIn 0.3s ease forwards;">
+    <div class="cookie-modal-card rounded-2xl w-full max-w-xl max-h-[90vh] overflow-hidden shadow-2xl"
+         style="animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+        
+        <!-- Modal Header -->
+        <div class="px-6 py-5 border-b border-white/10">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-white">Pengaturan Cookies</h2>
+                    <p class="text-gray-400 text-xs mt-1">Kelola preferensi privasi Anda</p>
+                </div>
+                <button onclick="closeCookieSettings()" 
+                        class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
+        </div>
 
-            <p class="text-gray-600 mb-6">
-                Kelola preferensi cookies Anda. Cookies penting diperlukan untuk fungsi dasar website dan tidak dapat dinonaktifkan.
+        <!-- Modal Body -->
+        <div class="px-6 py-5 overflow-y-auto cookie-scroll" style="max-height: calc(90vh - 180px);">
+            <p class="text-gray-400 text-sm mb-5 leading-relaxed">
+                Cookies penting diperlukan untuk fungsi dasar website dan tidak dapat dinonaktifkan. 
+                Anda dapat memilih untuk mengaktifkan atau menonaktifkan cookie lainnya.
             </p>
 
-            <div class="space-y-4">
+            <div class="space-y-3">
                 <!-- Necessary Cookies -->
-                <div class="border rounded-lg p-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-semibold">Cookies Penting</h3>
-                        <span class="text-sm text-gray-500">Selalu Aktif</span>
+                <div class="cookie-category-card rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="category-icon bg-emerald-500/15">
+                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="text-white font-semibold text-sm">Cookies Penting</h3>
+                                <span class="text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full font-medium">Selalu Aktif</span>
+                            </div>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Diperlukan untuk login, shopping cart, CSRF token, dan fungsi dasar keamanan website.
+                            </p>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">
-                        Cookies ini diperlukan untuk fungsi dasar website seperti login, shopping cart, dan keamanan.
-                    </p>
                 </div>
 
                 <!-- Functional Cookies -->
-                <div class="border rounded-lg p-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-semibold">Cookies Fungsional</h3>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="functionalCookies" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
+                <div class="cookie-category-card rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="category-icon bg-blue-500/15">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="text-white font-semibold text-sm">Cookies Fungsional</h3>
+                                <label class="cookie-toggle">
+                                    <input type="checkbox" id="functionalCookies">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Mengingat preferensi seperti bahasa, tampilan, dan filter produk yang tersimpan.
+                            </p>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">
-                        Cookies ini mengingat preferensi Anda seperti bahasa dan pengaturan tampilan.
-                    </p>
                 </div>
 
                 <!-- Analytics Cookies -->
-                <div class="border rounded-lg p-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-semibold">Cookies Analitik</h3>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="analyticsCookies" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
+                <div class="cookie-category-card rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="category-icon bg-purple-500/15">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="text-white font-semibold text-sm">Cookies Analitik</h3>
+                                <label class="cookie-toggle">
+                                    <input type="checkbox" id="analyticsCookies">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Membantu memahami cara pengunjung berinteraksi melalui Google Analytics dan metrik kunjungan.
+                            </p>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">
-                        Cookies ini membantu kami memahami bagaimana pengunjung berinteraksi dengan website.
-                    </p>
                 </div>
 
                 <!-- Marketing Cookies -->
-                <div class="border rounded-lg p-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-semibold">Cookies Marketing</h3>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="marketingCookies" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
+                <div class="cookie-category-card rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="category-icon bg-orange-500/15">
+                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="text-white font-semibold text-sm">Cookies Marketing</h3>
+                                <label class="cookie-toggle">
+                                    <input type="checkbox" id="marketingCookies">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Menampilkan iklan yang relevan melalui Facebook Pixel, Google Ads, dan retargeting.
+                            </p>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">
-                        Cookies ini digunakan untuk menampilkan iklan yang relevan dengan minat Anda.
-                    </p>
                 </div>
             </div>
+        </div>
 
-            <div class="flex gap-3 mt-6">
-                <button 
-                    onclick="saveCustomCookieSettings()" 
-                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-medium"
-                >
-                    Simpan Pengaturan
-                </button>
-                <button 
-                    onclick="acceptAllCookies()" 
-                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded font-medium"
-                >
-                    Terima Semua
-                </button>
-            </div>
+        <!-- Modal Footer -->
+        <div class="px-6 py-4 border-t border-white/10 flex gap-3">
+            <button 
+                onclick="saveCustomCookieSettings()" 
+                class="btn-cookie-gold flex-1 px-5 py-3 rounded-xl text-sm"
+            >
+                Simpan Pengaturan
+            </button>
+            <button 
+                onclick="acceptAllCookies()" 
+                class="btn-cookie-outline flex-1 px-5 py-3 rounded-xl text-sm"
+            >
+                Terima Semua
+            </button>
         </div>
     </div>
 </div>
@@ -128,7 +328,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     if (!getCookie('cookie_consent')) {
         setTimeout(() => {
-            document.getElementById('cookieConsent').classList.remove('hidden');
+            const banner = document.getElementById('cookieConsent');
+            banner.classList.remove('hidden');
         }, 1000);
     }
 });
@@ -143,8 +344,23 @@ function rejectNonEssential() {
 
 function showCookieSettings() {
     document.getElementById('cookieConsent').classList.add('hidden');
-    document.getElementById('cookieSettings').classList.remove('hidden');
+    const modal = document.getElementById('cookieSettings');
+    modal.classList.remove('hidden');
+    
+    // Load current preferences if they exist
+    const consent = getCookie('cookie_consent');
+    if (consent) {
+        try {
+            const prefs = JSON.parse(decodeURIComponent(consent));
+            document.getElementById('functionalCookies').checked = prefs.functional || false;
+            document.getElementById('analyticsCookies').checked = prefs.analytics || false;
+            document.getElementById('marketingCookies').checked = prefs.marketing || false;
+        } catch(e) {}
+    }
 }
+
+// Make showCookieConsent available globally for the cookie policy page
+window.showCookieConsent = showCookieSettings;
 
 function closeCookieSettings() {
     document.getElementById('cookieSettings').classList.add('hidden');
@@ -207,11 +423,9 @@ function setCookie(name, value, days) {
 
 function loadAnalytics() {
     // Load Google Analytics or other analytics scripts
-    console.log('Analytics loaded');
 }
 
 function loadMarketing() {
     // Load marketing pixels (Facebook, Google Ads, etc)
-    console.log('Marketing scripts loaded');
 }
 </script>
