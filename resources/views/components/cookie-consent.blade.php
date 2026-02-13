@@ -16,6 +16,10 @@
             from { transform: scale(0.95); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.5; transform: scale(0.8) rotate(180deg); }
+        }
         
         /* Custom Toggle Switch */
         .cookie-toggle {
@@ -133,6 +137,11 @@
             background: rgba(255, 255, 255, 0.1);
             border-color: rgba(255, 255, 255, 0.25);
         }
+        
+        /* Sparkle Animation */
+        .cookie-sparkle {
+            animation: sparkle 2s ease-in-out infinite;
+        }
     </style>
 
     <!-- Banner -->
@@ -141,10 +150,41 @@
             <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
                 <!-- Icon + Text -->
                 <div class="flex items-start gap-3 flex-1">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-600/20 to-yellow-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    <!-- Cookie Illustration -->
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-600/20 to-yellow-500/10 flex items-center justify-center flex-shrink-0 relative">
+                        <!-- Cookie SVG -->
+                        <svg class="w-7 h-7" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Cookie Base -->
+                            <circle cx="32" cy="32" r="28" fill="#D4A843"/>
+                            <circle cx="32" cy="32" r="28" fill="url(#cookieGradient)"/>
+                            
+                            <!-- Cookie Chips -->
+                            <circle cx="22" cy="24" r="3" fill="#8B4513" opacity="0.8"/>
+                            <circle cx="38" cy="22" r="2.5" fill="#654321" opacity="0.7"/>
+                            <circle cx="28" cy="36" r="2.8" fill="#8B4513" opacity="0.8"/>
+                            <circle cx="42" cy="34" r="2.3" fill="#654321" opacity="0.7"/>
+                            <circle cx="20" cy="40" r="2" fill="#8B4513" opacity="0.6"/>
+                            <circle cx="40" cy="44" r="2.5" fill="#654321" opacity="0.7"/>
+                            <circle cx="32" cy="28" r="2" fill="#8B4513" opacity="0.6"/>
+                            
+                            <!-- Bite Mark -->
+                            <path d="M 48 18 Q 52 22 48 26 Q 44 30 40 26 Q 36 22 40 18 Q 44 14 48 18 Z" fill="#1a1a2e" opacity="0.3"/>
+                            
+                            <!-- Gradient Definition -->
+                            <defs>
+                                <radialGradient id="cookieGradient" cx="0.3" cy="0.3">
+                                    <stop offset="0%" stop-color="#E0B94E" stop-opacity="0.8"/>
+                                    <stop offset="100%" stop-color="#C49A38" stop-opacity="0.9"/>
+                                </radialGradient>
+                            </defs>
                         </svg>
+                        
+                        <!-- Sparkle Effect -->
+                        <div class="absolute -top-1 -right-1 w-3 h-3 cookie-sparkle">
+                            <svg viewBox="0 0 24 24" fill="#FCD34D">
+                                <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/>
+                            </svg>
+                        </div>
                     </div>
                     <div>
                         <p class="text-white text-sm font-medium leading-relaxed">
@@ -158,22 +198,22 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex items-center gap-2.5 w-full md:w-auto flex-shrink-0">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto flex-shrink-0">
                     <button 
                         onclick="acceptAllCookies()" 
-                        class="btn-cookie-gold px-5 py-2.5 rounded-xl text-sm flex-1 md:flex-none"
+                        class="btn-cookie-gold px-6 py-2.5 rounded-xl text-sm whitespace-nowrap"
                     >
                         Terima Semua
                     </button>
                     <button 
                         onclick="showCookieSettings()" 
-                        class="btn-cookie-outline px-5 py-2.5 rounded-xl text-sm flex-1 md:flex-none"
+                        class="btn-cookie-outline px-6 py-2.5 rounded-xl text-sm whitespace-nowrap"
                     >
                         Pengaturan
                     </button>
                     <button 
                         onclick="rejectNonEssential()" 
-                        class="btn-cookie-outline px-5 py-2.5 rounded-xl text-sm flex-1 md:flex-none"
+                        class="btn-cookie-outline px-6 py-2.5 rounded-xl text-sm whitespace-nowrap"
                     >
                         Tolak
                     </button>
@@ -306,16 +346,16 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="px-6 py-4 border-t border-white/10 flex gap-3">
+        <div class="px-6 py-4 border-t border-white/10 flex flex-col sm:flex-row gap-3">
             <button 
                 onclick="saveCustomCookieSettings()" 
-                class="btn-cookie-gold flex-1 px-5 py-3 rounded-xl text-sm"
+                class="btn-cookie-gold flex-1 px-5 py-3 rounded-xl text-sm font-semibold"
             >
                 Simpan Pengaturan
             </button>
             <button 
                 onclick="acceptAllCookies()" 
-                class="btn-cookie-outline flex-1 px-5 py-3 rounded-xl text-sm"
+                class="btn-cookie-outline flex-1 px-5 py-3 rounded-xl text-sm font-medium"
             >
                 Terima Semua
             </button>
@@ -363,8 +403,37 @@ function showCookieSettings() {
 window.showCookieConsent = showCookieSettings;
 
 function closeCookieSettings() {
-    document.getElementById('cookieSettings').classList.add('hidden');
+    const modal = document.getElementById('cookieSettings');
+    modal.classList.add('hidden');
 }
+
+// Close modal when clicking outside (on overlay)
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('cookieSettings');
+    if (event.target === modal) {
+        closeCookieSettings();
+    }
+});
+
+// Close modal with ESC key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('cookieSettings');
+        if (!modal.classList.contains('hidden')) {
+            closeCookieSettings();
+        }
+    }
+});
+
+// Prevent modal close when clicking inside modal content
+document.addEventListener('DOMContentLoaded', function() {
+    const modalContent = document.querySelector('#cookieSettings .cookie-modal-card');
+    if (modalContent) {
+        modalContent.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
+});
 
 function saveCustomCookieSettings() {
     const functional = document.getElementById('functionalCookies').checked;
