@@ -154,8 +154,9 @@ jobs:
           echo "🔄 Syncing public folder to domain public_html..."
           
           # Sync Laravel public files to domain public_html
-          # Exclude build & storage karena akan di-symlink
+          # CRITICAL: Exclude .builds (Hostinger internal), build & storage (akan di-symlink)
           rsync -av --delete \
+            --exclude='.builds' \
             --exclude='build' \
             --exclude='storage' \
             public/ public_html/
@@ -166,13 +167,30 @@ jobs:
           
           # Recreate symbolic links (PENTING untuk assets & storage)
           cd public_html
-          rm -rf build storage
+          rm -rf build storage 2>/dev/null || true
           ln -s ../public/build build 2>/dev/null || echo "⚠️ Build symlink failed"
           ln -s ../storage/app/public storage 2>/dev/null || echo "⚠️ Storage symlink failed"
           cd ..
           
           # Set permissions
           chmod -R 755 public_html
+          chmod 644 public_html/index.php
+          chmod 644 public_html/.htaccess 2>/dev/null || true
+          
+          # Verify critical files exist
+          echo "🔍 Verifying deployment..."
+          if [ -f "public_html/index.php" ]; then
+            echo "✅ index.php exists"
+          else
+            echo "❌ ERROR: index.php missing!"
+            exit 1
+          fi
+          
+          if [ -L "public_html/build" ]; then
+            echo "✅ build symlink exists"
+          else
+            echo "⚠️ WARNING: build symlink missing"
+          fi
           chmod 644 public_html/index.php
           chmod 644 public_html/.htaccess 2>/dev/null || true
           
