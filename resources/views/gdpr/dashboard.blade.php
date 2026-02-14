@@ -215,9 +215,28 @@
                 </div>
                 <div class="flex-1">
                     <h2 class="text-lg font-bold text-gray-900 mb-1">Export Your Data</h2>
-                    <p class="text-gray-500 text-sm leading-relaxed">
+                    <p class="text-gray-500 text-sm leading-relaxed mb-3">
                         Download all your personal data in JSON format. The export file will be available for 7 days after processing.
                     </p>
+                    <div class="bg-teal-50/50 rounded-lg p-3 space-y-1.5">
+                        <p class="text-xs font-semibold text-teal-700 mb-1.5">Your export will include:</p>
+                        <div class="flex items-center gap-2 text-xs text-teal-600">
+                            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Profile information (name, email, phone)
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-teal-600">
+                            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Order history and transaction details
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-teal-600">
+                            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Reviews, wishlist, and shopping cart
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-teal-600">
+                            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Cookie preferences and consent history
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -229,6 +248,12 @@
                     </svg>
                     Request Data Export
                 </button>
+                <p class="text-xs text-gray-400 mt-2">
+                    <svg class="w-3.5 h-3.5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Processing typically takes 24-48 hours. You'll receive an email when ready.
+                </p>
             </form>
 
             @if($exportRequests->count() > 0)
@@ -242,19 +267,38 @@
                     <div class="space-y-2.5">
                         @foreach($exportRequests as $request)
                             <div class="gdpr-history-item p-3.5">
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center gap-2.5">
-                                        <span class="text-xs text-gray-500 font-medium">
-                                            {{ $request->created_at->format('d M Y H:i') }}
-                                        </span>
-                                        <span class="px-2.5 py-0.5 text-xs rounded-full font-semibold
-                                            @if($request->status === 'completed') bg-emerald-50 text-emerald-700
-                                            @elseif($request->status === 'processing') bg-amber-50 text-amber-700
-                                            @elseif($request->status === 'failed') bg-red-50 text-red-700
-                                            @else bg-gray-100 text-gray-600
-                                            @endif">
-                                            {{ ucfirst($request->status) }}
-                                        </span>
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2.5 mb-1">
+                                            <span class="text-xs text-gray-500 font-medium">
+                                                {{ $request->created_at->format('d M Y H:i') }}
+                                            </span>
+                                            <span class="px-2.5 py-0.5 text-xs rounded-full font-semibold
+                                                @if($request->status === 'completed') bg-emerald-50 text-emerald-700
+                                                @elseif($request->status === 'processing') bg-amber-50 text-amber-700
+                                                @elseif($request->status === 'failed') bg-red-50 text-red-700
+                                                @else bg-gray-100 text-gray-600
+                                                @endif">
+                                                {{ ucfirst($request->status) }}
+                                            </span>
+                                        </div>
+                                        @if($request->status === 'completed' && !$request->isExpired())
+                                            <p class="text-xs text-gray-400">
+                                                <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Expires: {{ $request->expires_at->format('d M Y H:i') }}
+                                            </p>
+                                        @elseif($request->status === 'processing')
+                                            <p class="text-xs text-amber-600 flex items-center gap-1">
+                                                <svg class="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                                </svg>
+                                                Processing your data...
+                                            </p>
+                                        @elseif($request->status === 'failed')
+                                            <p class="text-xs text-red-600">Failed to process. Please try again.</p>
+                                        @endif
                                     </div>
                                     @if($request->status === 'completed' && !$request->isExpired())
                                         <a href="{{ route('gdpr.download-export', $request->id) }}"
@@ -275,6 +319,16 @@
                                 </div>
                             </div>
                         @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="border-t border-gray-100 pt-5">
+                    <div class="text-center py-6">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <p class="text-sm text-gray-500">No export requests yet</p>
+                        <p class="text-xs text-gray-400 mt-1">Click the button above to request your first data export</p>
                     </div>
                 </div>
             @endif
@@ -305,6 +359,12 @@
                 </svg>
                 Request Data Deletion
             </button>
+            <p class="text-xs text-red-500 mb-5 flex items-start gap-1.5">
+                <svg class="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <span>Warning: This action is permanent and cannot be undone. Your account will be deleted after admin approval.</span>
+            </p>
 
             @if($deletionRequests->count() > 0)
                 <div class="border-t border-gray-100 pt-5">
@@ -317,27 +377,66 @@
                     <div class="space-y-2.5">
                         @foreach($deletionRequests as $request)
                             <div class="gdpr-history-item p-3.5">
-                                <div class="flex flex-col gap-1.5">
-                                    <div class="flex items-center gap-2.5">
-                                        <span class="text-xs text-gray-500 font-medium">
-                                            {{ $request->created_at->format('d M Y H:i') }}
-                                        </span>
-                                        <span class="px-2.5 py-0.5 text-xs rounded-full font-semibold
-                                            @if($request->status === 'completed') bg-emerald-50 text-emerald-700
-                                            @elseif($request->status === 'approved') bg-blue-50 text-blue-700
-                                            @elseif($request->status === 'processing') bg-amber-50 text-amber-700
-                                            @elseif($request->status === 'rejected') bg-red-50 text-red-700
-                                            @else bg-gray-100 text-gray-600
-                                            @endif">
-                                            {{ ucfirst($request->status) }}
-                                        </span>
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2.5">
+                                            <span class="text-xs text-gray-500 font-medium">
+                                                {{ $request->created_at->format('d M Y H:i') }}
+                                            </span>
+                                            <span class="px-2.5 py-0.5 text-xs rounded-full font-semibold
+                                                @if($request->status === 'completed') bg-emerald-50 text-emerald-700
+                                                @elseif($request->status === 'approved') bg-blue-50 text-blue-700
+                                                @elseif($request->status === 'processing') bg-amber-50 text-amber-700
+                                                @elseif($request->status === 'rejected') bg-red-50 text-red-700
+                                                @else bg-gray-100 text-gray-600
+                                                @endif">
+                                                {{ ucfirst($request->status) }}
+                                            </span>
+                                        </div>
                                     </div>
                                     @if($request->reason)
-                                        <p class="text-xs text-gray-400 italic pl-0.5">Reason: {{ $request->reason }}</p>
+                                        <div class="bg-gray-50 rounded-lg p-2 border border-gray-100">
+                                            <p class="text-xs text-gray-500 font-medium mb-0.5">Your reason:</p>
+                                            <p class="text-xs text-gray-700">{{ $request->reason }}</p>
+                                        </div>
+                                    @endif
+                                    @if($request->status === 'pending')
+                                        <p class="text-xs text-gray-500 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Awaiting admin review
+                                        </p>
+                                    @elseif($request->status === 'approved')
+                                        <p class="text-xs text-blue-600 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Approved - Processing deletion
+                                        </p>
+                                    @elseif($request->status === 'rejected')
+                                        <p class="text-xs text-red-600">Request was rejected by admin</p>
+                                    @elseif($request->status === 'completed')
+                                        <p class="text-xs text-emerald-600 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            Data successfully deleted
+                                        </p>
                                     @endif
                                 </div>
                             </div>
                         @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="border-t border-gray-100 pt-5">
+                    <div class="text-center py-6">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <p class="text-sm text-gray-500">No deletion requests yet</p>
+                        <p class="text-xs text-gray-400 mt-1">Your data is safe with us</p>
                     </div>
                 </div>
             @endif
