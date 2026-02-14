@@ -1,0 +1,35 @@
+========================================
+GitHub Deploy Key for JastipHype Server
+========================================
+
+PUBLIC KEY (Add this to GitHub):
+---------------------------------
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPbyT98FfHZWevboR7CS9g1M04usH4xKzxbfOMEvIL5 deploy@jastiphype.shop
+
+========================================
+HOW TO ADD TO GITHUB:
+========================================
+
+1. Go to: https://github.com/Dialius/JastipHype/settings/keys
+
+2. Click "Add deploy key"
+
+3. Fill in:
+   - Title: Hostinger Server Deploy Key
+   - Key: (paste the public key above)
+   - ✅ Allow write access (IMPORTANT!)
+
+4. Click "Add key"
+
+========================================
+VERIFICATION:
+========================================
+
+After adding the key to GitHub, test the connection:
+
+ssh -p 65002 u909490256@153.92.9.187 "ssh -T git@github.com"
+
+Expected output:
+"Hi Dialius/JastipHype! You've successfully authenticated..."
+
+========================================
