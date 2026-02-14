@@ -152,15 +152,15 @@ class Payment extends Model
     public function getStatusLabel()
     {
         $labels = [
-            'pending' => 'Menunggu Pembayaran',
-            'unpaid' => 'Belum Dibayar',
-            'settlement' => 'Berhasil',
-            'capture' => 'Berhasil',
-            'paid' => 'Berhasil',
-            'deny' => 'Ditolak',
-            'cancel' => 'Dibatalkan',
-            'expire' => 'Kadaluarsa',
-            'failed' => 'Gagal',
+            'pending' => 'Awaiting Payment',
+            'unpaid' => 'Unpaid',
+            'settlement' => 'Success',
+            'capture' => 'Success',
+            'paid' => 'Success',
+            'deny' => 'Denied',
+            'cancel' => 'Cancelled',
+            'expire' => 'Expired',
+            'failed' => 'Failed',
         ];
 
         return $labels[$this->transaction_status] ?? ucfirst($this->transaction_status);

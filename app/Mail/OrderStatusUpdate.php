@@ -28,7 +28,7 @@ class OrderStatusUpdate extends Mailable
     {
         return new Envelope(
             from: config('mail-addresses.order'),
-            subject: 'Update Status Pesanan #' . $this->order->order_number,
+            subject: 'Order Status Update #' . $this->order->order_number,
         );
     }
 

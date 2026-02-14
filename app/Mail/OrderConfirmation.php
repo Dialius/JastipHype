@@ -24,7 +24,7 @@ class OrderConfirmation extends Mailable
     {
         return new Envelope(
             from: config('mail-addresses.order'),
-            subject: 'Konfirmasi Pesanan #' . $this->order->order_number,
+            subject: 'Order Confirmation #' . $this->order->order_number,
         );
     }
 

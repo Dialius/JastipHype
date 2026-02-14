@@ -48,7 +48,7 @@ class ContactController extends Controller
         if ($sent) {
             return back()->with('success', 'Pesan Anda telah terkirim! Kami akan segera menghubungi Anda.');
         } else {
-            return back()->with('error', 'Gagal mengirim pesan. Silakan coba lagi.');
+            return back()->with('error', 'Failed to send message. Please try again.');
         }
     }
 }

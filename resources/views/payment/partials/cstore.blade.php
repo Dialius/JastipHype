@@ -5,14 +5,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
             </svg>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Bayar di {{ $instructions['store'] }}</h3>
-        <p class="text-gray-600">Tunjukkan kode pembayaran di bawah ini ke kasir</p>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Pay at {{ $instructions['store'] }}</h3>
+        <p class="text-gray-600">Show the payment code below to the cashier</p>
     </div>
 
     <!-- Payment Code -->
     <div class="bg-gray-50 rounded-lg p-6 mb-6">
         <div class="text-center">
-            <p class="text-sm text-gray-600 mb-2">Kode Pembayaran</p>
+            <p class="text-sm text-gray-600 mb-2">Payment Code</p>
             <div class="flex items-center justify-center space-x-2">
                 <p class="text-3xl font-bold text-gray-900 tracking-wider" id="payment-code">{{ $instructions['payment_code'] }}</p>
                 <button onclick="copyPaymentCode()" class="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition">
@@ -25,82 +25,82 @@
 
         <div class="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
             <p class="text-sm text-orange-800 text-center">
-                <strong>Total Pembayaran:</strong> Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}
+                <strong>Total Payment:</strong> Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}
             </p>
         </div>
     </div>
 
     <!-- Instructions -->
     <div class="bg-gray-50 rounded-lg p-4">
-        <h4 class="font-bold text-gray-900 mb-3">Cara Pembayaran:</h4>
+        <h4 class="font-bold text-gray-900 mb-3">Payment Instructions:</h4>
         
         @if($instructions['store'] === 'INDOMARET')
         <ol class="space-y-2 text-sm text-gray-700">
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">1</span>
-                <span>Kunjungi gerai <strong>Indomaret</strong> terdekat</span>
+                <span>Visit the nearest <strong>Indomaret</strong> store</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">2</span>
-                <span>Tunjukkan kode pembayaran <strong>{{ $instructions['payment_code'] }}</strong> ke kasir</span>
+                <span>Show payment code <strong>{{ $instructions['payment_code'] }}</strong> to the cashier</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">3</span>
-                <span>Kasir akan memproses pembayaran Anda</span>
+                <span>Cashier will process your payment</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">4</span>
-                <span>Lakukan pembayaran sebesar <strong>Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}</strong></span>
+                <span>Make payment of <strong>Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}</strong></span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">5</span>
-                <span>Simpan struk pembayaran sebagai bukti</span>
+                <span>Keep the payment receipt as proof</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">6</span>
-                <span>Pembayaran akan otomatis terverifikasi</span>
+                <span>Payment will be automatically verified</span>
             </li>
         </ol>
         @elseif($instructions['store'] === 'ALFAMART')
         <ol class="space-y-2 text-sm text-gray-700">
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">1</span>
-                <span>Kunjungi gerai <strong>Alfamart</strong> atau <strong>Alfamidi</strong> terdekat</span>
+                <span>Visit the nearest <strong>Alfamart</strong> or <strong>Alfamidi</strong> store</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">2</span>
-                <span>Tunjukkan kode pembayaran <strong>{{ $instructions['payment_code'] }}</strong> ke kasir</span>
+                <span>Show payment code <strong>{{ $instructions['payment_code'] }}</strong> to the cashier</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">3</span>
-                <span>Kasir akan memproses pembayaran Anda</span>
+                <span>Cashier will process your payment</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">4</span>
-                <span>Lakukan pembayaran sebesar <strong>Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}</strong></span>
+                <span>Make payment of <strong>Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}</strong></span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">5</span>
-                <span>Simpan struk pembayaran sebagai bukti</span>
+                <span>Keep the payment receipt as proof</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">6</span>
-                <span>Pembayaran akan otomatis terverifikasi</span>
+                <span>Payment will be automatically verified</span>
             </li>
         </ol>
         @else
         <ol class="space-y-2 text-sm text-gray-700">
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">1</span>
-                <span>Kunjungi gerai <strong>{{ $instructions['store'] }}</strong> terdekat</span>
+                <span>Visit the nearest <strong>{{ $instructions['store'] }}</strong> store</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">2</span>
-                <span>Tunjukkan kode pembayaran ke kasir</span>
+                <span>Show payment code to the cashier</span>
             </li>
             <li class="flex items-start">
                 <span class="flex-shrink-0 w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">3</span>
-                <span>Lakukan pembayaran dan simpan struk</span>
+                <span>Make payment and keep the receipt</span>
             </li>
         </ol>
         @endif
@@ -108,7 +108,7 @@
 
     <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
         <p class="text-sm text-yellow-800">
-            <strong>Catatan:</strong> Pastikan Anda membayar dengan nominal yang tepat. Pembayaran akan otomatis terverifikasi setelah kasir memproses transaksi.
+            <strong>Note:</strong> Make sure you pay the exact amount. Payment will be automatically verified after the cashier processes the transaction.
         </p>
     </div>
 </div>
@@ -117,7 +117,7 @@
 function copyPaymentCode() {
     const code = document.getElementById('payment-code').textContent;
     navigator.clipboard.writeText(code).then(() => {
-        alert('Kode pembayaran berhasil disalin!');
+        alert('Payment code copied successfully!');
     });
 }
 </script>

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 class EmailService
 {
     /**
-     * Kirim email konfirmasi pesanan
+     * Send order confirmation email
      */
     public function sendOrderConfirmation(Order $order)
     {
@@ -32,7 +32,7 @@ class EmailService
     }
 
     /**
-     * Kirim email update status pesanan
+     * Send order status update email
      */
     public function sendOrderStatusUpdate(Order $order, $oldStatus, $newStatus)
     {
@@ -56,7 +56,7 @@ class EmailService
     }
 
     /**
-     * Kirim email dari contact form ke admin
+     * Send contact form email to admin
      */
     public function sendContactFormToAdmin(array $data)
     {
@@ -75,24 +75,24 @@ class EmailService
     }
 
     /**
-     * Test koneksi email
+     * Test email connection
      */
     public function testEmailConnection()
     {
         try {
-            Mail::raw('Test email dari JastipHype', function ($message) {
+            Mail::raw('Test email from JastipHype', function ($message) {
                 $message->to(config('mail-addresses.admin'))
                     ->subject('Test Email Connection');
             });
             
             return [
                 'success' => true,
-                'message' => 'Email test berhasil dikirim!'
+                'message' => 'Test email sent successfully!'
             ];
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Gagal mengirim email: ' . $e->getMessage()
+                'message' => 'Failed to send email: ' . $e->getMessage()
             ];
         }
     }

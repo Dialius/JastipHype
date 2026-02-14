@@ -6,7 +6,7 @@
             </svg>
         </div>
         <h3 class="text-xl font-bold text-gray-900 mb-2">Scan QRIS Code</h3>
-        <p class="text-gray-600 mb-6">Scan QR code di bawah ini menggunakan aplikasi e-wallet atau mobile banking Anda</p>
+        <p class="text-gray-600 mb-6">Scan the QR code below using your e-wallet or mobile banking app</p>
 
         <!-- QR Code -->
         @if(isset($instructions['qr_string']))
@@ -17,27 +17,27 @@
 
         <!-- Instructions -->
         <div class="bg-gray-50 rounded-lg p-4 text-left">
-            <h4 class="font-bold text-gray-900 mb-3">Cara Pembayaran:</h4>
+            <h4 class="font-bold text-gray-900 mb-3">Payment Instructions:</h4>
             <ol class="space-y-2 text-sm text-gray-700">
                 <li class="flex items-start">
                     <span class="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">1</span>
-                    <span>Buka aplikasi e-wallet atau mobile banking Anda (GoPay, OVO, Dana, ShopeePay, dll)</span>
+                    <span>Open your e-wallet or mobile banking app (GoPay, OVO, Dana, ShopeePay, etc.)</span>
                 </li>
                 <li class="flex items-start">
                     <span class="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">2</span>
-                    <span>Pilih menu "Scan QR" atau "QRIS"</span>
+                    <span>Select "Scan QR" or "QRIS" menu</span>
                 </li>
                 <li class="flex items-start">
                     <span class="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">3</span>
-                    <span>Scan QR code di atas</span>
+                    <span>Scan the QR code above</span>
                 </li>
                 <li class="flex items-start">
                     <span class="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">4</span>
-                    <span>Konfirmasi pembayaran sebesar <strong>Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}</strong></span>
+                    <span>Confirm payment of <strong>Rp {{ number_format($payment->gross_amount, 0, ',', '.') }}</strong></span>
                 </li>
                 <li class="flex items-start">
                     <span class="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs mr-3 mt-0.5">5</span>
-                    <span>Pembayaran akan otomatis terverifikasi</span>
+                    <span>Payment will be automatically verified</span>
                 </li>
             </ol>
         </div>
