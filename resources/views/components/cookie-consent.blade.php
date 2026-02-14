@@ -358,13 +358,13 @@
                 onclick="saveCustomCookieSettings()" 
                 class="btn-cookie-gold flex-1 px-5 py-3 rounded-xl text-sm font-semibold"
             >
-                Simpan Pengaturan
+                Save Settings
             </button>
             <button 
                 onclick="acceptAllCookies()" 
                 class="btn-cookie-outline flex-1 px-5 py-3 rounded-xl text-sm font-medium"
             >
-                Terima Semua
+                Accept All
             </button>
         </div>
     </div>
