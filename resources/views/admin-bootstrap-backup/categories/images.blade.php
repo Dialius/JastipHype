@@ -159,7 +159,7 @@
 
                 <div>
                     <h6 class="mb-3">Preview Homepage</h6>
-                    <p class="small text-muted mb-2">Gambar akan muncul di homepage dalam grid 2x2 (mobile) atau 4 kolom (desktop)</p>
+                    <p class="small text-muted mb-2">Images will appear on the homepage in a 2x2 grid (mobile) or 4 columns (desktop)</p>
                     <div class="border rounded p-2 bg-light">
                         <div class="row g-2">
                             @foreach($categories as $category)

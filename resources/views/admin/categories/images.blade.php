@@ -261,7 +261,7 @@
 
                 <div>
                     <h3 class="text-sm font-semibold text-gray-900 mb-3">Homepage Preview</h3>
-                    <p class="text-xs text-gray-500 mb-3">Gambar akan muncul dalam grid 2x2 (mobile) atau 4 kolom (desktop)</p>
+                    <p class="text-xs text-gray-500 mb-3">Images will appear in a 2x2 grid (mobile) or 4 columns (desktop)</p>
                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-3">
                         <div class="grid grid-cols-2 gap-2">
                             @foreach($categories as $category)

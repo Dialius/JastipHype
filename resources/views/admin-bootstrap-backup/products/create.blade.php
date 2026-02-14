@@ -147,21 +147,21 @@
                     <!-- Image Size Recommendation -->
                     <div class="alert alert-info mb-4">
                         <h6 class="alert-heading mb-2">
-                            <i class="bi bi-info-circle"></i> Rekomendasi Ukuran Gambar
+                            <i class="bi bi-info-circle"></i> Recommended Image Size
                         </h6>
                         <ul class="mb-0 small">
-                            <li><strong>Ukuran Ideal:</strong> 800 x 1000 px (Rasio 4:5)</li>
-                            <li><strong>Ukuran Minimum:</strong> 600 x 750 px</li>
+                            <li><strong>Ideal Size:</strong> 800 x 1000 px (4:5 Ratio)</li>
+                            <li><strong>Minimum Size:</strong> 600 x 750 px</li>
                             <li><strong>Format:</strong> JPG, PNG, WEBP</li>
-                            <li><strong>Ukuran File:</strong> Maksimal 2MB per gambar</li>
-                            <li><strong>Background:</strong> Putih atau transparan (untuk konsistensi)</li>
+                            <li><strong>File Size:</strong> Maximum 2MB per image</li>
+                            <li><strong>Background:</strong> White or transparent (for consistency)</li>
                         </ul>
                     </div>
 
                     <!-- Image Upload Sections -->
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="bi bi-image text-primary"></i> Gambar Depan (Front)
+                            <i class="bi bi-image text-primary"></i> Front Image
                         </label>
                         <input type="file" name="images[front][]" class="form-control image-input" 
                                multiple accept="image/jpeg,image/png,image/jpg,image/webp" data-type="front">
@@ -191,11 +191,11 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">
-                            <i class="bi bi-images text-secondary"></i> Gambar Lainnya (Other)
+                            <i class="bi bi-images text-secondary"></i> Other Images
                         </label>
                         <input type="file" name="images[other][]" class="form-control image-input" 
                                multiple accept="image/jpeg,image/png,image/jpg,image/webp" data-type="other">
-                        <small class="text-muted">Foto lainnya (packaging, tag, accessories, lifestyle, dll)</small>
+                        <small class="text-muted">Other photos (packaging, tags, accessories, lifestyle, etc.)</small>
                         <div class="image-preview-container row g-2 mt-2" data-type="other"></div>
                     </div>
 

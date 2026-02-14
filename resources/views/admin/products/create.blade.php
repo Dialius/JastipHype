@@ -199,13 +199,13 @@
                                 </svg>
                             </div>
                             <div class="ml-3 flex-1">
-                                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-300">Rekomendasi Ukuran Gambar</h3>
+                                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-300">Recommended Image Size</h3>
                                 <div class="mt-2 text-sm text-blue-700 dark:text-blue-400">
                                     <ul class="list-disc space-y-1 pl-5">
-                                        <li><strong>Ukuran Ideal:</strong> 800 x 1000 px (Rasio 4:5)</li>
-                                        <li><strong>Ukuran Minimum:</strong> 600 x 750 px</li>
+                                        <li><strong>Ideal Size:</strong> 800 x 1000 px (4:5 Ratio)</li>
+                                        <li><strong>Minimum Size:</strong> 600 x 750 px</li>
                                         <li><strong>Format:</strong> JPG, PNG, WEBP</li>
-                                        <li><strong>Ukuran File:</strong> Maksimal 2MB per gambar</li>
+                                        <li><strong>File Size:</strong> Maximum 2MB per image</li>
                                     </ul>
                                 </div>
                             </div>
@@ -213,7 +213,7 @@
                     </div>
 
                     <!-- Image Upload Sections -->
-                    @foreach(['front' => 'Gambar Depan (Front)', 'back' => 'Gambar Belakang (Back)', 'detail' => 'Gambar Detail', 'other' => 'Gambar Lainnya (Other)'] as $type => $label)
+                    @foreach(['front' => 'Front Image', 'back' => 'Back Image', 'detail' => 'Detail Image', 'other' => 'Other Images'] as $type => $label)
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $label }}</label>
                         <input type="file" name="images[{{ $type }}][]" class="image-input mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"

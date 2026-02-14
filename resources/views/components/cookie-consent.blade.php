@@ -321,7 +321,7 @@
                                 </label>
                             </div>
                             <p class="text-gray-400 text-xs leading-relaxed">
-                                Membantu memahami cara pengunjung berinteraksi melalui Google Analytics dan metrik kunjungan.
+                                Help understand how visitors interact through Google Analytics and visit metrics.
                             </p>
                         </div>
                     </div>
@@ -344,7 +344,7 @@
                                 </label>
                             </div>
                             <p class="text-gray-400 text-xs leading-relaxed">
-                                Menampilkan iklan yang relevan melalui Facebook Pixel, Google Ads, dan retargeting.
+                                Display relevant ads through Facebook Pixel, Google Ads, and retargeting.
                             </p>
                         </div>
                     </div>

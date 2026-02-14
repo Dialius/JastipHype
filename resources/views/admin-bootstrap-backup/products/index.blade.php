@@ -148,7 +148,7 @@
                                         @endif
                                         @if($product->productImages->count() > 0)
                                             <small class="text-muted d-block">
-                                                <i class="bi bi-images"></i> {{ $product->productImages->count() }} gambar
+                                                <i class="bi bi-images"></i> {{ $product->productImages->count() }} images
                                             </small>
                                         @endif
                                     </div>
