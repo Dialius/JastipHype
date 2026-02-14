@@ -6,11 +6,46 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Deploy via SSH
+    # Step 1: Checkout code
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Step 2: Setup Node.js
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+        cache: 'npm'
+    
+    # Step 3: Install dependencies
+    - name: 📦 Install npm dependencies
+      run: npm ci
+    
+    # Step 4: Build assets
+    - name: 🏗️ Build Vite assets
+      run: npm run build
+    
+    # Step 5: Commit built assets
+    - name: 💾 Commit built assets
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+        git add public/build -f
+        if ! git diff --staged --quiet; then
+          git commit -m "build: compile assets [skip ci]"
+          git push
+        else
+          echo "No changes to commit"
+        fi
+    
+    # Step 6: Deploy to server
+    - name: 🚀 Deploy via SSH
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -18,28 +53,62 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
+          set -e  # Exit on any error
+          
           cd /home/u909490256/domains/jastiphype.shop
           
-          # Pull latest code
-          git pull origin master
+          echo "📦 Pulling latest code..."
+          if ! git pull origin master; then
+            echo "❌ Git pull failed"
+            exit 1
+          fi
           
-          # Install dependencies
-          composer install --no-dev --optimize-autoloader --no-interaction
+          echo "📚 Installing Composer dependencies..."
+          if ! composer install --no-dev --optimize-autoloader --no-interaction; then
+            echo "❌ Composer install failed"
+            exit 1
+          fi
           
-          # Copy public files
+          echo "📁 Copying public files..."
           cp -rf public/* public_html/
           
-          # Set permissions
+          echo "🔐 Setting permissions..."
           chmod -R 775 storage bootstrap/cache
           chmod -R 755 public_html
           
-          # Run migrations
-          php artisan migrate --force
+          echo "🗄️ Running migrations..."
+          if ! php artisan migrate --force; then
+            echo "❌ Migration failed"
+            exit 1
+          fi
           
-          # Clear and cache
+          echo "🧹 Clearing caches..."
           php artisan optimize:clear
+          
+          echo "⚡ Caching configuration..."
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
           
-          echo "✅ Deployment completed!"
+          echo "🏥 Running health check..."
+          if ! curl -f -s -o /dev/null https://jastiphype.shop; then
+            echo "⚠️ Warning: Health check failed, but deployment completed"
+          else
+            echo "✅ Health check passed"
+          fi
+          
+          echo "✅ Deployment completed successfully!"
+    
+    # Step 7: Success notification
+    - name: ✅ Deployment Success
+      if: success()
+      run: |
+        echo "::notice::Deployment to jastiphype.shop completed successfully!"
+        echo "🎉 Website: https://jastiphype.shop"
+    
+    # Step 8: Failure notification
+    - name: ❌ Deployment Failed
+      if: failure()
+      run: |
+        echo "::error::Deployment to jastiphype.shop failed!"
+        echo "Please check the logs above for details."
