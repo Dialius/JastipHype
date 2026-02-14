@@ -106,6 +106,53 @@ jobs:
           php artisan route:cache || echo "⚠️ Route cache failed"
           php artisan view:cache || echo "⚠️ View cache failed"
           
+          echo "🔄 Syncing public folder to domain public_html..."
+          # Sync Laravel public files to domain public_html
+          rsync -av --delete \
+            --exclude='build' \
+            --exclude='storage' \
+            public/ public_html/
+          
+          # Update index.php with correct paths
+          cat > public_html/index.php << 'INDEXPHP'
+<?php
+
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require __DIR__.'/../vendor/autoload.php';
+
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response);
+INDEXPHP
+          
+          # Recreate symbolic links
+          cd public_html
+          rm -rf build storage
+          ln -s ../public/build build 2>/dev/null || echo "⚠️ Build symlink failed"
+          ln -s ../storage/app/public storage 2>/dev/null || echo "⚠️ Storage symlink failed"
+          cd ..
+          
+          # Set permissions
+          chmod -R 755 public_html
+          chmod 644 public_html/index.php
+          chmod 644 public_html/.htaccess 2>/dev/null || true
+          
+          echo "✅ Public folder synced to domain public_html"
+          
           echo "🏥 Running health check..."
           if curl -f -s -o /dev/null -w "%{http_code}" https://jastiphype.shop | grep -q "200"; then
             echo "✅ Health check passed - Site is responding"
