@@ -56,52 +56,70 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          set -e  # Exit on any error
+          # Enable error handling but continue on some errors
+          set -e
           
-          cd /home/u909490256/domains/jastiphype.shop
+          echo "🔍 Current directory and user info..."
+          pwd
+          whoami
+          
+          cd /home/u909490256/domains/jastiphype.shop || { echo "❌ Failed to change directory"; exit 1; }
           
           echo "📦 Pulling latest code..."
-          # Stash any local changes (especially in public/build)
-          git stash --include-untracked
+          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+          echo "Current commit: $(git log -1 --oneline)"
           
-          # Reset to match remote exactly
-          git fetch origin master
-          git reset --hard origin/master
+          # Fetch all updates from remote
+          echo "Fetching from remote..."
+          git fetch --all || { echo "❌ Git fetch failed"; exit 1; }
           
-          # Clean any untracked files
-          git clean -fd
+          # Discard all local changes and sync with remote
+          echo "Resetting to remote master..."
+          git reset --hard origin/master || { echo "❌ Git reset failed"; exit 1; }
+          
+          # Remove any untracked files and directories
+          echo "Cleaning untracked files..."
+          git clean -fd || { echo "⚠️ Git clean had issues but continuing..."; }
+          
+          echo "✅ Repository synced with remote"
+          echo "New commit: $(git log -1 --oneline)"
           
           echo "📚 Installing Composer dependencies..."
-          if ! composer install --no-dev --optimize-autoloader --no-interaction; then
+          composer install --no-dev --optimize-autoloader --no-interaction || { 
             echo "❌ Composer install failed"
-            exit 1
-          fi
+            echo "Trying composer update..."
+            composer update --no-dev --optimize-autoloader --no-interaction || exit 1
+          }
           
           echo "🔐 Setting permissions..."
-          chmod -R 775 storage bootstrap/cache 2>/dev/null || true
-          chmod -R 755 public_html 2>/dev/null || true
+          chmod -R 775 storage bootstrap/cache 2>/dev/null || echo "⚠️ Some permission changes failed"
+          chmod -R 755 public_html 2>/dev/null || echo "⚠️ public_html permission change failed"
           
           echo "🗄️ Running migrations..."
-          if ! php artisan migrate --force; then
-            echo "⚠️ Warning: Migration failed, but continuing..."
-          fi
+          php artisan migrate --force || echo "⚠️ Migration had issues but continuing..."
           
           echo "🧹 Clearing caches..."
-          php artisan optimize:clear || true
+          php artisan optimize:clear || echo "⚠️ Cache clear had issues"
           
           echo "⚡ Caching configuration..."
-          php artisan config:cache || true
-          php artisan route:cache || true
-          php artisan view:cache || true
+          php artisan config:cache || echo "⚠️ Config cache failed"
+          php artisan route:cache || echo "⚠️ Route cache failed"
+          php artisan view:cache || echo "⚠️ View cache failed"
           
           echo "🏥 Running health check..."
-          if curl -f -s -o /dev/null https://jastiphype.shop; then
-            echo "✅ Health check passed"
+          if curl -f -s -o /dev/null -w "%{http_code}" https://jastiphype.shop | grep -q "200"; then
+            echo "✅ Health check passed - Site is responding"
           else
             echo "⚠️ Warning: Health check failed, but deployment completed"
+            echo "Site may need a few moments to fully restart"
           fi
           
+          echo ""
           echo "✅ Deployment completed successfully!"
+          echo "📊 Final status:"
+          echo "   - Commit: $(git log -1 --oneline)"
+          echo "   - Branch: $(git rev-parse --abbrev-ref HEAD)"
+          echo "   - Time: $(date)"
     
     # Step 7: Success notification
     - name: ✅ Deployment Success
