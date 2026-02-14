@@ -3,6 +3,22 @@
 # ============================================
 # Fix Domain Root untuk jastiphype.shop
 # ============================================
+# 
+# IMPORTANT - JANGAN HAPUS SCRIPT INI!
+# 
+# Script ini menyelesaikan masalah 403 Forbidden dengan:
+# 1. Mengidentifikasi document root yang benar
+# 2. Setup Laravel dengan struktur yang sesuai Hostinger
+# 3. Modifikasi index.php dengan path relatif
+# 4. Buat symbolic links untuk assets
+# 
+# Domain jastiphype.shop di-point ke:
+# /home/u909490256/domains/jastiphype.shop/public_html
+# 
+# BUKAN ke /home/u909490256/public_html (folder global)
+# 
+# Jika website return 403 Forbidden lagi, jalankan script ini!
+# ============================================
 
 set -e
 

@@ -1,5 +1,34 @@
 name: Deploy to Hostinger
 
+# ============================================
+# IMPORTANT NOTES - JANGAN HAPUS!
+# ============================================
+# 
+# Domain jastiphype.shop di-point ke:
+# /home/u909490256/domains/jastiphype.shop/public_html
+# 
+# BUKAN ke /home/u909490256/public_html (folder global)
+# 
+# Struktur folder yang HARUS dipertahankan:
+# /domains/jastiphype.shop/
+#   ├── public/           (Laravel public folder - original)
+#   │   ├── build/        (Vite compiled assets)
+#   │   └── ...
+#   └── public_html/      (Domain document root - Hostinger)
+#       ├── index.php     (Modified dengan path relatif ../)
+#       ├── .htaccess     (Laravel rewrite rules)
+#       ├── build/        (Symlink ke ../public/build)
+#       └── storage/      (Symlink ke ../storage/app/public)
+# 
+# Key Points:
+# 1. index.php HARUS menggunakan path relatif (../)
+# 2. build/ dan storage/ HARUS di-symlink (bukan copy)
+# 3. Setiap deployment HARUS sync public/ ke public_html/
+# 4. Setiap deployment HARUS recreate symlinks
+# 
+# Jika diubah, website akan return 403 Forbidden!
+# ============================================
+
 on:
   push:
     branches: [ master ]
@@ -106,15 +135,34 @@ jobs:
           php artisan route:cache || echo "⚠️ Route cache failed"
           php artisan view:cache || echo "⚠️ View cache failed"
           
+          # ============================================
+          # CRITICAL: Sync public folder to public_html
+          # ============================================
+          # JANGAN HAPUS BAGIAN INI!
+          # Domain jastiphype.shop di-point ke /domains/jastiphype.shop/public_html
+          # BUKAN ke /home/u909490256/public_html (folder global)
+          # 
+          # Struktur yang benar:
+          # /domains/jastiphype.shop/
+          #   ├── public/           (Laravel public folder - original)
+          #   └── public_html/      (Domain document root - Hostinger)
+          #       ├── index.php     (Modified dengan path relatif ../)
+          #       ├── build/        (Symlink ke ../public/build)
+          #       └── storage/      (Symlink ke ../storage/app/public)
+          # ============================================
+          
           echo "🔄 Syncing public folder to domain public_html..."
+          
           # Sync Laravel public files to domain public_html
+          # Exclude build & storage karena akan di-symlink
           rsync -av --delete \
             --exclude='build' \
             --exclude='storage' \
             public/ public_html/
           
-          # Update index.php with correct paths
-          cat > public_html/index.php << 'INDEXPHP'
+          # Update index.php dengan path relatif (JANGAN DIUBAH!)
+          # Path relatif ../ untuk akses ke parent folder
+          cat > public_html/index.php << 'EOF'
 <?php
 
 use Illuminate\Contracts\Http\Kernel;
@@ -137,9 +185,9 @@ $response = $kernel->handle(
 )->send();
 
 $kernel->terminate($request, $response);
-INDEXPHP
+EOF
           
-          # Recreate symbolic links
+          # Recreate symbolic links (PENTING untuk assets & storage)
           cd public_html
           rm -rf build storage
           ln -s ../public/build build 2>/dev/null || echo "⚠️ Build symlink failed"
