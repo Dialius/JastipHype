@@ -8,7 +8,7 @@
     <div class="sm:flex sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Shop by Category Images</h1>
-            <p class="mt-1 text-sm text-gray-500">Upload gambar untuk 4 kategori yang ditampilkan di bagian "Shop by Category" homepage</p>
+            <p class="mt-1 text-sm text-gray-500">Upload images for 4 categories displayed in the "Shop by Category" section on the homepage</p>
         </div>
     </div>
 </div>
@@ -161,7 +161,7 @@
                         <div class="ml-3">
                             <h3 class="text-sm font-medium text-blue-800">Shop by Category</h3>
                             <div class="mt-2 text-sm text-blue-700">
-                                <p>Grid 4 kolom di homepage untuk navigasi kategori utama</p>
+                                <p>4-column grid on homepage for main category navigation</p>
                             </div>
                         </div>
                     </div>
@@ -194,25 +194,25 @@
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span><strong>Accessories</strong> - Tas, belt, topi, dll</span>
+                            <span><strong>Accessories</strong> - Bags, belts, hats, etc</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span><strong>Clothing</strong> - Kaos, kemeja, celana, dll</span>
+                            <span><strong>Clothing</strong> - T-shirts, shirts, pants, etc</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span><strong>Hoodies</strong> - Hoodie, sweater, jaket</span>
+                            <span><strong>Hoodies</strong> - Hoodies, sweaters, jackets</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span><strong>Sneakers</strong> - Sepatu sneakers</span>
+                            <span><strong>Sneakers</strong> - Sneaker shoes</span>
                         </li>
                     </ul>
                     <div class="mt-3 rounded-md bg-yellow-50 p-3">
@@ -220,7 +220,7 @@
                             <svg class="inline h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
-                            Kategori ini tetap dan tidak bisa ditambah/dikurangi
+                            These categories are fixed and cannot be added or removed
                         </p>
                     </div>
                 </div>
@@ -234,25 +234,25 @@
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Gunakan gambar square 600x600px</span>
+                            <span>Use square 600x600px images</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Gambar harus jelas dan menarik</span>
+                            <span>Images must be clear and attractive</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Pilih gambar representatif untuk kategori</span>
+                            <span>Choose representative images for the category</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="mr-2 h-5 w-5 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Hindari gambar blur atau pixelated</span>
+                            <span>Avoid blurry or pixelated images</span>
                         </li>
                     </ul>
                 </div>

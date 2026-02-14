@@ -187,7 +187,7 @@
             <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
                 <div class="border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">Product Images</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Upload gambar produk dengan kategori (Depan, Belakang, Detail, Lainnya)</p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Upload product images with categories (Front, Back, Detail, Other)</p>
                 </div>
                 <div class="px-6 py-4 space-y-4">
                     <!-- Image Size Recommendation -->

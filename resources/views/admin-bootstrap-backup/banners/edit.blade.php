@@ -350,7 +350,7 @@
 
                 <div class="alert alert-warning">
                     <h6 class="mb-2"><i class="bi bi-info-circle me-1"></i> Shop by Category</h6>
-                    <p class="small mb-2">Untuk mengatur gambar kategori di bagian "Shop by Category", gunakan halaman khusus:</p>
+                    <p class="small mb-2">To manage category images in the "Shop by Category" section, use the dedicated page:</p>
                     <a href="{{ route('admin.categories.images.edit') }}" class="btn btn-sm btn-outline-warning">
                         <i class="bi bi-grid-3x3-gap me-1"></i> Category Images
                     </a>

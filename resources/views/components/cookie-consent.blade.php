@@ -194,11 +194,11 @@
                     </div>
                     <div>
                         <p class="text-white text-sm font-medium leading-relaxed">
-                            Kami menggunakan cookies untuk meningkatkan pengalaman belanja Anda.
+                            We use cookies to enhance your shopping experience.
                         </p>
                         <p class="text-gray-400 text-xs mt-1">
-                            Pilih preferensi cookies Anda atau pelajari lebih lanjut di 
-                            <a href="{{ route('gdpr.cookie-policy') }}" class="text-yellow-500 hover:text-yellow-400 underline underline-offset-2 transition-colors">Kebijakan Cookie</a> kami.
+                            Choose your cookie preferences or learn more in our 
+                            <a href="{{ route('gdpr.cookie-policy') }}" class="text-yellow-500 hover:text-yellow-400 underline underline-offset-2 transition-colors">Cookie Policy</a>.
                         </p>
                     </div>
                 </div>
@@ -209,19 +209,19 @@
                         onclick="acceptAllCookies()" 
                         class="btn-cookie-gold px-6 py-2.5 rounded-xl text-sm whitespace-nowrap"
                     >
-                        Terima Semua
+                        Accept All
                     </button>
                     <button 
                         onclick="showCookieSettings()" 
                         class="btn-cookie-outline px-6 py-2.5 rounded-xl text-sm whitespace-nowrap"
                     >
-                        Pengaturan
+                        Settings
                     </button>
                     <button 
                         onclick="rejectNonEssential()" 
                         class="btn-cookie-outline px-6 py-2.5 rounded-xl text-sm whitespace-nowrap"
                     >
-                        Tolak
+                        Reject
                     </button>
                 </div>
             </div>
@@ -240,8 +240,8 @@
             <div class="px-6 py-5 border-b border-white/10 flex-shrink-0">
                 <div class="flex justify-between items-center">
                     <div>
-                        <h2 class="text-xl font-bold text-white">Pengaturan Cookies</h2>
-                        <p class="text-gray-400 text-xs mt-1">Kelola preferensi privasi Anda</p>
+                        <h2 class="text-xl font-bold text-white">Cookie Settings</h2>
+                        <p class="text-gray-400 text-xs mt-1">Manage your privacy preferences</p>
                     </div>
                     <button onclick="closeCookieSettings()" 
                             class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors flex-shrink-0">
@@ -255,8 +255,8 @@
             <!-- Modal Body -->
             <div class="px-6 py-5 overflow-y-auto cookie-scroll flex-1">
             <p class="text-gray-400 text-sm mb-5 leading-relaxed">
-                Cookies penting diperlukan untuk fungsi dasar website dan tidak dapat dinonaktifkan. 
-                Anda dapat memilih untuk mengaktifkan atau menonaktifkan cookie lainnya.
+                Essential cookies are required for basic website functionality and cannot be disabled. 
+                You can choose to enable or disable other cookies.
             </p>
 
             <div class="space-y-3">
@@ -270,11 +270,11 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-white font-semibold text-sm">Cookies Penting</h3>
-                                <span class="text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full font-medium">Selalu Aktif</span>
+                                <h3 class="text-white font-semibold text-sm">Essential Cookies</h3>
+                                <span class="text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full font-medium">Always Active</span>
                             </div>
                             <p class="text-gray-400 text-xs leading-relaxed">
-                                Diperlukan untuk login, shopping cart, CSRF token, dan fungsi dasar keamanan website.
+                                Required for login, shopping cart, CSRF token, and basic website security functions.
                             </p>
                         </div>
                     </div>
@@ -291,14 +291,14 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-white font-semibold text-sm">Cookies Fungsional</h3>
+                                <h3 class="text-white font-semibold text-sm">Functional Cookies</h3>
                                 <label class="cookie-toggle">
                                     <input type="checkbox" id="functionalCookies">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
                             <p class="text-gray-400 text-xs leading-relaxed">
-                                Mengingat preferensi seperti bahasa, tampilan, dan filter produk yang tersimpan.
+                                Remember preferences such as language, display settings, and saved product filters.
                             </p>
                         </div>
                     </div>
@@ -314,7 +314,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-white font-semibold text-sm">Cookies Analitik</h3>
+                                <h3 class="text-white font-semibold text-sm">Analytics Cookies</h3>
                                 <label class="cookie-toggle">
                                     <input type="checkbox" id="analyticsCookies">
                                     <span class="toggle-slider"></span>

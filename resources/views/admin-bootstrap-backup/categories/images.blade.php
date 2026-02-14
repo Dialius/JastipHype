@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">Upload Category Images</h5>
-                <p class="text-muted small mb-0 mt-2">Upload gambar untuk 4 kategori yang ditampilkan di bagian "Shop by Category" homepage</p>
+                <p class="text-muted small mb-0 mt-2">Upload images for 4 categories displayed in the "Shop by Category" section on the homepage</p>
             </div>
             <div class="card-body">
                 <form action="{{ route('admin.categories.images.update') }}" method="POST" enctype="multipart/form-data">
@@ -116,42 +116,42 @@
                         </div>
                         <div>
                             <strong>Shop by Category</strong>
-                            <div class="text-muted small">Grid 4 kolom</div>
+                            <div class="text-muted small">4-column grid</div>
                         </div>
                     </div>
-                    <p class="small text-muted mb-2"><strong>Untuk:</strong> Bagian "Shop by Category" di homepage</p>
-                    <p class="small text-muted mb-2"><strong>Ukuran:</strong> 600x600px per kategori (1:1 square)</p>
-                    <p class="small text-muted mb-2"><strong>Format:</strong> JPG, PNG, atau WebP</p>
+                    <p class="small text-muted mb-2"><strong>For:</strong> "Shop by Category" section on homepage</p>
+                    <p class="small text-muted mb-2"><strong>Size:</strong> 600x600px per category (1:1 square)</p>
+                    <p class="small text-muted mb-2"><strong>Format:</strong> JPG, PNG, or WebP</p>
                     <p class="small text-muted mb-2"><strong>Max Size:</strong> 2MB per file</p>
                 </div>
 
                 <hr>
 
                 <div class="mb-4">
-                    <h6 class="mb-3">4 Kategori Tetap</h6>
+                    <h6 class="mb-3">4 Fixed Categories</h6>
                     <ul class="small text-muted mb-0">
-                        <li><strong>Accessories</strong> - Tas, belt, topi, dll</li>
-                        <li><strong>Clothing</strong> - Kaos, kemeja, celana, dll</li>
-                        <li><strong>Hoodies</strong> - Hoodie, sweater, jaket</li>
-                        <li><strong>Sneakers</strong> - Sepatu sneakers</li>
+                        <li><strong>Accessories</strong> - Bags, belts, hats, etc</li>
+                        <li><strong>Clothing</strong> - T-shirts, shirts, pants, etc</li>
+                        <li><strong>Hoodies</strong> - Hoodies, sweaters, jackets</li>
+                        <li><strong>Sneakers</strong> - Sneaker shoes</li>
                     </ul>
                     <p class="small text-info mt-3 mb-0">
                         <i class="bi bi-info-circle me-1"></i>
-                        Kategori ini tetap dan tidak bisa ditambah/dikurangi. Hanya gambarnya yang bisa diubah.
+                        These categories are fixed and cannot be added or removed. Only images can be changed.
                     </p>
                 </div>
 
                 <hr>
 
                 <div class="mb-4">
-                    <h6 class="mb-3">Tips Upload Gambar</h6>
+                    <h6 class="mb-3">Image Upload Tips</h6>
                     <ul class="small text-muted mb-0">
-                        <li>Gunakan gambar square 600x600px</li>
-                        <li>Gambar harus jelas dan menarik</li>
-                        <li>Pilih gambar yang representatif untuk kategori</li>
-                        <li>Gunakan gambar berkualitas tinggi</li>
-                        <li>Hindari gambar dengan teks terlalu banyak</li>
-                        <li>Pastikan gambar tidak blur atau pixelated</li>
+                        <li>Use square 600x600px images</li>
+                        <li>Images must be clear and attractive</li>
+                        <li>Choose representative images for the category</li>
+                        <li>Use high-quality images</li>
+                        <li>Avoid images with too much text</li>
+                        <li>Ensure images are not blurry or pixelated</li>
                     </ul>
                 </div>
 

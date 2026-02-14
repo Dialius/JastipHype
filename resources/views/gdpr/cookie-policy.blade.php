@@ -136,7 +136,7 @@
         <!-- Breadcrumb -->
         <nav class="mb-6">
             <ol class="flex items-center gap-2 text-sm text-gray-400">
-                <li><a href="/" class="hover:text-yellow-500 transition-colors">Beranda</a></li>
+                <li><a href="/" class="hover:text-yellow-500 transition-colors">Home</a></li>
                 <li><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></li>
                 <li class="text-yellow-500">Cookie Policy</li>
             </ol>
@@ -151,14 +151,14 @@
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Cookie Policy</h1>
                 <p class="text-gray-300 text-base leading-relaxed max-w-2xl">
-                    Transparansi tentang bagaimana kami menggunakan cookies untuk memberikan pengalaman terbaik di JastipHype.
+                    Transparency about how we use cookies to provide the best experience at JastipHype.
                 </p>
                 <div class="flex items-center gap-3 mt-4">
                     <span class="inline-flex items-center gap-1.5 text-xs text-gray-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        Terakhir diperbarui: {{ date('d F Y') }}
+                        Last updated: {{ date('d F Y') }}
                     </span>
                 </div>
             </div>
@@ -171,17 +171,17 @@
 
     <!-- What Are Cookies Card -->
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">Apa itu Cookies?</h2>
+        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">What are Cookies?</h2>
         <p class="text-gray-600 text-sm leading-relaxed">
-            Cookies adalah file teks kecil yang disimpan di perangkat Anda ketika Anda mengunjungi website. 
-            Cookies membantu kami memberikan pengalaman yang lebih baik dan personal, mengingat preferensi Anda, 
-            dan memahami bagaimana Anda menggunakan layanan kami agar kami dapat terus meningkatkan kualitas.
+            Cookies are small text files stored on your device when you visit a website. 
+            Cookies help us provide a better and more personalized experience, remember your preferences, 
+            and understand how you use our services so we can continuously improve quality.
         </p>
     </div>
 
     <!-- Cookie Types Section -->
     <div class="mb-8">
-        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">Jenis Cookies yang Kami Gunakan</h2>
+        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">Types of Cookies We Use</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Necessary -->
@@ -194,25 +194,25 @@
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-2">
-                            <h3 class="font-bold text-gray-900 text-sm">Cookies Penting</h3>
-                            <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium">Wajib</span>
+                            <h3 class="font-bold text-gray-900 text-sm">Essential Cookies</h3>
+                            <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium">Required</span>
                         </div>
-                        <p class="text-gray-500 text-xs leading-relaxed mb-3">Diperlukan agar website berfungsi dengan baik.</p>
+                        <p class="text-gray-500 text-xs leading-relaxed mb-3">Required for the website to function properly.</p>
                         <ul class="space-y-1.5">
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                Session cookies untuk login
+                                Session cookies for login
                             </li>
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                CSRF token untuk keamanan
+                                CSRF token for security
                             </li>
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                                 Shopping cart cookies
                             </li>
                         </ul>
-                        <p class="text-xs text-gray-400 mt-2 italic">Cookies ini tidak dapat dinonaktifkan.</p>
+                        <p class="text-xs text-gray-400 mt-2 italic">These cookies cannot be disabled.</p>
                     </div>
                 </div>
             </div>
@@ -228,22 +228,22 @@
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-2">
-                            <h3 class="font-bold text-gray-900 text-sm">Cookies Fungsional</h3>
-                            <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">Opsional</span>
+                            <h3 class="font-bold text-gray-900 text-sm">Functional Cookies</h3>
+                            <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">Optional</span>
                         </div>
-                        <p class="text-gray-500 text-xs leading-relaxed mb-3">Mengingat preferensi Anda untuk pengalaman yang lebih baik.</p>
+                        <p class="text-gray-500 text-xs leading-relaxed mb-3">Remember your preferences for a better experience.</p>
                         <ul class="space-y-1.5">
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                Bahasa pilihan
+                                Language preference
                             </li>
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                Preferensi tampilan
+                                Display preferences
                             </li>
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                Filter produk tersimpan
+                                Saved product filters
                             </li>
                         </ul>
                     </div>
@@ -260,10 +260,10 @@
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-2">
-                            <h3 class="font-bold text-gray-900 text-sm">Cookies Analitik</h3>
-                            <span class="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-medium">Opsional</span>
+                            <h3 class="font-bold text-gray-900 text-sm">Analytics Cookies</h3>
+                            <span class="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-medium">Optional</span>
                         </div>
-                        <p class="text-gray-500 text-xs leading-relaxed mb-3">Membantu kami memahami penggunaan website.</p>
+                        <p class="text-gray-500 text-xs leading-relaxed mb-3">Help us understand website usage.</p>
                         <ul class="space-y-1.5">
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-purple-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
@@ -271,11 +271,11 @@
                             </li>
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-purple-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                Halaman populer
+                                Popular pages
                             </li>
                             <li class="flex items-center gap-2 text-xs text-gray-600">
                                 <svg class="w-3.5 h-3.5 text-purple-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                Durasi kunjungan
+                                Visit duration
                             </li>
                         </ul>
                     </div>
@@ -318,60 +318,60 @@
 
     <!-- Cookie Detail Table -->
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">Detail Cookies</h2>
-        <p class="text-gray-500 text-sm mb-5">Informasi lengkap tentang setiap cookie yang kami gunakan.</p>
+        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">Cookie Details</h2>
+        <p class="text-gray-500 text-sm mb-5">Complete information about each cookie we use.</p>
         
         <div class="overflow-x-auto">
             <table class="cookie-detail-table w-full">
                 <thead>
                     <tr>
-                        <th class="text-left">Nama Cookie</th>
-                        <th class="text-left">Kategori</th>
-                        <th class="text-left">Durasi</th>
-                        <th class="text-left">Tujuan</th>
+                        <th class="text-left">Cookie Name</th>
+                        <th class="text-left">Category</th>
+                        <th class="text-left">Duration</th>
+                        <th class="text-left">Purpose</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td class="font-medium text-gray-900">laravel_session</td>
-                        <td><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Penting</span></td>
-                        <td class="text-gray-500">2 jam</td>
-                        <td class="text-gray-600">Mengelola sesi pengguna</td>
+                        <td><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Essential</span></td>
+                        <td class="text-gray-500">2 hours</td>
+                        <td class="text-gray-600">Manage user session</td>
                     </tr>
                     <tr>
                         <td class="font-medium text-gray-900">XSRF-TOKEN</td>
-                        <td><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Penting</span></td>
-                        <td class="text-gray-500">2 jam</td>
-                        <td class="text-gray-600">Perlindungan CSRF</td>
+                        <td><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Essential</span></td>
+                        <td class="text-gray-500">2 hours</td>
+                        <td class="text-gray-600">CSRF protection</td>
                     </tr>
                     <tr>
                         <td class="font-medium text-gray-900">cookie_consent</td>
-                        <td><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Penting</span></td>
-                        <td class="text-gray-500">1 tahun</td>
-                        <td class="text-gray-600">Menyimpan preferensi cookie</td>
+                        <td><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">Essential</span></td>
+                        <td class="text-gray-500">1 year</td>
+                        <td class="text-gray-600">Store cookie preferences</td>
                     </tr>
                     <tr>
                         <td class="font-medium text-gray-900">locale</td>
-                        <td><span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Fungsional</span></td>
-                        <td class="text-gray-500">1 tahun</td>
-                        <td class="text-gray-600">Menyimpan bahasa pilihan</td>
+                        <td><span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Functional</span></td>
+                        <td class="text-gray-500">1 year</td>
+                        <td class="text-gray-600">Store language preference</td>
                     </tr>
                     <tr>
                         <td class="font-medium text-gray-900">_ga</td>
-                        <td><span class="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">Analitik</span></td>
-                        <td class="text-gray-500">2 tahun</td>
-                        <td class="text-gray-600">Google Analytics - identifikasi pengunjung</td>
+                        <td><span class="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">Analytics</span></td>
+                        <td class="text-gray-500">2 years</td>
+                        <td class="text-gray-600">Google Analytics - identify visitors</td>
                     </tr>
                     <tr>
                         <td class="font-medium text-gray-900">_gid</td>
-                        <td><span class="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">Analitik</span></td>
-                        <td class="text-gray-500">24 jam</td>
-                        <td class="text-gray-600">Google Analytics - membedakan pengunjung</td>
+                        <td><span class="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">Analytics</span></td>
+                        <td class="text-gray-500">24 hours</td>
+                        <td class="text-gray-600">Google Analytics - distinguish visitors</td>
                     </tr>
                     <tr>
                         <td class="font-medium text-gray-900">_fbp</td>
                         <td><span class="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full">Marketing</span></td>
-                        <td class="text-gray-500">3 bulan</td>
+                        <td class="text-gray-500">3 months</td>
                         <td class="text-gray-600">Facebook Pixel tracking</td>
                     </tr>
                 </tbody>
@@ -381,25 +381,25 @@
 
     <!-- Manage Cookies Section -->
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">Mengelola Cookies</h2>
-        <p class="text-gray-600 text-sm leading-relaxed mb-5">Anda dapat mengelola preferensi cookies kapan saja.</p>
+        <h2 class="text-xl font-bold text-gray-900 policy-section-title mb-6">Manage Cookies</h2>
+        <p class="text-gray-600 text-sm leading-relaxed mb-5">You can manage your cookie preferences at any time.</p>
         
         <!-- Manage Button CTA -->
         <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <h3 class="text-white font-semibold text-sm mb-1">Ubah Preferensi Cookies</h3>
-                <p class="text-gray-400 text-xs">Pilih cookies mana yang ingin Anda aktifkan atau nonaktifkan</p>
+                <h3 class="text-white font-semibold text-sm mb-1">Change Cookie Preferences</h3>
+                <p class="text-gray-400 text-xs">Choose which cookies you want to enable or disable</p>
             </div>
             <button 
                 onclick="openCookieSettings()" 
                 class="flex-shrink-0 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-semibold px-6 py-2.5 rounded-xl text-sm hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/30"
             >
-                Kelola Preferensi
+                Manage Preferences
             </button>
         </div>
 
         <!-- Browser Management -->
-        <p class="text-gray-600 text-sm mb-4">Anda juga dapat mengelola cookies melalui pengaturan browser:</p>
+        <p class="text-gray-600 text-sm mb-4">You can also manage cookies through your browser settings:</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" class="browser-card">
                 <div class="browser-icon bg-blue-50">
@@ -459,8 +459,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
         </div>
-        <h2 class="text-white font-bold text-lg mb-2">Ada Pertanyaan?</h2>
-        <p class="text-gray-400 text-sm mb-4">Hubungi kami jika Anda memiliki pertanyaan tentang penggunaan cookies.</p>
+        <h2 class="text-white font-bold text-lg mb-2">Have Questions?</h2>
+        <p class="text-gray-400 text-sm mb-4">Contact us if you have questions about cookie usage.</p>
         <a href="mailto:info@jastiphype.shop" class="inline-flex items-center gap-2 text-yellow-500 hover:text-yellow-400 text-sm font-medium transition-colors">
             <span>info@jastiphype.shop</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>

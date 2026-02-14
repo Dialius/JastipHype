@@ -141,7 +141,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Product Images</h5>
-                    <small class="text-muted">Upload gambar produk dengan kategori (Depan, Belakang, Detail, Lainnya)</small>
+                    <small class="text-muted">Upload product images with categories (Front, Back, Detail, Other)</small>
                 </div>
                 <div class="card-body">
                     <!-- Image Size Recommendation -->
@@ -165,27 +165,27 @@
                         </label>
                         <input type="file" name="images[front][]" class="form-control image-input" 
                                multiple accept="image/jpeg,image/png,image/jpg,image/webp" data-type="front">
-                        <small class="text-muted">Foto tampak depan produk - Gambar utama yang akan ditampilkan pertama</small>
+                        <small class="text-muted">Front view photo - Main image displayed first</small>
                         <div class="image-preview-container row g-2 mt-2" data-type="front"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="bi bi-image text-success"></i> Gambar Belakang (Back)
+                            <i class="bi bi-image text-success"></i> Back Image
                         </label>
                         <input type="file" name="images[back][]" class="form-control image-input" 
                                multiple accept="image/jpeg,image/png,image/jpg,image/webp" data-type="back">
-                        <small class="text-muted">Foto tampak belakang produk</small>
+                        <small class="text-muted">Back view photo</small>
                         <div class="image-preview-container row g-2 mt-2" data-type="back"></div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="bi bi-zoom-in text-warning"></i> Gambar Detail
+                            <i class="bi bi-zoom-in text-warning"></i> Detail Images
                         </label>
                         <input type="file" name="images[detail][]" class="form-control image-input" 
                                multiple accept="image/jpeg,image/png,image/jpg,image/webp" data-type="detail">
-                        <small class="text-muted">Foto detail produk (logo, jahitan, material, label, dll)</small>
+                        <small class="text-muted">Product detail photos (logo, stitching, material, label, etc)</small>
                         <div class="image-preview-container row g-2 mt-2" data-type="detail"></div>
                     </div>
 
