@@ -5,7 +5,8 @@
 ### 🔧 Masalah yang Diperbaiki
 
 #### 1. Auto Deploy Error (GitHub Actions)
-**Masalah:** Error 403 "The requested URL returned error: 403" saat GitHub Actions mencoba push built assets.
+
+**Masalah 1: Error 403 "The requested URL returned error: 403"**
 
 **Penyebab:** 
 - GitHub Actions bot tidak memiliki permission untuk push ke repository
@@ -18,9 +19,23 @@
 - ✅ Mengubah Node.js version dari 24 ke 20 (LTS)
 - ✅ Menghapus typo karakter 's' di baris 20
 
+**Masalah 2: Git Pull Error "Your local changes would be overwritten by merge"**
+
+**Penyebab:**
+- File `public/build/` yang di-generate di server bentrok dengan yang di-push dari GitHub Actions
+- Git mencegah overwrite untuk melindungi local changes
+
+**Solusi:**
+- ✅ Menggunakan `git stash --include-untracked` untuk menyimpan local changes
+- ✅ Menggunakan `git reset --hard origin/master` untuk force sync dengan remote
+- ✅ Menggunakan `git clean -fd` untuk membersihkan untracked files
+- ✅ Menambahkan error handling yang lebih baik (|| true) untuk command yang mungkin gagal
+- ✅ Membuat migration dan cache clearing non-blocking
+
 **Referensi:** 
 - [GitHub Actions Permission Issues](https://stackoverflow.com/questions/73687176/permission-denied-to-github-actionsbot)
-- [GitHub Actions Write Permissions](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token)
+- [Git Force Pull to Overwrite](https://kodekloud.com/blog/git-force-pull/)
+- [Handling Local Changes in Deployment](https://www.devopsroles.com/local-changes-git-merge-conflict-error-in-git/)
 
 ---
 
@@ -83,6 +98,18 @@ Berdasarkan GDPR compliance best practices 2024-2025:
 
 ### 🚀 Cara Deploy
 
+**Strategi Deployment Baru:**
+
+Workflow sekarang menggunakan "force sync" strategy untuk menghindari konflik:
+1. **Stash local changes** - Menyimpan perubahan lokal sementara
+2. **Fetch remote** - Mengambil update terbaru dari GitHub
+3. **Hard reset** - Force sync dengan remote (menimpa local changes)
+4. **Clean untracked** - Membersihkan file yang tidak di-track
+
+Ini memastikan server selalu sync 100% dengan GitHub, menghindari konflik merge.
+
+**Langkah Deploy:**
+
 1. Commit dan push perubahan ke branch master:
 ```bash
 git add .
@@ -91,15 +118,19 @@ git push origin master
 ```
 
 2. GitHub Actions akan otomatis:
-   - Build Vite assets
-   - Commit built assets (dengan permission yang benar)
-   - Deploy ke Hostinger via SSH
-   - Run migrations dan cache optimization
+   - ✅ Build Vite assets dengan Node.js 20
+   - ✅ Commit built assets (dengan permission yang benar)
+   - ✅ Deploy ke Hostinger via SSH
+   - ✅ Force sync repository (menghindari merge conflicts)
+   - ✅ Install Composer dependencies
+   - ✅ Run migrations (non-blocking)
+   - ✅ Clear dan rebuild caches (non-blocking)
+   - ✅ Health check website
 
 3. Verifikasi deployment:
    - Cek GitHub Actions logs: https://github.com/Dialius/JastipHype/actions
    - Test website: https://jastiphype.shop/gdpr/dashboard
-   - Pastikan tidak ada error 403 lagi
+   - Pastikan tidak ada error lagi
 
 ---
 
@@ -119,12 +150,18 @@ git push origin master
 ### 📝 Notes
 
 - File yang diubah:
-  - `.github/workflows/deploy-hostinger.yml` - Fix auto deploy error
+  - `.github/workflows/deploy-hostinger.yml` - Fix auto deploy errors (403 & merge conflicts)
   - `resources/views/gdpr/dashboard.blade.php` - Improve UI/UX
   
 - Tidak ada perubahan di backend/controller
 - Tidak ada perubahan di database schema
 - Semua perubahan backward compatible
+
+**Penting:**
+- Deployment sekarang menggunakan `git reset --hard` yang akan menimpa semua local changes di server
+- Jangan edit file langsung di server, selalu edit di local dan push ke GitHub
+- Jika ada file yang perlu di-preserve di server, tambahkan ke `.gitignore`
+- Migration dan cache clearing sekarang non-blocking (tidak akan stop deployment jika gagal)
 
 ---
 
