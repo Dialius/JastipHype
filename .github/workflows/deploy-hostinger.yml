@@ -69,9 +69,6 @@ jobs:
             exit 1
           fi
           
-          echo "📁 Copying public files..."
-          cp -rf public/* public_html/
-          
           echo "🔐 Setting permissions..."
           chmod -R 775 storage bootstrap/cache
           chmod -R 755 public_html
