@@ -154,16 +154,23 @@ jobs:
           echo "🔄 Syncing public folder to domain public_html..."
           
           # Sync Laravel public files to domain public_html
-          # CRITICAL: Exclude .builds (Hostinger internal), build & storage (akan di-symlink)
+          # CRITICAL EXCLUDES:
+          # - .builds: Hostinger internal folder (MUST NOT DELETE)
+          # - build: Will be symlinked to ../public/build
+          # - storage: Will be symlinked to ../storage/app/public
+          # - index.php: Will be replaced with template (has different paths)
           rsync -av --delete \
             --exclude='.builds' \
             --exclude='build' \
             --exclude='storage' \
+            --exclude='index.php' \
             public/ public_html/
           
           # Update index.php dengan path relatif (JANGAN DIUBAH!)
-          # Menggunakan template file untuk menghindari YAML heredoc issues
+          # CRITICAL: index.php di public_html HARUS berbeda dari public/index.php
+          # karena menggunakan path relatif ../ untuk akses parent folder
           cp public_html_index.php.template public_html/index.php
+          echo "✅ index.php updated with relative paths"
           
           # Recreate symbolic links (PENTING untuk assets & storage)
           cd public_html
@@ -181,6 +188,13 @@ jobs:
           echo "🔍 Verifying deployment..."
           if [ -f "public_html/index.php" ]; then
             echo "✅ index.php exists"
+            # Verify it has correct content (relative paths)
+            if grep -q "__DIR__.'/../vendor/autoload.php'" public_html/index.php; then
+              echo "✅ index.php has correct relative paths"
+            else
+              echo "❌ ERROR: index.php has wrong paths!"
+              exit 1
+            fi
           else
             echo "❌ ERROR: index.php missing!"
             exit 1
@@ -191,8 +205,6 @@ jobs:
           else
             echo "⚠️ WARNING: build symlink missing"
           fi
-          chmod 644 public_html/index.php
-          chmod 644 public_html/.htaccess 2>/dev/null || true
           
           echo "✅ Public folder synced to domain public_html"
           
