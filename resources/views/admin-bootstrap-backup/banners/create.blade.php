@@ -36,12 +36,12 @@
                                 name="type" 
                                 required
                                 onchange="updateFormFields()">
-                            <option value="">-- Pilih Tipe Banner --</option>
+                            <option value="">-- Select Banner Type --</option>
                             <option value="hero" {{ old('type') == 'hero' ? 'selected' : '' }}>
-                                🎯 Hero Banner - Banner utama homepage (Full screen dengan countdown)
+                                🎯 Hero Banner - Main homepage banner (Full screen with countdown)
                             </option>
                             <option value="limited" {{ old('type') == 'limited' ? 'selected' : '' }}>
-                                ⭐ Limited Edition Banner - Bagian "Limited Edition Drops" (Product showcase)
+                                ⭐ Limited Edition Banner - "Limited Edition Drops" section (Product showcase)
                             </option>
                         </select>
                         @error('type')
@@ -53,8 +53,8 @@
                         <div class="alert alert-warning mt-2">
                             <small>
                                 <i class="bi bi-info-circle me-1"></i>
-                                <strong>Catatan:</strong> Untuk mengatur gambar "Shop by Category", gunakan menu 
-                                <a href="{{ route('admin.categories.images.edit') }}" class="alert-link">Category Images</a>
+                                <strong>Note:</strong> To manage "Shop by Category" images, use the 
+                                <a href="{{ route('admin.categories.images.edit') }}" class="alert-link">Category Images</a> menu
                             </small>
                         </div>
                     </div>
