@@ -20,8 +20,14 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust Vercel proxies
         $middleware->trustProxies(at: '*');
 
+        // Exclude payment webhook from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'payment/webhook',
+        ]);
+
         // Register admin middleware alias
         $middleware->alias([
+
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'check.ip.blocked' => \App\Http\Middleware\CheckIpBlocked::class,
             'log.security' => \App\Http\Middleware\LogSecurityEvents::class,
