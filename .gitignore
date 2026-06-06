@@ -25,3 +25,5 @@ Thumbs.db
 .vercel
 deploy_hostinger.py
 upload_fixes.py
+.env.hostinger
+
