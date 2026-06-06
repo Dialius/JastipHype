@@ -41,18 +41,9 @@
 
 ## 📸 Tampilan Platform
 
-<table align="center">
-  <tr>
-    <td align="center" valign="top" width="50%">
-      <strong>Desktop Version</strong><br><br>
-      <img src="public/images/screenshots/desktop_homepage.png" alt="Desktop Homepage Preview" width="100%">
-    </td>
-    <td align="center" valign="top" width="50%">
-      <strong>Mobile Version</strong><br><br>
-      <img src="public/images/screenshots/mobile_homepage.png" alt="Mobile Homepage Preview" width="100%">
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <img src="public/images/screenshots/desktop_homepage.png" alt="Desktop Homepage Preview" width="100%">
+</p>
 
 ---
 
