@@ -162,7 +162,7 @@ Aplikasi ini menggunakan **GitHub Actions** untuk deployment otomatis ke server 
 
 ### Struktur Folder Domain Hostinger
 Agar aplikasi berjalan lancar di Hostinger tanpa error `403 Forbidden`, struktur folder diatur sebagai berikut:
-- **Core Laravel**: Berada di root directory domain (`/home/u909490256/domains/jastiphype.shop`).
+- **Core Laravel**: Berada di root directory domain (`/home/<username>/domains/jastiphype.shop`).
 - **Web Root**: Berada di folder `public_html/` yang berisi isi dari folder `public/` Laravel dengan `index.php` yang disesuaikan path relatifnya.
 
 ### Script Utility yang Tersedia
