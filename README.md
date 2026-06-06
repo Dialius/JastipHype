@@ -9,10 +9,12 @@
 </p>
 
 <p align="center">
-  <a href="https://jastiphype.shop"><img src="https://img.shields.io/badge/Live-jastiphype.shop-black?style=for-the-badge" alt="Live Site"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Laravel-12.x-red?style=for-the-badge&logo=laravel" alt="Laravel"></a>
-  <a href="#"><img src="https://img.shields.io/badge/PHP-8.3-purple?style=for-the-badge&logo=php" alt="PHP"></a>
-  <a href="#"><img src="https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql" alt="MySQL"></a>
+  <a href="https://jastiphype.shop">
+    <img src="https://img.shields.io/badge/Live-jastiphype.shop-000?style=flat-square&logo=vercel&logoColor=white" alt="Live Site">
+  </a>
+  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel&logoColor=white" alt="Laravel">
+  <img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP">
+  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
 </p>
 
 ---
@@ -176,8 +178,10 @@ Untuk memudahkan maintenance langsung dari server, kami menyediakan utility scri
 
 ## 👥 Tim Pengembang
 
-- **Vinthegreat** - Lead Developer
-- **Kiro AI** - Development Assistant
+| Nama | Peran | GitHub / Tautan |
+| :--- | :--- | :--- |
+| **Dialius** | Lead Developer | [@Dialius](https://github.com/Dialius) |
+| **Antigravity** | AI Development Assistant | [Google DeepMind](https://deepmind.google) |
 
 ---
 
