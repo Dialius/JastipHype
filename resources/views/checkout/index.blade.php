@@ -246,19 +246,18 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <div class="flex gap-1.5">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png" alt="BCA" class="h-5 object-contain" onerror="this.style.display='none'">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/200px-Bank_Mandiri_logo_2016.svg.png" alt="Mandiri" class="h-5 object-contain" onerror="this.style.display='none'">
-                                            <img src="https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/200px-BNI_logo.svg.png" alt="BNI" class="h-5 object-contain" onerror="this.style.display='none'">
+                                            <img src="{{ asset('images/payment/banks/mandiri-va.webp') }}" alt="Mandiri" class="h-5 object-contain" onerror="this.style.display='none'">
+                                            <img src="{{ asset('images/payment/banks/bri-va.webp') }}" alt="BRI" class="h-5 object-contain" onerror="this.style.display='none'">
                                         </div>
                                         <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="openSection === 'va' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                     </div>
                                 </button>
                                 <div x-show="openSection === 'va'" x-collapse class="px-5 pb-5 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     @foreach([
-                                        ['value'=>'bank_transfer', 'detail'=>'bca', 'label'=>'BCA Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png', 'color'=>'#005BAC'],
-                                        ['value'=>'bank_transfer', 'detail'=>'mandiri', 'label'=>'Mandiri Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/200px-Bank_Mandiri_logo_2016.svg.png', 'color'=>'#003087'],
-                                        ['value'=>'bank_transfer', 'detail'=>'bni', 'label'=>'BNI Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/200px-BNI_logo.svg.png', 'color'=>'#F58220'],
-                                        ['value'=>'bank_transfer', 'detail'=>'bri', 'label'=>'BRI Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/200px-BANK_BRI_logo.svg.png', 'color'=>'#00529B'],
+                                        ['value'=>'bank_transfer', 'detail'=>'bca', 'label'=>'BCA Virtual Account', 'logo'=>asset('images/payment/banks/bca.svg'), 'color'=>'#005BAC'],
+                                        ['value'=>'bank_transfer', 'detail'=>'mandiri', 'label'=>'Mandiri Virtual Account', 'logo'=>asset('images/payment/banks/mandiri-va.webp'), 'color'=>'#003087'],
+                                        ['value'=>'bank_transfer', 'detail'=>'bni', 'label'=>'BNI Virtual Account', 'logo'=>asset('images/payment/banks/bni-va.webp'), 'color'=>'#F58220'],
+                                        ['value'=>'bank_transfer', 'detail'=>'bri', 'label'=>'BRI Virtual Account', 'logo'=>asset('images/payment/banks/bri-va.webp'), 'color'=>'#00529B'],
                                         ['value'=>'bank_transfer', 'detail'=>'permata', 'label'=>'Permata Virtual Account', 'logo'=>'', 'color'=>'#E31E24'],
                                     ] as $bank)
                                     <label class="relative flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
@@ -266,9 +265,9 @@
                                         <input type="radio" name="_payment_choice" value="{{ $bank['value'] }}|{{ $bank['detail'] }}"
                                             @change="selectMethod('{{ $bank['value'] }}', '{{ $bank['detail'] }}')"
                                             class="sr-only">
-                                        <div class="w-12 h-8 flex items-center justify-center flex-shrink-0 bg-white rounded border border-gray-100 p-1">
+                                        <div class="w-16 h-10 flex items-center justify-center flex-shrink-0 bg-white rounded border border-gray-100 p-1">
                                             @if($bank['logo'])
-                                            <img src="{{ $bank['logo'] }}" alt="{{ $bank['label'] }}" class="max-h-6 max-w-full object-contain" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:{{ $bank['color'] }}\'>{{ strtoupper($bank['detail']) }}</span>'">
+                                            <img src="{{ $bank['logo'] }}" alt="{{ $bank['label'] }}" class="max-h-8 max-w-full object-contain" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:{{ $bank['color'] }}\'>{{ strtoupper($bank['detail']) }}</span>'">
                                             @else
                                             <span class="text-xs font-bold" style="color:{{ $bank['color'] }}">{{ strtoupper($bank['detail']) }}</span>
                                             @endif
@@ -294,32 +293,36 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <div class="flex gap-1.5 items-center">
-                                            <span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:#00AED6;color:white">QRIS</span>
-                                            <span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:#00A651;color:white">GoPay</span>
+                                            <img src="{{ asset('images/payment/ewallet/qrisfinal.webp') }}" alt="QRIS" class="h-5 object-contain" onerror="this.style.display='none'">
                                         </div>
                                         <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="openSection === 'ewallet' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                     </div>
                                 </button>
                                 <div x-show="openSection === 'ewallet'" x-collapse class="px-5 pb-5 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     @foreach([
-                                        ['value'=>'qris', 'detail'=>'', 'label'=>'QRIS (Semua Dompet)', 'badge'=>'QRIS', 'bg'=>'#00AED6', 'desc'=>'GoPay, OVO, DANA, dll'],
-                                        ['value'=>'gopay', 'detail'=>'', 'label'=>'GoPay', 'badge'=>'GO', 'bg'=>'#00A651', 'desc'=>'Bayar dengan GoPay'],
-                                        ['value'=>'shopeepay', 'detail'=>'', 'label'=>'ShopeePay', 'badge'=>'SP', 'bg'=>'#EE4D2D', 'desc'=>'Bayar dengan ShopeePay'],
+                                        ['value'=>'qris', 'detail'=>'', 'label'=>'QRIS (Semua Dompet)', 'logo'=>asset('images/payment/ewallet/qrisfinal.webp'), 'color'=>'#00AED6', 'desc'=>'GoPay, OVO, DANA, dll'],
+                                        ['value'=>'ewallet', 'detail'=>'gopay', 'label'=>'GoPay', 'logo'=>asset('images/payment/ewallet/qris-gopay.webp'), 'color'=>'#00A651', 'desc'=>'Bayar dengan GoPay'],
+                                        ['value'=>'ewallet', 'detail'=>'shopeepay', 'label'=>'ShopeePay', 'logo'=>asset('images/payment/ewallet/qris-shopee.webp'), 'color'=>'#EE4D2D', 'desc'=>'Bayar dengan ShopeePay'],
+                                        ['value'=>'ewallet', 'detail'=>'dana', 'label'=>'DANA', 'logo'=>asset('images/payment/ewallet/qris-dana.webp'), 'color'=>'#0079C1', 'desc'=>'Bayar dengan DANA'],
                                     ] as $wallet)
                                     <label class="relative flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
-                                        :class="selectedMethod === '{{ $wallet['value'] }}' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'">
+                                        :class="selectedMethod === '{{ $wallet['value'] }}' && selectedDetail === '{{ $wallet['detail'] }}' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'">
                                         <input type="radio" name="_payment_choice" value="{{ $wallet['value'] }}|{{ $wallet['detail'] }}"
                                             @change="selectMethod('{{ $wallet['value'] }}', '{{ $wallet['detail'] }}')"
                                             class="sr-only">
-                                        <div class="w-12 h-8 flex items-center justify-center flex-shrink-0 rounded p-1 text-white font-bold text-xs" style="background:{{ $wallet['bg'] }}">
-                                            {{ $wallet['badge'] }}
+                                        <div class="w-16 h-10 flex items-center justify-center flex-shrink-0 bg-white rounded border border-gray-100 p-1">
+                                            @if($wallet['logo'])
+                                            <img src="{{ $wallet['logo'] }}" alt="{{ $wallet['label'] }}" class="max-h-8 max-w-full object-contain" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:{{ $wallet['color'] }}\'>{{ strtoupper($wallet['detail'] ?: $wallet['value']) }}</span>'">
+                                            @else
+                                            <span class="text-xs font-bold" style="color:{{ $wallet['color'] }}">{{ strtoupper($wallet['detail'] ?: $wallet['value']) }}</span>
+                                            @endif
                                         </div>
                                         <div>
                                             <p class="text-sm font-medium text-gray-800">{{ $wallet['label'] }}</p>
                                             <p class="text-xs text-gray-500">{{ $wallet['desc'] }}</p>
                                         </div>
                                         <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
-                                            :class="selectedMethod === '{{ $wallet['value'] }}' ? 'border-black bg-black' : 'border-gray-300'">
+                                            :class="selectedMethod === '{{ $wallet['value'] }}' && selectedDetail === '{{ $wallet['detail'] }}' ? 'border-black bg-black' : 'border-gray-300'">
                                             <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
                                         </div>
                                     </label>
@@ -337,22 +340,29 @@
                                         <span class="font-semibold text-gray-900">Convenience Store</span>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="text-xs font-bold px-1.5 py-0.5 rounded text-white" style="background:#E31E24">Indomaret</span>
+                                        <div class="flex gap-1.5 items-center">
+                                            <img src="{{ asset('images/payment/cstore/alfamart.png') }}" alt="Alfamart" class="h-5 object-contain" onerror="this.style.display='none'">
+                                            <img src="{{ asset('images/payment/cstore/indomaret.png') }}" alt="Indomaret" class="h-5 object-contain" onerror="this.style.display='none'">
+                                        </div>
                                         <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="openSection === 'cstore' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                     </div>
                                 </button>
                                 <div x-show="openSection === 'cstore'" x-collapse class="px-5 pb-5 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     @foreach([
-                                        ['value'=>'cstore', 'detail'=>'indomaret', 'label'=>'Indomaret', 'badge'=>'ID', 'bg'=>'#E31E24'],
-                                        ['value'=>'cstore', 'detail'=>'alfamart', 'label'=>'Alfamart', 'badge'=>'AF', 'bg'=>'#E31E24'],
+                                        ['value'=>'convenience_store', 'detail'=>'indomaret', 'label'=>'Indomaret', 'logo'=>asset('images/payment/cstore/indomaret.png'), 'color'=>'#005BAC'],
+                                        ['value'=>'convenience_store', 'detail'=>'alfamart', 'label'=>'Alfamart', 'logo'=>asset('images/payment/cstore/alfamart.png'), 'color'=>'#E31E24'],
                                     ] as $store)
                                     <label class="relative flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
                                         :class="selectedMethod === '{{ $store['value'] }}' && selectedDetail === '{{ $store['detail'] }}' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'">
                                         <input type="radio" name="_payment_choice" value="{{ $store['value'] }}|{{ $store['detail'] }}"
                                             @change="selectMethod('{{ $store['value'] }}', '{{ $store['detail'] }}')"
                                             class="sr-only">
-                                        <div class="w-12 h-8 flex items-center justify-center flex-shrink-0 rounded p-1 text-white font-bold text-xs" style="background:{{ $store['bg'] }}">
-                                            {{ $store['badge'] }}
+                                        <div class="w-16 h-10 flex items-center justify-center flex-shrink-0 bg-white rounded border border-gray-100 p-1">
+                                            @if($store['logo'])
+                                            <img src="{{ $store['logo'] }}" alt="{{ $store['label'] }}" class="max-h-8 max-w-full object-contain" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:{{ $store['color'] }}\'>{{ strtoupper($store['detail']) }}</span>'">
+                                            @else
+                                            <span class="text-xs font-bold" style="color:{{ $store['color'] }}">{{ strtoupper($store['detail']) }}</span>
+                                            @endif
                                         </div>
                                         <span class="text-sm font-medium text-gray-800">{{ $store['label'] }}</span>
                                         <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
