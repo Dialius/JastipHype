@@ -226,9 +226,157 @@
                         </div>
                     </div>
 
-                    <!-- Payment Method - Hidden (will be selected in Midtrans) -->
-                    <input type="hidden" name="payment_method" value="snap">
-                    <input type="hidden" name="payment_detail" value="all">
+
+                    <!-- Payment Method -->
+                    <div class="bg-white rounded-2xl p-8 mb-6 shadow-sm border border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-black text-white text-sm font-bold">3</span>
+                            Payment Method
+                        </h2>
+
+                        <div x-data="paymentSelector()" class="space-y-3">
+                            <!-- Virtual Account -->
+                            <div class="border-2 rounded-xl overflow-hidden transition-all" :class="openSection === 'va' ? 'border-black' : 'border-gray-200'">
+                                <button type="button"
+                                    @click="openSection = openSection === 'va' ? null : 'va'"
+                                    class="w-full flex items-center justify-between px-5 py-4 bg-gray-50 hover:bg-gray-100 transition">
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                        <span class="font-semibold text-gray-900">Virtual Account (VA)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex gap-1.5">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png" alt="BCA" class="h-5 object-contain" onerror="this.style.display='none'">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/200px-Bank_Mandiri_logo_2016.svg.png" alt="Mandiri" class="h-5 object-contain" onerror="this.style.display='none'">
+                                            <img src="https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/200px-BNI_logo.svg.png" alt="BNI" class="h-5 object-contain" onerror="this.style.display='none'">
+                                        </div>
+                                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="openSection === 'va' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                </button>
+                                <div x-show="openSection === 'va'" x-collapse class="px-5 pb-5 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach([
+                                        ['value'=>'bank_transfer', 'detail'=>'bca', 'label'=>'BCA Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png', 'color'=>'#005BAC'],
+                                        ['value'=>'bank_transfer', 'detail'=>'mandiri', 'label'=>'Mandiri Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/200px-Bank_Mandiri_logo_2016.svg.png', 'color'=>'#003087'],
+                                        ['value'=>'bank_transfer', 'detail'=>'bni', 'label'=>'BNI Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/200px-BNI_logo.svg.png', 'color'=>'#F58220'],
+                                        ['value'=>'bank_transfer', 'detail'=>'bri', 'label'=>'BRI Virtual Account', 'logo'=>'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/200px-BANK_BRI_logo.svg.png', 'color'=>'#00529B'],
+                                        ['value'=>'bank_transfer', 'detail'=>'permata', 'label'=>'Permata Virtual Account', 'logo'=>'', 'color'=>'#E31E24'],
+                                    ] as $bank)
+                                    <label class="relative flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
+                                        :class="selectedMethod === '{{ $bank['value'] }}' && selectedDetail === '{{ $bank['detail'] }}' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'">
+                                        <input type="radio" name="_payment_choice" value="{{ $bank['value'] }}|{{ $bank['detail'] }}"
+                                            @change="selectMethod('{{ $bank['value'] }}', '{{ $bank['detail'] }}')"
+                                            class="sr-only">
+                                        <div class="w-12 h-8 flex items-center justify-center flex-shrink-0 bg-white rounded border border-gray-100 p-1">
+                                            @if($bank['logo'])
+                                            <img src="{{ $bank['logo'] }}" alt="{{ $bank['label'] }}" class="max-h-6 max-w-full object-contain" onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:{{ $bank['color'] }}\'>{{ strtoupper($bank['detail']) }}</span>'">
+                                            @else
+                                            <span class="text-xs font-bold" style="color:{{ $bank['color'] }}">{{ strtoupper($bank['detail']) }}</span>
+                                            @endif
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-800">{{ $bank['label'] }}</span>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
+                                            :class="selectedMethod === '{{ $bank['value'] }}' && selectedDetail === '{{ $bank['detail'] }}' ? 'border-black bg-black' : 'border-gray-300'">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- E-Wallet & QRIS -->
+                            <div class="border-2 rounded-xl overflow-hidden transition-all" :class="openSection === 'ewallet' ? 'border-black' : 'border-gray-200'">
+                                <button type="button"
+                                    @click="openSection = openSection === 'ewallet' ? null : 'ewallet'"
+                                    class="w-full flex items-center justify-between px-5 py-4 bg-gray-50 hover:bg-gray-100 transition">
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                        <span class="font-semibold text-gray-900">E-Wallet & QRIS</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex gap-1.5 items-center">
+                                            <span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:#00AED6;color:white">QRIS</span>
+                                            <span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:#00A651;color:white">GoPay</span>
+                                        </div>
+                                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="openSection === 'ewallet' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                </button>
+                                <div x-show="openSection === 'ewallet'" x-collapse class="px-5 pb-5 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach([
+                                        ['value'=>'qris', 'detail'=>'', 'label'=>'QRIS (Semua Dompet)', 'badge'=>'QRIS', 'bg'=>'#00AED6', 'desc'=>'GoPay, OVO, DANA, dll'],
+                                        ['value'=>'gopay', 'detail'=>'', 'label'=>'GoPay', 'badge'=>'GO', 'bg'=>'#00A651', 'desc'=>'Bayar dengan GoPay'],
+                                        ['value'=>'shopeepay', 'detail'=>'', 'label'=>'ShopeePay', 'badge'=>'SP', 'bg'=>'#EE4D2D', 'desc'=>'Bayar dengan ShopeePay'],
+                                    ] as $wallet)
+                                    <label class="relative flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
+                                        :class="selectedMethod === '{{ $wallet['value'] }}' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'">
+                                        <input type="radio" name="_payment_choice" value="{{ $wallet['value'] }}|{{ $wallet['detail'] }}"
+                                            @change="selectMethod('{{ $wallet['value'] }}', '{{ $wallet['detail'] }}')"
+                                            class="sr-only">
+                                        <div class="w-12 h-8 flex items-center justify-center flex-shrink-0 rounded p-1 text-white font-bold text-xs" style="background:{{ $wallet['bg'] }}">
+                                            {{ $wallet['badge'] }}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800">{{ $wallet['label'] }}</p>
+                                            <p class="text-xs text-gray-500">{{ $wallet['desc'] }}</p>
+                                        </div>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
+                                            :class="selectedMethod === '{{ $wallet['value'] }}' ? 'border-black bg-black' : 'border-gray-300'">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Convenience Store -->
+                            <div class="border-2 rounded-xl overflow-hidden transition-all" :class="openSection === 'cstore' ? 'border-black' : 'border-gray-200'">
+                                <button type="button"
+                                    @click="openSection = openSection === 'cstore' ? null : 'cstore'"
+                                    class="w-full flex items-center justify-between px-5 py-4 bg-gray-50 hover:bg-gray-100 transition">
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                        <span class="font-semibold text-gray-900">Convenience Store</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold px-1.5 py-0.5 rounded text-white" style="background:#E31E24">Indomaret</span>
+                                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" :class="openSection === 'cstore' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                </button>
+                                <div x-show="openSection === 'cstore'" x-collapse class="px-5 pb-5 pt-3 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach([
+                                        ['value'=>'cstore', 'detail'=>'indomaret', 'label'=>'Indomaret', 'badge'=>'ID', 'bg'=>'#E31E24'],
+                                        ['value'=>'cstore', 'detail'=>'alfamart', 'label'=>'Alfamart', 'badge'=>'AF', 'bg'=>'#E31E24'],
+                                    ] as $store)
+                                    <label class="relative flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
+                                        :class="selectedMethod === '{{ $store['value'] }}' && selectedDetail === '{{ $store['detail'] }}' ? 'border-black bg-gray-50' : 'border-gray-200 hover:border-gray-300'">
+                                        <input type="radio" name="_payment_choice" value="{{ $store['value'] }}|{{ $store['detail'] }}"
+                                            @change="selectMethod('{{ $store['value'] }}', '{{ $store['detail'] }}')"
+                                            class="sr-only">
+                                        <div class="w-12 h-8 flex items-center justify-center flex-shrink-0 rounded p-1 text-white font-bold text-xs" style="background:{{ $store['bg'] }}">
+                                            {{ $store['badge'] }}
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-800">{{ $store['label'] }}</span>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
+                                            :class="selectedMethod === '{{ $store['value'] }}' && selectedDetail === '{{ $store['detail'] }}' ? 'border-black bg-black' : 'border-gray-300'">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Validation note -->
+                            <p x-show="showValidationError" class="text-sm text-red-600 flex items-center gap-2 mt-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Pilih metode pembayaran terlebih dahulu.
+                            </p>
+                        </div>
+
+                        <!-- Hidden real inputs that get submitted -->
+                        <input type="hidden" name="payment_method" id="payment_method_input" value="">
+                        <input type="hidden" name="payment_detail" id="payment_detail_input" value="">
+                    </div>
+
+
 
                     <!-- Hidden input for shipping cost -->
                     <input type="hidden" name="shipping_cost" x-model="shippingCost">
@@ -921,17 +1069,48 @@ function checkoutPage() {
                 return false;
             }
 
-            // Log form data for debugging
-            console.log('Form validation passed. Submitting with data:', {
-                provinceId,
-                cityId,
-                postalCode,
-                shippingCost: this.shippingCost
-            });
+            // Check payment method selected
+            const paymentMethod = document.getElementById('payment_method_input').value;
+            if (!paymentMethod) {
+                event.preventDefault();
+                // Trigger Alpine validation error
+                window.dispatchEvent(new CustomEvent('show-payment-validation'));
+                if (typeof $notify !== 'undefined') {
+                    $notify('Pilih metode pembayaran terlebih dahulu', 'error');
+                } else {
+                    alert('Pilih metode pembayaran terlebih dahulu');
+                }
+                return false;
+            }
 
             return true;
         }
     }
 }
+
+// Payment Method Selector Component
+function paymentSelector() {
+    return {
+        openSection: null,
+        selectedMethod: '',
+        selectedDetail: '',
+        showValidationError: false,
+
+        init() {
+            window.addEventListener('show-payment-validation', () => {
+                this.showValidationError = true;
+            });
+        },
+
+        selectMethod(method, detail) {
+            this.selectedMethod = method;
+            this.selectedDetail = detail;
+            this.showValidationError = false;
+            document.getElementById('payment_method_input').value = method;
+            document.getElementById('payment_detail_input').value = detail;
+        }
+    }
+}
 </script>
 @endsection
+

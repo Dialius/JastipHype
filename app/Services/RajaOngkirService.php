@@ -19,10 +19,14 @@ class RajaOngkirService
             throw new \Exception('RajaOngkir API key is not configured. Please set RAJAONGKIR_API_KEY in your .env file.');
         }
         
-        $this->accountType = config('rajaongkir.account_type', 'starter');
-        $this->baseUrl = $this->accountType === 'pro' 
-            ? 'https://pro.rajaongkir.com/api' 
-            : 'https://api.rajaongkir.com/starter';
+        $this->accountType = config('rajaongkir.type') ?? config('rajaongkir.account_type') ?? 'starter';
+        if ($this->accountType === 'pro') {
+            $this->baseUrl = 'https://pro.rajaongkir.com/api';
+        } elseif ($this->accountType === 'basic') {
+            $this->baseUrl = 'https://api.rajaongkir.com/basic';
+        } else {
+            $this->baseUrl = 'https://api.rajaongkir.com/starter';
+        }
     }
 
     /**
@@ -31,20 +35,24 @@ class RajaOngkirService
     public function getProvinces()
     {
         return Cache::remember('rajaongkir_provinces', 60 * 24 * 7, function () {
-            $response = Http::withHeaders([
-                'key' => $this->apiKey
-            ])->get("{$this->baseUrl}/province");
+            try {
+                $response = Http::withHeaders([
+                    'key' => $this->apiKey
+                ])->timeout(3)->get("{$this->baseUrl}/province");
 
-            if ($response->successful() && $response->json('rajaongkir.status.code') == 200) {
-                $results = $response->json('rajaongkir.results');
-                
-                // If API returns data, use it
-                if (!empty($results)) {
-                    return $results;
+                if ($response->successful() && $response->json('rajaongkir.status.code') == 200) {
+                    $results = $response->json('rajaongkir.results');
+                    
+                    // If API returns data, use it
+                    if (!empty($results)) {
+                        return $results;
+                    }
                 }
+            } catch (\Exception $e) {
+                \Log::warning('RajaOngkir API error (provinces): ' . $e->getMessage());
             }
 
-            // Fallback mock data for development (when API key invalid/expired)
+            // Fallback mock data for development (when API key invalid/expired/timeout)
             return $this->getMockProvinces();
         });
     }
@@ -102,17 +110,21 @@ class RajaOngkirService
         return Cache::remember($cacheKey, 60 * 24 * 7, function () use ($provinceId) {
             $url = "{$this->baseUrl}/city";
             
-            $response = Http::withHeaders([
-                'key' => $this->apiKey
-            ])->get($url, $provinceId ? ['province' => $provinceId] : []);
+            try {
+                $response = Http::withHeaders([
+                    'key' => $this->apiKey
+                ])->timeout(3)->get($url, $provinceId ? ['province' => $provinceId] : []);
 
-            if ($response->successful() && $response->json('rajaongkir.status.code') == 200) {
-                $results = $response->json('rajaongkir.results');
-                
-                // If API returns data, use it
-                if (!empty($results)) {
-                    return $results;
+                if ($response->successful() && $response->json('rajaongkir.status.code') == 200) {
+                    $results = $response->json('rajaongkir.results');
+                    
+                    // If API returns data, use it
+                    if (!empty($results)) {
+                        return $results;
+                    }
                 }
+            } catch (\Exception $e) {
+                \Log::warning("RajaOngkir API error (cities): " . $e->getMessage());
             }
 
             // Fallback mock data
@@ -245,21 +257,25 @@ class RajaOngkirService
      */
     public function getCost($origin, $destination, $weight, $courier = 'jne')
     {
-        $response = Http::withHeaders([
-            'key' => $this->apiKey
-        ])->post("{$this->baseUrl}/cost", [
-            'origin' => $origin,
-            'destination' => $destination,
-            'weight' => $weight,
-            'courier' => $courier
-        ]);
+        try {
+            $response = Http::withHeaders([
+                'key' => $this->apiKey
+            ])->timeout(10)->post("{$this->baseUrl}/cost", [
+                'origin' => $origin,
+                'destination' => $destination,
+                'weight' => $weight,
+                'courier' => $courier
+            ]);
 
-        if ($response->successful() && $response->json('rajaongkir.status.code') == 200) {
-            $results = $response->json('rajaongkir.results');
-            
-            if (!empty($results)) {
-                return $results;
+            if ($response->successful() && $response->json('rajaongkir.status.code') == 200) {
+                $results = $response->json('rajaongkir.results');
+                
+                if (!empty($results)) {
+                    return $results;
+                }
             }
+        } catch (\Exception $e) {
+            \Log::warning("RajaOngkir API error (cost): " . $e->getMessage());
         }
 
         // Fallback mock cost data
@@ -404,36 +420,59 @@ class RajaOngkirService
             // STEP 1: Get data from RajaOngkir API
             // ========================================
             try {
-                $response = Http::withHeaders([
-                    'key' => $this->apiKey
-                ])->get("https://rajaongkir.komerce.id/api/v1/location/subdistrict", [
-                    'city' => $cityId
-                ]);
+                // If account type is pro or basic, use the official RajaOngkir API
+                if ($this->accountType === 'pro' || $this->accountType === 'basic') {
+                    $response = Http::withHeaders([
+                        'key' => $this->apiKey
+                    ])->timeout(3)->get("{$this->baseUrl}/subdistrict", [
+                        'city' => $cityId
+                    ]);
 
-                if ($response->successful()) {
-                    $data = $response->json();
-                    
-                    if (isset($data['rajaongkir']['status']['code']) && 
-                        $data['rajaongkir']['status']['code'] == 200 &&
-                        isset($data['rajaongkir']['results']) &&
-                        is_array($data['rajaongkir']['results']) &&
-                        count($data['rajaongkir']['results']) > 0) {
-                        
-                        foreach ($data['rajaongkir']['results'] as $item) {
-                            $rajaongkirData[] = [
-                                'subdistrict_id' => $item['subdistrict_id'],
-                                'city_id' => $item['city_id'],
-                                'subdistrict_name' => $item['subdistrict_name'],
-                                'postal_code' => '',
-                                'source' => 'rajaongkir'
-                            ];
+                    if ($response->successful() && $response->json('rajaongkir.status.code') == 200) {
+                        $results = $response->json('rajaongkir.results');
+                        if (!empty($results)) {
+                            foreach ($results as $item) {
+                                $rajaongkirData[] = [
+                                    'subdistrict_id' => $item['subdistrict_id'],
+                                    'city_id' => $item['city_id'],
+                                    'subdistrict_name' => $item['subdistrict_name'],
+                                    'postal_code' => '',
+                                    'source' => 'rajaongkir_official'
+                                ];
+                            }
                         }
+                    }
+                } else {
+                    // For starter account, use the third-party Komerce API
+                    $response = Http::withHeaders([
+                        'key' => $this->apiKey
+                    ])->timeout(3)->get("https://rajaongkir.komerce.id/api/v1/location/subdistrict", [
+                        'city' => $cityId
+                    ]);
+
+                    if ($response->successful()) {
+                        $data = $response->json();
                         
-                        \Log::info("RajaOngkir API: Found " . count($rajaongkirData) . " subdistricts for city {$cityId}");
+                        if (isset($data['rajaongkir']['status']['code']) && 
+                            $data['rajaongkir']['status']['code'] == 200 &&
+                            isset($data['rajaongkir']['results']) &&
+                            is_array($data['rajaongkir']['results']) &&
+                            count($data['rajaongkir']['results']) > 0) {
+                            
+                            foreach ($data['rajaongkir']['results'] as $item) {
+                                $rajaongkirData[] = [
+                                    'subdistrict_id' => $item['subdistrict_id'],
+                                    'city_id' => $item['city_id'],
+                                    'subdistrict_name' => $item['subdistrict_name'],
+                                    'postal_code' => '',
+                                    'source' => 'rajaongkir_komerce'
+                                ];
+                            }
+                        }
                     }
                 }
             } catch (\Exception $e) {
-                \Log::warning('RajaOngkir API error: ' . $e->getMessage());
+                \Log::warning('RajaOngkir API error (subdistricts): ' . $e->getMessage());
             }
 
             // ========================================
@@ -443,7 +482,7 @@ class RajaOngkirService
             if ($city) {
                 try {
                     $regencyName = $this->normalizeRegencyName($city['city_name']);
-                    $response = Http::timeout(5)->get("https://kodepos.vercel.app/search/", [
+                    $response = Http::timeout(2)->get("https://kodepos.vercel.app/search/", [
                         'q' => $regencyName
                     ]);
 

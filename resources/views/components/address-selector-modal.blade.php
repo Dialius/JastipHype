@@ -242,30 +242,33 @@ function addressSelector() {
         subdistricts: [],
         
         get filteredProvinces() {
-            if (!this.searchQuery) return this.provinces;
+            const provincesArray = Array.isArray(this.provinces) ? this.provinces : Object.values(this.provinces || {});
+            if (!this.searchQuery) return provincesArray;
             
             const query = this.searchQuery.toLowerCase();
-            return this.provinces.filter(province => {
-                return province.province.toLowerCase().includes(query);
+            return provincesArray.filter(province => {
+                return String(province.province || '').toLowerCase().includes(query);
             });
         },
         
         get filteredCities() {
-            if (!this.searchQuery) return this.cities;
+            const citiesArray = Array.isArray(this.cities) ? this.cities : Object.values(this.cities || {});
+            if (!this.searchQuery) return citiesArray;
             
             const query = this.searchQuery.toLowerCase();
-            return this.cities.filter(city => {
-                const fullName = `${city.type} ${city.city_name}`.toLowerCase();
+            return citiesArray.filter(city => {
+                const fullName = `${city.type || ''} ${city.city_name || ''}`.toLowerCase();
                 return fullName.includes(query);
             });
         },
 
         get filteredSubdistricts() {
-            if (!this.searchQuery) return this.subdistricts;
+            const subdistrictsArray = Array.isArray(this.subdistricts) ? this.subdistricts : Object.values(this.subdistricts || {});
+            if (!this.searchQuery) return subdistrictsArray;
             
             const query = this.searchQuery.toLowerCase();
-            return this.subdistricts.filter(subdistrict => {
-                return subdistrict.subdistrict_name.toLowerCase().includes(query);
+            return subdistrictsArray.filter(subdistrict => {
+                return String(subdistrict.subdistrict_name || '').toLowerCase().includes(query);
             });
         },
         

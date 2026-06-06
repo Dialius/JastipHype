@@ -150,44 +150,17 @@ class CheckoutController extends Controller
                 ];
             }
 
-            // Prepare Midtrans transaction data (show all payment methods)
-            $orderData = [
-                'order_id' => $order->order_number,
-                'gross_amount' => $total,
-                'customer' => [
-                    'first_name' => $validated['name'],
-                    'last_name' => '', // Optional
-                    'email' => $validated['email'],
-                    'phone' => $validated['phone'],
-                    'address' => [
-                        'address' => $validated['address'],
-                        'city' => $validated['city_id'], // This should ideally be city name
-                        'postal_code' => $validated['postal_code'],
-                        'country_code' => 'IDN'
-                    ]
-                ],
-                'items' => $itemDetails
-                // No enabled_payments - show all available payment methods in Midtrans
-            ];
+            // Save payment information with selected method
+            $paymentMethod = $validated['payment_method'] ?? 'pending';
+            $paymentDetail = $validated['payment_detail'] ?? '';
 
-            // Create Midtrans Snap Transaction
-            $midtransResponse = $this->midtrans->createSnapTransaction($orderData);
-
-            if (!$midtransResponse['success']) {
-                throw new \Exception('Failed to create payment: ' . $midtransResponse['message']);
-            }
-
-            // Save payment information (Initial State)
             $paymentData = [
-                'order_id' => $order->id,
-                'transaction_id' => null, // Will be updated after payment
-                'payment_type' => 'snap', // Placeholder
-                'gross_amount' => $total,
+                'order_id'           => $order->id,
+                'transaction_id'     => null,
+                'payment_type'       => $paymentMethod,
+                'gross_amount'       => $total,
                 'transaction_status' => 'pending',
-                'payment_data' => [
-                    'snap_token' => $midtransResponse['token'],
-                    'redirect_url' => $midtransResponse['redirect_url'] // Now correctly retrieving redirect_url
-                ],
+                'payment_data'       => [],
             ];
 
             $payment = Payment::create($paymentData);
@@ -197,27 +170,93 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            \Log::info('Order created successfully with Snap', [
-                'order_number' => $order->order_number,
-                'token' => $midtransResponse['token']
+            \Log::info('Order created successfully', [
+                'order_number'   => $order->order_number,
+                'payment_method' => $paymentMethod,
             ]);
 
-            // Redirect to payment page (for Embedded/Popup mode)
+            // If a real payment method was selected, process via Midtrans Core API immediately
+            if ($paymentMethod && $paymentMethod !== 'pending') {
+                // Build item details
+                $midtransItems = $order->items->map(fn($item) => [
+                    'id'       => $item->product_id,
+                    'price'    => (int) $item->price,
+                    'quantity' => $item->quantity,
+                    'name'     => substr($item->product_name, 0, 50),
+                ])->toArray();
+
+                if ($shippingCost > 0) {
+                    $midtransItems[] = ['id' => 'SHIPPING', 'price' => (int) $shippingCost, 'quantity' => 1, 'name' => 'Shipping Cost'];
+                }
+
+                $mapped = $this->midtrans->mapPaymentMethod($paymentMethod, ['detail' => $paymentDetail]);
+
+                $orderData = [
+                    'order_id'     => $order->order_number,
+                    'gross_amount' => (int) $total,
+                    'customer'     => [
+                        'first_name' => $validated['name'],
+                        'email'      => $validated['email'],
+                        'phone'      => $validated['phone'],
+                        'address'    => ['address' => $validated['address'], 'country_code' => 'IDN'],
+                    ],
+                    'items' => $midtransItems,
+                ];
+
+                $response = $this->midtrans->createTransaction($orderData, $mapped['type'], $mapped['details']);
+
+                if ($response['success']) {
+                    $data = $response['data'];
+                    $paymentCode = null;
+                    $qrCodeUrl   = null;
+                    $deeplink    = null;
+                    $updateData  = ['payment_type' => $paymentMethod];
+
+                    if (isset($data->va_numbers)) {
+                        $updateData['payment_data'] = json_decode(json_encode($data->va_numbers), true);
+                        $paymentCode = $data->va_numbers[0]->va_number ?? null;
+                    } elseif (isset($data->bill_key)) {
+                        $updateData['payment_data'] = ['bill_key' => $data->bill_key, 'biller_code' => $data->biller_code ?? null];
+                    } elseif (isset($data->payment_code)) {
+                        $updateData['payment_data'] = ['payment_code' => $data->payment_code];
+                        $paymentCode = $data->payment_code;
+                    }
+
+                    if (isset($data->actions)) {
+                        $updateData['payment_data']['actions'] = json_decode(json_encode($data->actions), true);
+                        foreach ($data->actions as $action) {
+                            if ($action->name === 'generate-qr-code') $qrCodeUrl = $action->url;
+                            if ($action->name === 'deeplink-redirect')  $deeplink  = $action->url;
+                        }
+                    }
+
+                    if ($paymentCode) $updateData['payment_code']       = $paymentCode;
+                    if ($qrCodeUrl)   $updateData['qr_code_url']        = $qrCodeUrl;
+                    if ($deeplink)    $updateData['deeplink_redirect']   = $deeplink;
+                    if (isset($data->expiry_time)) $updateData['expiry_time'] = $data->expiry_time;
+
+                    $payment->update($updateData);
+                } else {
+                    \Log::warning('Midtrans failed at checkout, user will retry on payment page', ['msg' => $response['message'] ?? '']);
+                }
+            }
+
             return redirect()->route('payment.show', $order->order_number)
-                ->with('success', 'Order created successfully! Please complete payment.');
+                ->with('success', 'Order berhasil! Selesaikan pembayaran Anda.');
 
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Checkout error: ' . $e->getMessage(), [
                 'exception' => get_class($e),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'file'      => $e->getFile(),
+                'line'      => $e->getLine()
             ]);
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Failed to process order: ' . $e->getMessage());
         }
     }
+
 
     /**
      * Apply discount/voucher code

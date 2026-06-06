@@ -4,7 +4,286 @@
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
-    @if($payment->isPending() && isset($payment->payment_data['snap_token']))
+    @if($payment->isPending() && (!$payment->payment_type || $payment->payment_type === 'pending') && !isset($payment->payment_data['snap_token']))
+        <!-- Payment Method Selection -->
+        <div class="py-12 px-4">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Select Payment Method</h2>
+
+                <form action="{{ route('payment.process', $order->order_number) }}" method="POST" id="payment-form">
+                    @csrf
+
+                    <div class="space-y-4">
+                        <!-- Virtual Account -->
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                            <button type="button"
+                                class="w-full px-6 py-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition focus:outline-none"
+                                onclick="toggleAccordion('va-methods')">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                    <span class="font-semibold text-gray-900">Virtual Account (VA)</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="flex gap-1.5 items-center">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png" alt="BCA" class="h-5 object-contain" onerror="this.style.display='none'">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/200px-Bank_Mandiri_logo_2016.svg.png" alt="Mandiri" class="h-5 object-contain" onerror="this.style.display='none'">
+                                        <img src="https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/200px-BNI_logo.svg.png" alt="BNI" class="h-5 object-contain" onerror="this.style.display='none'">
+                                    </div>
+                                    <svg class="w-5 h-5 text-gray-500 transform transition-transform" id="va-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </button>
+                            <div id="va-methods" class="hidden px-6 py-5 border-t border-gray-100">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                                    <!-- BCA -->
+                                    <label class="relative flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-all payment-label" id="label-bca">
+                                        <input type="radio" name="payment_method" value="bank_transfer"
+                                            class="sr-only"
+                                            onchange="selectBank('bca', this)">
+                                        <div class="w-12 h-8 flex items-center justify-center bg-white rounded border border-gray-100 p-1 flex-shrink-0">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/200px-Bank_Central_Asia.svg.png"
+                                                alt="BCA" class="max-h-6 max-w-full object-contain"
+                                                onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:#005BAC\'>BCA</span>'">
+                                        </div>
+                                        <span class="font-medium text-gray-900 text-sm">BCA VA</span>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center radio-dot flex-shrink-0">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+
+                                    <!-- Mandiri -->
+                                    <label class="relative flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-all payment-label" id="label-mandiri">
+                                        <input type="radio" name="payment_method" value="bank_transfer"
+                                            class="sr-only"
+                                            onchange="selectBank('mandiri', this)">
+                                        <div class="w-12 h-8 flex items-center justify-center bg-white rounded border border-gray-100 p-1 flex-shrink-0">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/200px-Bank_Mandiri_logo_2016.svg.png"
+                                                alt="Mandiri" class="max-h-6 max-w-full object-contain"
+                                                onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:#003087\'>MANDIRI</span>'">
+                                        </div>
+                                        <span class="font-medium text-gray-900 text-sm">Mandiri VA</span>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center radio-dot flex-shrink-0">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+
+                                    <!-- BNI -->
+                                    <label class="relative flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-all payment-label" id="label-bni">
+                                        <input type="radio" name="payment_method" value="bank_transfer"
+                                            class="sr-only"
+                                            onchange="selectBank('bni', this)">
+                                        <div class="w-12 h-8 flex items-center justify-center bg-white rounded border border-gray-100 p-1 flex-shrink-0">
+                                            <img src="https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/200px-BNI_logo.svg.png"
+                                                alt="BNI" class="max-h-6 max-w-full object-contain"
+                                                onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:#F58220\'>BNI</span>'">
+                                        </div>
+                                        <span class="font-medium text-gray-900 text-sm">BNI VA</span>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center radio-dot flex-shrink-0">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+
+                                    <!-- BRI -->
+                                    <label class="relative flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-all payment-label" id="label-bri">
+                                        <input type="radio" name="payment_method" value="bank_transfer"
+                                            class="sr-only"
+                                            onchange="selectBank('bri', this)">
+                                        <div class="w-12 h-8 flex items-center justify-center bg-white rounded border border-gray-100 p-1 flex-shrink-0">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/200px-BANK_BRI_logo.svg.png"
+                                                alt="BRI" class="max-h-6 max-w-full object-contain"
+                                                onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;color:#00529B\'>BRI</span>'">
+                                        </div>
+                                        <span class="font-medium text-gray-900 text-sm">BRI VA</span>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center radio-dot flex-shrink-0">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- E-Wallet & QRIS -->
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                            <button type="button"
+                                class="w-full px-6 py-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition focus:outline-none"
+                                onclick="toggleAccordion('ewallet-methods')">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    <span class="font-semibold text-gray-900">E-Wallet &amp; QRIS</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="flex gap-1.5 items-center">
+                                        <span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:#00AED6;color:white">QRIS</span>
+                                        <span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:#00A651;color:white">GoPay</span>
+                                    </div>
+                                    <svg class="w-5 h-5 text-gray-500 transform transition-transform" id="ewallet-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </button>
+                            <div id="ewallet-methods" class="hidden px-6 py-5 border-t border-gray-100">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                                    <!-- QRIS -->
+                                    <label class="relative flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-all payment-label" id="label-qris">
+                                        <input type="radio" name="payment_method" value="qris"
+                                            class="sr-only"
+                                            onchange="selectWallet('qris', '', this)">
+                                        <div class="w-12 h-8 flex items-center justify-center rounded flex-shrink-0 overflow-hidden">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_QRIS.svg/200px-Logo_QRIS.svg.png"
+                                                alt="QRIS" class="max-h-7 max-w-full object-contain"
+                                                onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;background:#00AED6;color:white;padding:2px 5px;border-radius:4px\'>QRIS</span>'">
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="font-medium text-gray-900 text-sm">QRIS (Any app)</p>
+                                            <p class="text-xs text-gray-500">GoPay, OVO, DANA, dll</p>
+                                        </div>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center radio-dot flex-shrink-0">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+
+                                    <!-- GoPay -->
+                                    <label class="relative flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-all payment-label" id="label-gopay">
+                                        <input type="radio" name="payment_method" value="gopay"
+                                            class="sr-only"
+                                            onchange="selectWallet('gopay', 'gopay', this)">
+                                        <div class="w-12 h-8 flex items-center justify-center rounded flex-shrink-0 overflow-hidden">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/200px-Gopay_logo.svg.png"
+                                                alt="GoPay" class="max-h-7 max-w-full object-contain"
+                                                onerror="this.parentElement.innerHTML='<span style=\'font-size:10px;font-weight:700;background:#00A651;color:white;padding:2px 5px;border-radius:4px\'>GoPay</span>'">
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="font-medium text-gray-900 text-sm">GoPay</p>
+                                            <p class="text-xs text-gray-500">Bayar dengan GoPay</p>
+                                        </div>
+                                        <div class="ml-auto w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center radio-dot flex-shrink-0">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                                        </div>
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="payment_detail" id="payment_detail" value="">
+
+                    <div class="mt-8">
+                        <button type="submit"
+                            class="w-full py-4 bg-black text-white rounded-xl hover:bg-gray-800 transition font-bold text-base disabled:opacity-40 disabled:cursor-not-allowed"
+                            id="pay-button" disabled>
+                            Bayar Rp {{ number_format($order->total, 0, ',', '.') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function toggleAccordion(id) {
+                const content = document.getElementById(id);
+                const iconId = id.replace('-methods', '-icon');
+                const icon = document.getElementById(iconId);
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.classList.add('rotate-180');
+                } else {
+                    content.classList.add('hidden');
+                    icon.classList.remove('rotate-180');
+                }
+            }
+
+            function highlightLabel(labelId) {
+                document.querySelectorAll('.payment-label').forEach(label => {
+                    label.classList.remove('border-black', 'bg-gray-50');
+                    label.classList.add('border-gray-200');
+                    const dot = label.querySelector('.radio-dot');
+                    if (dot) { dot.classList.remove('border-black', 'bg-black'); dot.classList.add('border-gray-300'); }
+                });
+                const selected = document.getElementById(labelId);
+                if (selected) {
+                    selected.classList.remove('border-gray-200');
+                    selected.classList.add('border-black', 'bg-gray-50');
+                    const dot = selected.querySelector('.radio-dot');
+                    if (dot) { dot.classList.remove('border-gray-300'); dot.classList.add('border-black', 'bg-black'); }
+                }
+            }
+
+            function selectBank(bank, input) {
+                document.getElementById('payment_detail').value = bank;
+                document.getElementById('pay-button').disabled = false;
+                highlightLabel('label-' + bank);
+            }
+
+            function selectWallet(method, detail, input) {
+                document.getElementById('payment_detail').value = detail;
+                document.getElementById('pay-button').disabled = false;
+                highlightLabel('label-' + method);
+            }
+        </script>
+
+    @elseif($payment->isPending() && $payment->payment_type && $payment->payment_type !== 'pending' && !isset($payment->payment_data['snap_token']))
+        <!-- Payment Instructions -->
+        <div class="py-12 px-4">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-8">
+                    <div class="p-6 sm:p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Complete Your Payment</h2>
+                        
+                        <div class="bg-gray-50 rounded-lg p-6 mb-6 text-center">
+                            <p class="text-sm text-gray-500 mb-1">Total Amount</p>
+                            <p class="text-3xl font-bold text-gray-900">Rp {{ number_format($order->total, 0, ',', '.') }}</p>
+                        </div>
+
+                        @if($instructions)
+                            <div class="space-y-6">
+                                <div class="border border-gray-200 rounded-lg p-6 text-center">
+                                    <h3 class="font-semibold text-gray-900 mb-4">{{ $instructions['title'] ?? ($instructions['type'] ?? 'Payment Instructions') }}</h3>
+                                    
+                                    @if(isset($instructions['qr_url']))
+                                        <div class="flex justify-center mb-4">
+                                            <img src="{{ $instructions['qr_url'] }}" alt="QR Code" class="w-64 h-64 border border-gray-200 rounded-lg p-2">
+                                        </div>
+                                    @endif
+                                    
+                                    @if(isset($instructions['deeplink']))
+                                        <div class="text-center mb-4">
+                                            <a href="{{ $instructions['deeplink'] }}" target="_blank" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                                                Pay with {{ ucfirst($order->payment_detail ?? $payment->payment_type) }} App
+                                            </a>
+                                        </div>
+                                    @endif
+
+                                    @if(isset($instructions['steps']) && count($instructions['steps']) > 0)
+                                        <ul class="space-y-3 text-sm text-gray-600 text-left mt-6">
+                                            @foreach($instructions['steps'] as $index => $step)
+                                                <li class="flex items-start">
+                                                    <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-800 font-bold text-xs mr-3 mt-0.5">{{ $index + 1 }}</span>
+                                                    <span>{!! $step !!}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                    
+                                    @if($payment->expiry_time)
+                                    <div class="mt-6 pt-4 border-t border-gray-200 text-center text-sm text-red-600 font-medium">
+                                        Please complete payment before: <br>
+                                        {{ date('d M Y, H:i', strtotime($payment->expiry_time)) }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @else
+                            <div class="text-center text-gray-600">
+                                Instructions are currently unavailable. Please check your email or contact support.
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    @elseif($payment->isPending() && isset($payment->payment_data['snap_token']))
         <!-- Midtrans Snap Payment Container - Full Width -->
         <div class="bg-white shadow-sm" style="overflow: hidden; height: calc(100vh - 80px);">
             <!-- Snap Container - Full Screen -->

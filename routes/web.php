@@ -131,6 +131,7 @@ Route::post('/checkout/remove-discount', [CheckoutController::class, 'removeDisc
 // Payment Routes
 use App\Http\Controllers\PaymentController;
 Route::get('/payment/{orderNumber}', [PaymentController::class, 'show'])->name('payment.show');
+Route::post('/payment/{orderNumber}/process', [PaymentController::class, 'process'])->name('payment.process');
 Route::get('/payment/{orderNumber}/status', [PaymentController::class, 'checkStatus'])->name('payment.status');
 Route::post('/payment/{orderNumber}/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
 

@@ -69,7 +69,7 @@
         <div class="h-[400px] flex flex-col">
             <template x-if="!hasTicket && view === 'form'">
                 {{-- New Ticket Form --}}
-                <div class="flex-1 p-4 overflow-y-auto scrollbar-hide">
+                <div class="flex-1 p-4 overflow-y-auto custom-scrollbar">
                     <div class="text-center mb-6">
                         <div class="inline-flex items-center justify-center w-12 h-12 bg-accent-gold/10 rounded-full mb-3">
                             <svg class="w-6 h-6 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +177,7 @@
                     {{-- Messages Container --}}
                     <div 
                         x-ref="messagesContainer"
-                        class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide"
+                        class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar"
                     >
                         <template x-for="message in messages" :key="message.id">
                             <div 
@@ -476,13 +476,23 @@ function liveChatWidget() {
 </script>
 
 <style>
-/* Hide scrollbar for clean UI */
-.scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+/* Custom Scrollbar for Chat Widget */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
 }
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari, Opera */
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.8);
+}
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
 }
 
 @keyframes bounce {

@@ -16,7 +16,7 @@
                 </p>
             </div>
             
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto custom-scrollbar">
                 <template x-if="tickets.length === 0">
                     <div class="p-4 text-center">
                         <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mx-auto mb-3">
@@ -80,9 +80,9 @@
             </template>
 
             <template x-if="selectedTicket">
-                <div class="flex-1 flex flex-col">
+                <div class="flex-1 flex flex-col h-full min-h-0">
                     {{-- Chat Header --}}
-                    <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-900/50">
+                    <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-900/50 flex-shrink-0">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
                                 <svg class="h-5 w-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -119,7 +119,7 @@
                     </div>
 
                     {{-- Messages --}}
-                    <div x-ref="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div x-ref="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 custom-scrollbar">
                         <template x-for="message in messages" :key="message.id">
                             <div :class="message.is_from_admin ? 'flex-row-reverse' : ''" class="flex gap-3">
                                 <div class="flex-shrink-0">
@@ -147,7 +147,7 @@
                     </div>
 
                     {{-- Input Area --}}
-                    <div class="p-4 border-t border-gray-100 dark:border-gray-800">
+                    <div class="p-4 border-t border-gray-100 dark:border-gray-800 flex-shrink-0">
                         <form @submit.prevent="sendMessage()" class="flex gap-2">
                             <textarea 
                                 x-model="newMessage"
@@ -318,4 +318,28 @@ function adminLiveChat(initialTickets) {
     }
 }
 </script>
+
+@push('styles')
+<style>
+/* Custom Scrollbar for Admin Chat */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.8);
+}
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+</style>
+@endpush
 @endsection
