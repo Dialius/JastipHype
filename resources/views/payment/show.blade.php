@@ -254,6 +254,90 @@
                                         </div>
                                     @endif
 
+                                    <!-- Virtual Account Details Box -->
+                                    @if(isset($instructions['va_number']))
+                                        <div class="my-6 p-4 bg-gray-50 border border-gray-100 rounded-xl max-w-md mx-auto">
+                                            <p class="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Nomor Virtual Account {{ $instructions['bank'] ?? '' }}</p>
+                                            <div class="flex items-center justify-center gap-2">
+                                                <span class="text-2xl font-bold font-mono text-gray-900 select-all" id="va-number-text">{{ $instructions['va_number'] }}</span>
+                                                <button type="button" onclick="copyToClipboard('{{ $instructions['va_number'] }}', this)" class="text-gray-500 hover:text-black p-1.5 hover:bg-gray-100 rounded-lg transition" title="Salin">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <!-- Mandiri Bill Payment Details Box -->
+                                    @if(isset($instructions['bill_key']) && isset($instructions['biller_code']))
+                                        <div class="my-6 p-4 bg-gray-50 border border-gray-100 rounded-xl max-w-md mx-auto space-y-3">
+                                            <div>
+                                                <p class="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Kode Perusahaan (Biller Code)</p>
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <span class="text-xl font-bold font-mono text-gray-900 select-all">{{ $instructions['biller_code'] }}</span>
+                                                    <button type="button" onclick="copyToClipboard('{{ $instructions['biller_code'] }}', this)" class="text-gray-500 hover:text-black p-1 hover:bg-gray-100 rounded-lg transition" title="Salin">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="border-t border-gray-200 pt-3">
+                                                <p class="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Nomor Bill Key</p>
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <span class="text-xl font-bold font-mono text-gray-900 select-all">{{ $instructions['bill_key'] }}</span>
+                                                    <button type="button" onclick="copyToClipboard('{{ $instructions['bill_key'] }}', this)" class="text-gray-500 hover:text-black p-1 hover:bg-gray-100 rounded-lg transition" title="Salin">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <!-- Convenience Store Details Box -->
+                                    @if(isset($instructions['payment_code']) && $instructions['type'] === 'cstore')
+                                        <div class="my-6 p-4 bg-gray-50 border border-gray-100 rounded-xl max-w-md mx-auto">
+                                            <p class="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Kode Pembayaran {{ $instructions['store'] ?? '' }}</p>
+                                            <div class="flex items-center justify-center gap-2">
+                                                <span class="text-2xl font-bold font-mono text-gray-900 select-all">{{ $instructions['payment_code'] }}</span>
+                                                <button type="button" onclick="copyToClipboard('{{ $instructions['payment_code'] }}', this)" class="text-gray-500 hover:text-black p-1.5 hover:bg-gray-100 rounded-lg transition" title="Salin">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <script>
+                                        function copyToClipboard(text, button) {
+                                            navigator.clipboard.writeText(text).then(function() {
+                                                const originalHTML = button.innerHTML;
+                                                button.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+                                                setTimeout(function() {
+                                                    button.innerHTML = originalHTML;
+                                                }, 2000);
+                                            }).catch(function(err) {
+                                                console.error('Could not copy text: ', err);
+                                            });
+                                        }
+
+                                        // Poll every 3 seconds to check if payment status has changed to success or failed
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            console.log("Starting payment status polling for {{ $order->order_number }}...");
+                                            const pollInterval = setInterval(function() {
+                                                fetch('{{ route('payment.status', $order->order_number) }}')
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        console.log('Polled status data:', data);
+                                                        if (data.success && (data.is_success || data.is_failed)) {
+                                                            clearInterval(pollInterval);
+                                                            console.log('Payment status updated, reloading page...');
+                                                            window.location.reload();
+                                                        }
+                                                    })
+                                                    .catch(error => {
+                                                        console.error('Error polling payment status:', error);
+                                                    });
+                                            }, 3000);
+                                        });
+                                    </script>
+
                                     @if(isset($instructions['steps']) && count($instructions['steps']) > 0)
                                         <ul class="space-y-3 text-sm text-gray-600 text-left mt-6">
                                             @foreach($instructions['steps'] as $index => $step)

@@ -79,52 +79,184 @@ class Payment extends Model
         
         switch ($this->payment_type) {
             case 'qris':
+                $qrUrl = $this->qr_code_url;
+                if (!$qrUrl && isset($data['actions'])) {
+                    foreach ($data['actions'] as $action) {
+                        if (isset($action['name']) && $action['name'] === 'generate-qr-code') {
+                            $qrUrl = $action['url'];
+                            break;
+                        }
+                    }
+                }
+                if (!$qrUrl && isset($data['qr_string'])) {
+                    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . urlencode($data['qr_string']);
+                }
+                
+                $deeplink = $this->deeplink_redirect;
+                if (!$deeplink && isset($data['actions'])) {
+                    foreach ($data['actions'] as $action) {
+                        if (isset($action['name']) && $action['name'] === 'deeplink-redirect') {
+                            $deeplink = $action['url'];
+                            break;
+                        }
+                    }
+                }
+
                 return [
                     'type' => 'qris',
-                    'qr_string' => $data['qr_string'] ?? null,
+                    'title' => 'QRIS (Scan QR Code)',
+                    'qr_url' => $qrUrl,
+                    'deeplink' => $deeplink,
                     'acquirer' => $data['acquirer'] ?? 'gopay',
+                    'steps' => [
+                        'Buka aplikasi e-wallet pilihan Anda (GoPay, OVO, DANA, LinkAja, ShopeePay) atau aplikasi mobile banking.',
+                        'Pilih opsi Pindai / Scan QR.',
+                        'Arahkan kamera ke kode QR yang tertera di atas.',
+                        'Periksa jumlah tagihan dan nama merchant (JastipHype) di layar.',
+                        'Konfirmasi dan masukkan PIN transaksi Anda untuk menyelesaikan pembayaran.'
+                    ]
                 ];
                 
             case 'gopay':
+                $qrUrl = $this->qr_code_url;
+                $deeplink = $this->deeplink_redirect;
+                
+                if (isset($data['actions'])) {
+                    foreach ($data['actions'] as $action) {
+                        if (isset($action['name'])) {
+                            if ($action['name'] === 'generate-qr-code') {
+                                $qrUrl = $action['url'];
+                            } elseif ($action['name'] === 'deeplink-redirect') {
+                                $deeplink = $action['url'];
+                            }
+                        }
+                    }
+                }
+                
                 return [
                     'type' => 'gopay',
-                    'deeplink' => $data['actions'][0]['url'] ?? $this->deeplink_redirect,
-                    'qr_code' => $data['actions'][1]['url'] ?? $this->qr_code_url,
+                    'title' => 'GoPay',
+                    'qr_url' => $qrUrl,
+                    'deeplink' => $deeplink,
+                    'steps' => [
+                        'Jika menggunakan Smartphone: Klik tombol "Pay with GoPay App" untuk membayar langsung menggunakan aplikasi GoPay Anda.',
+                        'Jika menggunakan PC/Laptop: Buka aplikasi GoPay atau Gojek di HP Anda.',
+                        'Pilih menu "Bayar" lalu scan QR Code yang tampil di layar.',
+                        'Konfirmasi pembayaran pada aplikasi GoPay/Gojek Anda.',
+                        'Masukkan PIN GoPay Anda untuk menyelesaikan transaksi.'
+                    ]
                 ];
                 
             case 'shopeepay':
+                $deeplink = $this->deeplink_redirect;
+                if (!$deeplink && isset($data['actions'])) {
+                    foreach ($data['actions'] as $action) {
+                        if (isset($action['name']) && $action['name'] === 'deeplink-redirect') {
+                            $deeplink = $action['url'];
+                            break;
+                        }
+                    }
+                }
                 return [
                     'type' => 'shopeepay',
-                    'deeplink' => $data['actions'][0]['url'] ?? $this->deeplink_redirect,
+                    'title' => 'ShopeePay',
+                    'deeplink' => $deeplink,
+                    'steps' => [
+                        'Klik tombol "Pay with ShopeePay App" untuk membuka aplikasi Shopee.',
+                        'Konfirmasi detail pembayaran di halaman pembayaran ShopeePay.',
+                        'Masukkan PIN ShopeePay Anda untuk menyelesaikan transaksi.'
+                    ]
                 ];
                 
             case 'bank_transfer':
                 $bank = $data['va_numbers'][0]['bank'] ?? 'bca';
+                $vaNumber = $data['va_numbers'][0]['va_number'] ?? $this->payment_code;
+                
+                $steps = [];
+                if (strtolower($bank) === 'bca') {
+                    $steps = [
+                        'Masukkan Kartu ATM BCA & PIN Anda.',
+                        'Pilih menu Transaksi Lainnya > Transfer > Ke Rekening BCA Virtual Account.',
+                        'Masukkan nomor Virtual Account: ' . $vaNumber,
+                        'Periksa detail transaksi. Jika sudah benar, masukkan jumlah pembayaran lalu pilih "Ya".',
+                        'Ikuti instruksi selanjutnya untuk menyelesaikan transaksi.'
+                    ];
+                } elseif (strtolower($bank) === 'bni') {
+                    $steps = [
+                        'Masukkan Kartu ATM BNI & PIN Anda.',
+                        'Pilih menu Menu Lain > Transfer > Virtual Account Billing.',
+                        'Masukkan nomor Virtual Account: ' . $vaNumber,
+                        'Periksa detail transaksi. Pilih "Ya" untuk melakukan pembayaran.',
+                        'Ikuti instruksi selanjutnya untuk menyelesaikan transaksi.'
+                    ];
+                } elseif (strtolower($bank) === 'bri') {
+                    $steps = [
+                        'Masukkan Kartu ATM BRI & PIN Anda.',
+                        'Pilih menu Transaksi Lain > Pembayaran > Lainnya > BRIVA.',
+                        'Masukkan nomor BRIVA: ' . $vaNumber,
+                        'Periksa detail transaksi. Pilih "Ya" untuk melakukan pembayaran.',
+                        'Ikuti instruksi selanjutnya untuk menyelesaikan transaksi.'
+                    ];
+                } else {
+                    $steps = [
+                        'Lakukan transfer ke bank tujuan transfer Virtual Account.',
+                        'Masukkan nomor Virtual Account: ' . $vaNumber,
+                        'Periksa detail transaksi dan konfirmasi pembayaran.'
+                    ];
+                }
+                
                 return [
                     'type' => 'bank_transfer',
+                    'title' => strtoupper($bank) . ' Virtual Account',
                     'bank' => strtoupper($bank),
-                    'va_number' => $data['va_numbers'][0]['va_number'] ?? $this->payment_code,
+                    'va_number' => $vaNumber,
+                    'steps' => $steps
                 ];
                 
             case 'echannel':
+                $billKey = $data['bill_key'] ?? null;
+                $billerCode = $data['biller_code'] ?? null;
                 return [
                     'type' => 'echannel',
+                    'title' => 'Mandiri Bill Payment',
                     'bank' => 'MANDIRI',
-                    'bill_key' => $data['bill_key'] ?? null,
-                    'biller_code' => $data['biller_code'] ?? null,
+                    'bill_key' => $billKey,
+                    'biller_code' => $billerCode,
+                    'steps' => [
+                        'Masukkan Kartu ATM Mandiri & PIN Anda.',
+                        'Pilih menu Bayar/Beli > Multi Payment.',
+                        'Masukkan kode Biller Mandiri: ' . $billerCode,
+                        'Masukkan nomor Bill Key: ' . $billKey,
+                        'Periksa detail transaksi. Pilih item tagihan dan pilih "Ya" untuk membayar.',
+                        'Ikuti instruksi selanjutnya untuk menyelesaikan transaksi.'
+                    ]
                 ];
                 
             case 'cstore':
+                $store = $data['store'] ?? 'indomaret';
+                $paymentCode = $data['payment_code'] ?? $this->payment_code;
                 return [
                     'type' => 'cstore',
-                    'store' => strtoupper($data['store'] ?? 'indomaret'),
-                    'payment_code' => $data['payment_code'] ?? $this->payment_code,
+                    'title' => ucfirst($store),
+                    'store' => strtoupper($store),
+                    'payment_code' => $paymentCode,
+                    'steps' => [
+                        'Datang ke gerai ' . ucfirst($store) . ' terdekat.',
+                        'Katakan kepada kasir bahwa Anda ingin melakukan pembayaran "Midtrans" atau "JastipHype".',
+                        'Tunjukkan kode pembayaran berikut kepada kasir: ' . $paymentCode,
+                        'Bayar dengan nominal tagihan yang sesuai.',
+                        'Simpan struk pembayaran sebagai bukti transaksi yang sah.'
+                    ]
                 ];
                 
             default:
                 return [
                     'type' => 'unknown',
+                    'title' => 'Instructions',
                     'data' => $data,
+                    'steps' => [
+                        'Silakan ikuti instruksi yang dikirimkan ke email Anda untuk menyelesaikan pembayaran.'
+                    ]
                 ];
         }
     }
