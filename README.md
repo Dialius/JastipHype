@@ -22,6 +22,7 @@
 ## 📋 Daftar Isi
 
 - [Tentang Project](#-tentang-project)
+- [Tampilan Platform](#-tampilan-platform)
 - [Fitur Utama](#-fitur-utama)
 - [Tech Stack](#-tech-stack)
 - [Instalasi](#-instalasi)
@@ -35,6 +36,23 @@
 ## 🎯 Tentang Project
 
 **JastipHype** adalah platform e-commerce modern yang dikhususkan untuk jual-beli produk streetwear premium seperti Supreme, Off-White, BAPE, Essentials, dan brand hype lainnya. Platform ini menyediakan sistem jastip (jasa titip) yang memudahkan pelanggan untuk mendapatkan produk original limited edition secara aman dan transparan.
+
+---
+
+## 📸 Tampilan Platform
+
+<table align="center">
+  <tr>
+    <td align="center" valign="top" width="50%">
+      <strong>Desktop Version</strong><br><br>
+      <img src="public/images/screenshots/desktop_homepage.png" alt="Desktop Homepage Preview" width="100%">
+    </td>
+    <td align="center" valign="top" width="50%">
+      <strong>Mobile Version</strong><br><br>
+      <img src="public/images/screenshots/mobile_homepage.png" alt="Mobile Homepage Preview" width="100%">
+    </td>
+  </tr>
+</table>
 
 ---
 
