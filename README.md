@@ -46,7 +46,7 @@
 ## 📸 Tampilan Platform
 
 <p align="center">
-  <img src="public/images/screenshots/desktop_homepage.png" alt="Desktop Homepage Preview" width="50%">
+  <img src="public/images/screenshots/homepage_latest.png" alt="Desktop Homepage Preview" width="50%">
 </p>
 
 ---

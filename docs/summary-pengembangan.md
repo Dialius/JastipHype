@@ -23,7 +23,7 @@ Dokumen ini mencatat seluruh perubahan penting, optimasi, dan perbaikan keamanan
 *   **Lisensi Resmi**: Menambahkan file `LICENSE` (MIT License) di root direktori untuk kejelasan aspek hukum kode sumber.
 
 ### 4. 📸 Dokumentasi Screenshot Platform
-*   **Desktop Homepage Preview**: Mengambil tangkapan layar (screenshot) halaman utama versi desktop terupdate, menyimpannya di direktori `public/images/screenshots/desktop_homepage.png`, dan menampilkan preview-nya di dalam `README.md`.
+*   **Desktop Homepage Preview**: Mengambil tangkapan layar (screenshot) halaman utama versi desktop terupdate, menyimpannya di direktori `public/images/screenshots/homepage_latest.png`, dan menampilkan preview-nya di dalam `README.md`.
 
 ---
 
