@@ -1,7 +1,7 @@
 # 🛍️ JastipHype - Premium Streetwear E-Commerce Platform
 
 <p align="center">
-  <img src="public/images/logo/JastipHype_tab-logo.png" alt="JastipHype Logo" width="200">
+  <img src="public/images/logo/JastipHype_tab-logo.png" alt="JastipHype Logo" width="80">
 </p>
 
 <p align="center">
@@ -42,7 +42,7 @@
 ## 📸 Tampilan Platform
 
 <p align="center">
-  <img src="public/images/screenshots/desktop_homepage.png" alt="Desktop Homepage Preview" width="100%">
+  <img src="public/images/screenshots/desktop_homepage.png" alt="Desktop Homepage Preview" width="50%">
 </p>
 
 ---
