@@ -17,6 +17,10 @@
   <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
 </p>
 
+> [!WARNING]
+> **Status Proyek: Tahap Pengetesan & Pengembangan**  
+> Repositori ini sedang dalam tahap pengujian aktif dan pengembangan berkelanjutan. Semua fitur transaksi menggunakan integrasi pembayaran *Sandbox* (simulasi) dan data di dalamnya bersifat uji coba.
+
 ---
 
 ## 📋 Daftar Isi
