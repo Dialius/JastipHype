@@ -30,8 +30,9 @@ Dokumen ini mencatat seluruh perubahan penting, optimasi, dan perbaikan keamanan
 ## 🔑 Catatan Teknis untuk Pemeliharaan di Hostinger
 
 *   **Penyebab Error 403 Forbidden**: Hostinger sering kali memutuskan tautan simbolik (symlink) jika ada pembaruan file. Jika website Anda mengalami Forbidden lagi di masa mendatang:
-    1. Masuk ke SSH server Anda.
-    2. Jalankan script perbaikan dengan perintah:
+    1. Pastikan menu **SSH Access** di hPanel Hostinger Anda dalam status **Enabled** (Aktif). Jika mati, deploy GitHub Actions maupun koneksi SSH manual akan gagal dengan error `/sbin/nologin`.
+    2. Masuk ke SSH server Anda.
+    3. Jalankan script perbaikan dengan perintah:
        ```bash
        bash scripts/fix-domain-root.sh
        ```
